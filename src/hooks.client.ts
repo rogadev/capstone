@@ -1,1 +1,0 @@
-import '$lib/db'; // Required to initialize the Supabase client client-side.

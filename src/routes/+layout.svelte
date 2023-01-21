@@ -1,6 +1,6 @@
 <script>
 	import '../app.css'; // TailwindCSS Global Styles
-	import { supabaseClient } from '$lib/db';
+	import supabaseClient from '$lib/db';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
