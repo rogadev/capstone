@@ -6,8 +6,8 @@ import devMode from "$lib/server/mode";
 
 export const actions: Actions = {
   login: async ({ url }) => {
-    const provider = url.searchParams.get("provider") satisfies Provider;
-    const { data, error } = await supabase.auth.signInWithOAuth({ provider }, { redirectTo: "http://localhost:3000/dashboard" });
+    const provider = url.searchParams.get("provider") as Provider;
+    const { data, error } = await supabase.auth.signInWithOAuth({ provider });
     if (error) {
       if (devMode) console.error(`Error logging in with Supabase. Provider: ${provider}. Error: ${error}`);
       return fail(400, "Something went wrong");
