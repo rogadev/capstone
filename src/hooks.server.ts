@@ -21,7 +21,6 @@ const getSupabaseSession = async (event: RequestEvent) => {
   return session;
 };
 
-// This is the main function that will be called by SvelteKit to handle server requests.
 export const handle: Handle = async ({ event, resolve }) => {
   const session = await getSupabaseSession(event);
   const loggedIn = session?.user.email ? true : false;
