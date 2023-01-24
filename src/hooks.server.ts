@@ -24,19 +24,14 @@ const getSupabaseSession = async (event: RequestEvent) => {
 export const handle: Handle = async ({ event, resolve }) => {
   const session = await getSupabaseSession(event);
   const loggedIn = session?.user.email ? true : false;
-  console.log(session);
   const loggingIn = event.url.pathname.match('/login') ? true : false;
   const intendedPath = event.url.pathname;
   const guardedPaths = ['/dashboard', '/profile', '/settings', '/admin'];
   const intendedPathIsGuarded = guardedPaths.some((guardedPath: string) => intendedPath.startsWith(guardedPath));
 
-  if (!loggedIn && intendedPathIsGuarded) {
-    throw redirect(303, '/login');
-  }
+  if (!loggedIn && intendedPathIsGuarded) throw redirect(303, '/login');
 
-  if (loggingIn && loggedIn) {
-    throw redirect(303, '/dashboard');
-  }
+  if (loggingIn && loggedIn) throw redirect(303, '/dashboard');
 
   return await resolve(event);
 };
