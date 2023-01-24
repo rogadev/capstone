@@ -1,5 +1,10 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+	$: session = $page.data.session;
+</script>
+
 <div id="brand">
-	<a href="/" class="flex flex-row gap-2 items-center">
+	<a href={session ? '/dashboard' : '/'} class="flex flex-row gap-2 items-center">
 		<img
 			src="https://a.storyblok.com/f/192938/512x512/384274f919/app-logo.png/m/40x0/filters:format(webp)"
 			alt="logo"
