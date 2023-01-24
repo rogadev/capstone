@@ -24,8 +24,6 @@
 			text: 'Evaluations'
 		}
 	];
-
-	const inactive = '';
 </script>
 
 <div class="flex flex-row gap-4">
@@ -34,8 +32,9 @@
 			{#each protectedRoutes as route}
 				<a
 					href={route.path}
-					class="px-3 py-2 text-sm font-medium text-white bg-green-900 rounded-md shadow hover:bg-blue-700 hover:shadow-lg"
-					class:active={'bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium shadow hover:shadow-lg'}
+					class={$page.url.pathname === route.path
+						? 'px-3 py-2 text-sm font-medium text-white bg-blue-900 rounded-md shadow hover:bg-blue-700 hover:shadow-lg'
+						: 'px-3 py-2 text-sm font-medium text-blue-900 bg-white rounded-md shadow hover:bg-blue-100 hover:shadow-lg'}
 				>
 					{route.text}
 				</a>
