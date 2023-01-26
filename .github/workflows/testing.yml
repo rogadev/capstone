@@ -1,10 +1,5 @@
 name: Run tests
 
-env:
-  SECRET_ENV_MODE: ${{ secrets.SECRET_ENV_MODE }}
-  PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
-  PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
-
 on:
   push:
     branches: [main]
@@ -27,7 +22,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: npm install
-        run: npm ci 
+        env:
+          SECRET_ENV_MODE: ${{ secrets.SECRET_ENV_MODE }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+        run: npm ci
       - name: run tests
         run: npm run test
       - name: run unit tests
