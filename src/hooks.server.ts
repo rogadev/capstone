@@ -26,12 +26,12 @@ export const handle: Handle = async ({ event, resolve }) => {
   const loggedIn = session?.user.email ? true : false;
   const loggingIn = event.url.pathname.match('/login') ? true : false;
   const intendedPath = event.url.pathname;
-  const guardedPaths = ['/dashboard', '/profile', '/settings', '/admin'];
-  const intendedPathIsGuarded = guardedPaths.some((guardedPath: string) => intendedPath.startsWith(guardedPath));
-
-  if (!loggedIn && intendedPathIsGuarded) throw redirect(303, '/login');
+  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/public', '/onboarding'];
+  const intendedPathIsPublic = publicPaths.some((publicPath: string) => intendedPath.startsWith(publicPath));
 
   if (loggingIn && loggedIn) throw redirect(303, '/dashboard');
+
+  if (!loggedIn && !intendedPathIsPublic) throw redirect(303, '/login');
 
   return await resolve(event);
 };
