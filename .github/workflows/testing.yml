@@ -1,4 +1,9 @@
-name: Runs All Unit tests
+name: Run tests
+
+env:
+  SECRET_ENV_MODE: ${{ secrets.SECRET_ENV_MODE }}
+  PUBLIC_SUPABASE_URL: ${{ PUBLIC_SUPABASE_URL }}
+  PUBLIC_SUPABASE_ANON_KEY: ${{ PUBLIC_SUPABASE_ANON_KEY }}
 
 on:
   push:
