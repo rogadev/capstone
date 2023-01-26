@@ -21,13 +21,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - name: npm install
+          SECRET_ENV_MODE: ${{ secrets.SECRET_ENV_MODE }}
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         env:
           SECRET_ENV_MODE: ${{ secrets.SECRET_ENV_MODE }}
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+      - name: Clean Install
         run: npm ci
-      - name: run tests
+      - name: Playright Tests
         run: npm run test
-      - name: run unit tests
+      - name: Unit Tests
         run: npm run test:unit
