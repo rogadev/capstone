@@ -3,6 +3,7 @@
 </script>
 
 <h1>Welcome</h1>
+
 <!-- {#if !$page.data.session}
 	<h1>You are not logged in</h1>
 	<div class="p-4">
