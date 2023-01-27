@@ -1,5 +1,4 @@
-import * as env from 'dotenv';
-env.config();
+import { SECRET_ENV_MODE } from "$env/static/private";
 
-const mode = process.env.SECRET_ENV_MODE !== 'production';
+const mode = SECRET_ENV_MODE !== 'production';
 export default mode;

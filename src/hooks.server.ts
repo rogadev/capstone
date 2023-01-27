@@ -21,9 +21,9 @@ const getSupabaseSession = async (event: RequestEvent) => {
   return session;
 };
 
-export const handle = async ({ event, resolve }) => {
+export const handle: Handle = async ({ event, resolve }) => {
   const session = await getSupabaseSession(event);
-  const loggedIn = session?.username ? true : false;
+  const loggedIn = session !== null ? true : false;
   const loggingIn = event.url.pathname.match('/login') ? true : false;
   const intendedPath = event.url.pathname;
   const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/public', '/onboarding'];
