@@ -19,6 +19,6 @@
 </script>
 
 <Navbar />
-<div class="w-5/6 mx-auto pt-4">
+<div class="w-5/6 pt-4 mx-auto">
 	<slot />
 </div>

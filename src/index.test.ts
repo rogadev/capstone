@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 
-describe('sum test', () => {
-	it('adds 1 + 2 to equal 3', () => {
-		expect(1 + 2).toBe(3);
+describe('Run Unit Tests', () => {
+	it('No tests at this time...', () => {
+		return true;
 	});
 });
