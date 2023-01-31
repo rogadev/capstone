@@ -1,9 +1,22 @@
-<script>
+<script lang="ts">
 	import '../app.css'; // TailwindCSS Global Styles
-	import supabaseClient from '$lib/db';
+	import { onMount, onDestroy } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import * as colorTheme from '$lib/stores/colorTheme';
+	import supabaseClient from '$lib/db';
 	import Navbar from './Navbar.svelte';
+
+	let mode: 'light' | 'dark';
+	colorTheme.useBrowserPreference();
+	const unsubscribe = colorTheme.mode.subscribe((value) => {
+		const useDark = value === 'dark';
+		mode = useDark ? 'dark' : 'light';
+	});
+	$: useDark = mode === 'dark';
+
+	function toggleTheme() {
+		colorTheme.toggleMode();
+	}
 
 	onMount(() => {
 		const {
@@ -11,14 +24,19 @@
 		} = supabaseClient.auth.onAuthStateChange(() => {
 			invalidate('supabase:auth');
 		});
-
 		return () => {
 			subscription.unsubscribe();
 		};
 	});
+
+	onDestroy(() => {
+		unsubscribe();
+	});
 </script>
 
-<Navbar />
-<div class="w-5/6 pt-4 mx-auto">
-	<slot />
+<div class={useDark ? 'dark' : ''}>
+	<Navbar mode={useDark} {toggleTheme} />
+	<div class="w-5/6 pt-4 mx-auto">
+		<slot />
+	</div>
 </div>

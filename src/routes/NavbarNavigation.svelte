@@ -4,6 +4,10 @@
 	import Icon from '@iconify/svelte';
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
+	import ThemeToggle from './ThemeToggle.svelte';
+
+	export let mode: Boolean;
+	export let toggleTheme: () => void;
 
 	$: session = $page.data.session;
 
@@ -53,20 +57,20 @@
 </script>
 
 {#if session}
-	<div class="flex flex-row gap-4">
+	<div class="flex flex-row gap-2">
 		<NavbarLinks {links} />
 		<!-- Mobile Navigation Hamburger -->
-		<div class="flex flex-row items-center gap-2 md:hidden">
+		<div class="flex md:hidden">
 			<button
 				type="button"
 				title="Menu"
-				class="text-2xl text-blue-900 hover:text-blue-700"
+				class="text-2xl"
 				on:click={() => {
 					showMobileMenu = !showMobileMenu;
 				}}
 			>
 				<div
-					class="p-1 bg-white border rounded shadow hover:bg-blue-600 hover:text-white hover:shadow-none focus:outline-none focus:bg-blue-600 focus:text-white focus:shadow-inner"
+					class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
 				>
 					<Icon icon="mdi:menu" />
 				</div>
@@ -89,18 +93,30 @@
 				</div>
 			{/if}
 		</div>
-		<div id="account" class="flex flex-row items-center gap-2">
-			<a href="/profile" title="Profile" class="text-2xl text-blue-900 hover:text-blue-700">
+		<div
+			id="account"
+			class="flex flex-row items-center justify-center gap-2 text-2xl font-semibold dark:text-white"
+		>
+			<ThemeToggle {mode} {toggleTheme} />
+
+			<a
+				href="/profile"
+				title="Profile"
+				class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
+			>
 				<Icon icon="mdi:user-circle" />
 			</a>
+
 			<button
 				type="button"
 				title="Logout"
+				class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
 				on:click={logout}
-				class="text-2xl text-blue-900 hover:text-blue-700"
 			>
 				<Icon icon="mdi:logout" />
 			</button>
 		</div>
 	</div>
+{:else}
+	<ThemeToggle {mode} {toggleTheme} />
 {/if}

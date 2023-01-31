@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
 	import NavbarNavigation from './NavbarNavigation.svelte';
 	import NavbarBrand from './NavbarBrand.svelte';
+
+	export let mode: Boolean;
+	export let toggleTheme: () => void;
 </script>
 
-<div class="w-full py-3 m-0 border-b bg-slate-100">
+<div class="w-full py-3 m-0 border-b bg-slate-200 dark:bg-slate-900 dark:text-white">
 	<div class="w-5/6 mx-auto">
 		<div class="flex flex-row items-center justify-between">
 			<NavbarBrand />
-			<NavbarNavigation />
+			<NavbarNavigation {mode} {toggleTheme} />
 		</div>
 	</div>
 </div>
