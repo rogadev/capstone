@@ -6,6 +6,8 @@
 	export let icon: string | undefined;
 	export let name: string;
 
+	// TODO clean this up and extract logic into a separate file. I created useTooltip.ts for this exact purpose. Let's use it.
+
 	let showTooltip = false;
 
 	$: mouseLocation = { x: 0, y: 0 };
