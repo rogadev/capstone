@@ -15,11 +15,5 @@
 		{#each reversedLinks as { name, icon, href }}
 			<NavbarLink {href} {icon} {name} />
 		{/each}
-	{:else}
-		<a
-			href="/login"
-			class="px-3 py-2 text-sm font-medium text-white bg-green-900 rounded-md shadow hover:bg-blue-700 hover:shadow-lg"
-			>Login</a
-		>
 	{/if}
 </div>

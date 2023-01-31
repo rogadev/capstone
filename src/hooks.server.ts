@@ -3,7 +3,6 @@ import { getServerSession } from '@supabase/auth-helpers-sveltekit';
 import type { Session } from '@supabase/supabase-js';
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 import { fail, redirect } from "@sveltejs/kit";
-import inDevMode from "$lib/server/mode";
 
 /**
  * Reaches out to our getServerSession function from @supabase/auth-helpers-sveltekit to get the current session and returns it, or null if there is no session.
@@ -15,7 +14,7 @@ const getSupabaseSession = async (event: RequestEvent) => {
   try {
     session = await getServerSession(event);
   } catch (e) {
-    if (inDevMode) console.error('Supabase getServerSession Error: ', e);
+    console.error('Supabase getServerSession Error: ', e);
     fail(500, 'Something went wrong');
   }
   return session;
