@@ -8,9 +8,9 @@
 	}[];
 </script>
 
-<ul class="flex flex-col gap-2">
+<ul class="flex flex-col gap-1">
 	{#each links as { name, icon, href }}
-		<li class="p-1">
+		<li class="flex p-1">
 			<NavbarLinkMobile {href} {icon} {name} />
 		</li>
 	{/each}
