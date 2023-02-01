@@ -1,16 +1,7 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
 	import SignInWithFacebook from './SignInWithFacebook.svelte';
 	import SignInWithGithub from './SignInWithGithub.svelte';
 	import SignInWithGoogle from './SignInWithGoogle.svelte';
-	// make sure that our html has classes h-full and bg-white
-	document.documentElement.classList.add('h-full', 'bg-white');
-	document.body.classList.add('h-full');
-	// remove these classes on destroy
-	onDestroy(() => {
-		document.documentElement.classList.remove('h-full', 'bg-white');
-		document.body.classList.remove('h-full');
-	});
 </script>
 
 <div class="flex min-h-full">
@@ -36,17 +27,17 @@
 				</p>
 			</div>
 
-			<form method="GET" class="mt-8">
+			<div class="mt-8">
 				<!-- Social Sign In -->
 				<div>
 					<!-- Providers -->
 					<div>
 						<p class="text-sm font-medium text-gray-700">Sign in with</p>
-						<div class="mt-1 grid grid-cols-3 gap-3">
+						<form method="POST" class="mt-1 grid grid-cols-3 gap-3">
 							<SignInWithGoogle />
 							<SignInWithFacebook />
 							<SignInWithGithub />
-						</div>
+						</form>
 					</div>
 					<!-- Or... -->
 					<div class="relative mt-6">
@@ -120,7 +111,7 @@
 						</div>
 					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 	<div class="relative hidden w-0 flex-1 lg:block">
