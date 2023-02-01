@@ -1,8 +1,7 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
+	// TODO Remove this auth in favor of the new component. Only replace once new auth works.
 </script>
-
-<!-- Login Component -->
 
 <section class="h-screen">
 	<div class="px-6 h-full text-gray-900">
