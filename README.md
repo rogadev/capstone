@@ -21,5 +21,3 @@ For versions, please see the [package.json](./package.json) file. For more infor
 - [Playwright](https://playwright.dev/)
 - [Vite](https://vitejs.dev/)
 - [Vercel](https://vercel.com/)
-
--- testing things --
