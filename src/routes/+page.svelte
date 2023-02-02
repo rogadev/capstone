@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Auth from './Auth.svelte';
+	import Auth from '$lib/components/auth/Auth.svelte';
 
 	$: session = $page.data.session;
 </script>
