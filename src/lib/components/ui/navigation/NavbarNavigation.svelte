@@ -4,7 +4,7 @@
 	import Icon from '@iconify/svelte';
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
-	import ThemeToggle from './ThemeToggle.svelte';
+	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;

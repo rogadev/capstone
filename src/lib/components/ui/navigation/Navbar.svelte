@@ -1,6 +1,6 @@
 <script lang="ts">
-	import NavbarNavigation from './NavbarNavigation.svelte';
-	import NavbarBrand from './NavbarBrand.svelte';
+	import NavbarNavigation from '$lib/components/ui/navigation/NavbarNavigation.svelte';
+	import NavbarBrand from '$lib/components/ui/navigation/NavbarBrand.svelte';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;
