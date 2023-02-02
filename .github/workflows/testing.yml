@@ -27,15 +27,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - name: Print all ENVs
-        run: printenv
-        
       - name: Clean Install
         run: |
              npm ci
              npx playwright install
-      - name: Playright Tests
+      - name: Run Tests - Playwright
         run: npm run test
-      - name: Unit Tests
+      - name: Run Tests - Vitest Unit Testing
         run: npm run test:unit
