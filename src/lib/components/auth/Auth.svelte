@@ -2,7 +2,7 @@
 	import SignInWithEmailAndPassword from './SignInWithEmailAndPassword.svelte';
 	import SignUpEmailAndPassword from './SignUpWithEmailAndPassword.svelte';
 	import SignInWithFacebook from './SignInWithFacebook.svelte';
-	import SignInWithGithub from './SignInWithGithub.svelte';
+	import SignInWithMicrosoft from './SignInWithMicrosoft.svelte';
 	import SignInWithGoogle from './SignInWithGoogle.svelte';
 
 	let signIn = true;
@@ -42,7 +42,7 @@
 						<div class="mt-1 grid grid-cols-3 gap-3">
 							<SignInWithGoogle />
 							<SignInWithFacebook />
-							<SignInWithGithub />
+							<SignInWithMicrosoft />
 						</div>
 					</div>
 					<div class="relative mt-6">

@@ -4,7 +4,7 @@
 	import { invalidate } from '$app/navigation';
 	import * as colorTheme from '$lib/stores/colorTheme';
 	import supabaseClient from '$lib/db';
-	import Navbar from './Navbar.svelte';
+	import Navbar from '$lib/components/ui/navigation/Navbar.svelte';
 
 	let mode: 'light' | 'dark';
 	colorTheme.useBrowserPreference();

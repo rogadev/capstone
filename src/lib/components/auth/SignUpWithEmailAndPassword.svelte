@@ -111,7 +111,7 @@
 			loading = true;
 			const { error } = await supabase.auth.signUp({ email, password });
 			if (error) throw error;
-			alert('Check your email for login link!');
+			window.location.href = `/confirm?email=${email}`;
 		} catch (error) {
 			if (error instanceof Error) {
 				alert(error.message);

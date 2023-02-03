@@ -25,7 +25,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const loggedIn = session !== null ? true : false;
   const loggingIn = event.url.pathname.match('/login') ? true : false;
   const intendedPath = event.url.pathname;
-  const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/public', '/onboarding'];
+  const publicPaths = ['/login', '/register', '/forgot', '/reset', '/public', '/onboarding', '/confirm'];
   const intendedPathIsPublic = intendedPath === '/' || publicPaths.some((publicPath) => intendedPath.startsWith(publicPath));
 
   if (loggingIn && loggedIn) throw redirect(303, '/dashboard');
