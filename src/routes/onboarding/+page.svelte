@@ -1,12 +1,40 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
 	// import { z, ZodError } from 'zod';
+	import OrganizationForm from '$lib/components/forms/OrganizationForm/Form.svelte';
 
-	export let user;
-	export let userOrganization;
+	export let data;
 
-	console.log(userOrganization);
-	console.log(user);
+	const currentUser = data.userId;
+	const existingOrganization = data.userOrganization;
+	const errorsFetchingOrganization = data.error;
 </script>
+
+<h1>Step 1: Register an account</h1>
+{#if currentUser === null}
+	<p>Please log in and return to onboarding to continue.</p>
+	<a href="/">Log in</a>
+{:else}
+	<div class="flex items-center gap-2">
+		<Icon icon="carbon:checkmark-filled" />
+		<p>You are logged in.</p>
+	</div>
+{/if}
+
+<h1>Step 2: Create an organization</h1>
+{#if existingOrganization}
+	<div class="flex items-center gap-2">
+		<Icon icon="carbon:checkmark-filled" />
+		<p>You have an organization.</p>
+	</div>
+{:else if errorsFetchingOrganization}
+	<div class="flex items-center gap-2">
+		<Icon icon="carbon:error-filled" />
+		<p>There was an error fetching your organization.</p>
+	</div>
+{:else}
+	<OrganizationForm organization={existingOrganization} />
+{/if}
 
 <form method="post">
 	<!-- {#if organization}
