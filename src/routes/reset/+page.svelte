@@ -29,22 +29,22 @@
 </script>
 
 {#if loading}
-	<div class="flex flex-col items-center justify-center h-full">
+	<div class="flex h-full flex-col items-center justify-center">
 		<Loading />
 	</div>
 {:else}
-	<div class="flex flex-col items-center justify-center h-full">
+	<div class="flex h-full flex-col items-center justify-center">
 		{#if statusMessage}
 			<div class="text-center">
-				<h1 class="text-2xl font-bold mb-4">Reset Password</h1>
+				<h1 class="mb-4 text-2xl font-bold">Reset Password</h1>
 				<p>{statusMessage}</p>
 			</div>
 		{:else}
 			<div class="text-center">
-				<h1 class="text-2xl font-bold mb-4">Reset Password</h1>
+				<h1 class="mb-4 text-2xl font-bold">Reset Password</h1>
 				<p>We'll send you an email with a link to reset your password.</p>
 				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+					class="mt-4 rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
 					on:click={handleResetPassword}
 				>
 					Reset Password

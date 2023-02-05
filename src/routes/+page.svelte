@@ -8,3 +8,7 @@
 {#if !session}
 	<Auth />
 {/if}
+
+<div>
+	<button class="flex" title="test" aria-busy="false">test</button>
+</div>

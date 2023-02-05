@@ -25,7 +25,7 @@
 </script>
 
 <div>
-	<h3 class="my-4 text-2xl font-semibold text-center sm:text-left">Quick Links</h3>
+	<h3 class="my-4 text-center text-2xl font-semibold sm:text-left">Quick Links</h3>
 	<div
 		id="dashboard-options"
 		class="grid grid-cols-2 gap-4 text-center md:grid-cols-3 lg:grid-cols-5"

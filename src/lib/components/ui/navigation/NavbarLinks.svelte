@@ -10,7 +10,7 @@
 	const reversedLinks = links.slice().reverse();
 </script>
 
-<div class="flex-wrap hidden md:flex md:items-center md:gap-3 md:flex-row-reverse">
+<div class="hidden flex-wrap md:flex md:flex-row-reverse md:items-center md:gap-3">
 	{#if session}
 		{#each reversedLinks as { name, icon, href }}
 			<NavbarLink {href} {icon} {name} />

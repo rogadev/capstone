@@ -139,7 +139,7 @@
 				/>
 			</div>
 			{#if errors.email.length}
-				<ul class="mt-2 text-sm text-red-600 list-disc list-inside">
+				<ul class="mt-2 list-inside list-disc text-sm text-red-600">
 					{#each errors.email as error}
 						<li>{error}</li>
 					{/each}
@@ -161,7 +161,7 @@
 				/>
 			</div>
 			{#if errors.password.length}
-				<ul class="mt-2 text-sm text-red-600 list-disc list-inside">
+				<ul class="mt-2 list-inside list-disc text-sm text-red-600">
 					{#each errors.password as error}
 						<li>{error}</li>
 					{/each}
@@ -185,7 +185,7 @@
 				/>
 			</div>
 			{#if errors.confirmPassword.length}
-				<ul class="mt-2 text-sm text-red-600 list-disc list-inside">
+				<ul class="mt-2 list-inside list-disc text-sm text-red-600">
 					{#each errors.confirmPassword as error}
 						<li>{error}</li>
 					{/each}
@@ -197,7 +197,7 @@
 			<button
 				type="submit"
 				disabled={!readyToSubmit || loading}
-				class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+				class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:hover:bg-gray-400"
 			>
 				Sign up
 			</button>

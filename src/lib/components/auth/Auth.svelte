@@ -66,7 +66,7 @@
 							<div class="w-full border-t border-gray-300" />
 						</div>
 						<div class="relative flex justify-center text-sm">
-							<span class="px-2 bg-white text-gray-500">
+							<span class="bg-white px-2 text-gray-500">
 								{#if signIn}
 									Don't have an account?
 								{:else}
@@ -80,7 +80,7 @@
 						<button
 							type="button"
 							on:click={toggleMethod}
-							class="w-full flex justify-center rounded-md border border-gray-300 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+							class="flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
 						>
 							{#if signIn}
 								Sign up instead

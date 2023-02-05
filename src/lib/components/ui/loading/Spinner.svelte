@@ -1,4 +1,4 @@
-<div class="w-full h-full flex items-center justify-center">
+<div class="flex h-full w-full items-center justify-center">
 	<svg
 		version="1.1"
 		id="L7"

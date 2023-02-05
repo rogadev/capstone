@@ -11,7 +11,7 @@
 <div>
 	<div class="grid grid-cols-3 items-center">
 		<label class="col-span-1" for={slug}>{text}</label>
-		<div class="flex gap-2 items-center justify-end col-span-2">
+		<div class="col-span-2 flex items-center justify-end gap-2">
 			{#if required}
 				<Icon icon="mdi:required" class="text-red-600" />
 			{/if}

@@ -36,7 +36,7 @@
 
 <div class={useDark ? 'dark' : ''}>
 	<Navbar mode={useDark} {toggleTheme} />
-	<div class="w-5/6 pt-4 mx-auto">
+	<div class="mx-auto w-5/6 pt-4">
 		<slot />
 	</div>
 </div>

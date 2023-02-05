@@ -30,8 +30,8 @@
 <a
 	{href}
 	class={$page.url.pathname === href
-		? 'px-3 py-2 text-sm font-medium text-white bg-blue-900 rounded-md shadow hover:bg-blue-700 hover:shadow-lg'
-		: 'px-3 py-2 text-sm font-medium text-blue-900 bg-white rounded-md shadow hover:bg-blue-100 hover:shadow-lg'}
+		? 'rounded-md bg-blue-900 px-3 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 hover:shadow-lg'
+		: 'rounded-md bg-white px-3 py-2 text-sm font-medium text-blue-900 shadow hover:bg-blue-100 hover:shadow-lg'}
 	on:mouseenter={handleMouseEnter}
 	on:mouseleave={handleMouseLeave}
 >
@@ -47,7 +47,7 @@
 
 {#if showTooltip}
 	<div
-		class="absolute z-10 p-2 text-sm text-white bg-black rounded-md shadow-lg lg:hidden"
+		class="absolute z-10 rounded-md bg-black p-2 text-sm text-white shadow-lg lg:hidden"
 		style={`left: ${mouseLocation.x}px; top: ${mouseLocation.y + 20}px;`}
 	>
 		{name}
