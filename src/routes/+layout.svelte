@@ -36,7 +36,9 @@
 
 <div class={useDark ? 'dark' : ''}>
 	<Navbar mode={useDark} {toggleTheme} />
-	<div class="mx-auto w-5/6 pt-4">
-		<slot />
+	<div class=" bg-light text-black dark:bg-dark dark:bg-opacity-95 dark:text-white">
+		<div class="flex items-stretch justify-items-stretch">
+			<slot />
+		</div>
 	</div>
 </div>

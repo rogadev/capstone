@@ -9,9 +9,10 @@
 
 <a
 	{href}
-	class={$page.url.pathname === href
-		? 'w-full rounded-md border bg-blue-900 px-3 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 hover:shadow-lg'
-		: 'w-full rounded-md border bg-white px-3 py-2 text-sm font-medium text-blue-900 shadow hover:bg-blue-100 hover:shadow-lg'}
+	class="w-full rounded-md  px-3 py-2 text-sm font-medium shadow hover:bg-dark dark:bg-light  dark:hover:bg-accent  {$page
+		.route.id === href
+		? 'bg-primary text-black hover:cursor-default hover:bg-primary hover:text-black hover:shadow dark:bg-primary dark:text-black dark:hover:bg-primary dark:hover:text-black'
+		: 'bg-light text-dark hover:text-white hover:shadow-lg dark:hover:text-white'}"
 >
 	{#if icon}
 		<Icon {icon} class="mr-2 hidden lg:inline-block" />

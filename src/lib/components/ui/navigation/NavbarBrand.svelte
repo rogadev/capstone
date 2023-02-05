@@ -10,6 +10,6 @@
 			alt="logo"
 			class="h-[40px] p-1"
 		/>
-		<span class="text-3xl font-semibold sm:block {session ? 'hidden' : 'block'}">EzEval</span>
+		<span class="text-3xl font-semibold">EzEval</span>
 	</a>
 </div>
