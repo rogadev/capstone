@@ -26,11 +26,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: 'npm'
       - name: Clean Install
         run: |
-             npm ci
-             npx playwright install
+          npm ci
+          npx playwright install
       - name: Run Tests - Playwright
         run: npm run test
       - name: Run Tests - Vitest Unit Testing

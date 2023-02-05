@@ -4,12 +4,12 @@
 </script>
 
 <div id="brand">
-	<a href={session ? '/dashboard' : '/'} class="flex flex-row gap-2 items-center">
+	<a href={session ? '/dashboard' : '/'} class="flex flex-row items-center gap-2">
 		<img
 			src="https://a.storyblok.com/f/192938/512x512/384274f919/app-logo.png/m/40x0/filters:format(webp)"
 			alt="logo"
-			class="p-1 h-[40px]"
+			class="h-[40px] p-1"
 		/>
-		<span class="sm:block text-3xl font-semibold {session ? 'hidden' : 'block'}">EzEval</span>
+		<span class="text-3xl font-semibold sm:block {session ? 'hidden' : 'block'}">EzEval</span>
 	</a>
 </div>

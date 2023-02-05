@@ -70,7 +70,7 @@
 				}}
 			>
 				<div
-					class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
+					class="rounded border border-slate-300 bg-blue-50 p-1 hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10 dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10"
 				>
 					<Icon icon="mdi:menu" />
 				</div>
@@ -78,14 +78,14 @@
 			{#if showMobileMenu}
 				<!--Invisible backdrop, full h and w, behind the dropdown list, if clicked on, closes showMenuMobile  -->
 				<div
-					class="fixed inset-0 z-0 w-full h-full bg-black bg-opacity-25"
+					class="fixed inset-0 z-0 h-full w-full bg-black bg-opacity-25"
 					on:click={toggleMobileMenu}
 					on:keypress={toggleMobileMenu}
 				/>
 				<!-- dropdown vertical list of navbar links -->
 				<!-- on select of any item, close mobile menu, then navigate -->
 				<div
-					class="absolute z-10 w-48 p-2 mt-12 bg-white border rounded shadow-lg top-2 right-28"
+					class="absolute top-2 right-28 z-10 mt-12 w-48 rounded border bg-white p-2 shadow-lg"
 					on:click={toggleMobileMenu}
 					on:keypress={toggleMobileMenu}
 				>
@@ -102,7 +102,7 @@
 			<a
 				href="/profile"
 				title="Profile"
-				class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
+				class="rounded border border-slate-300 bg-blue-50 p-1 hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10 dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10"
 			>
 				<Icon icon="mdi:user-circle" />
 			</a>
@@ -110,7 +110,7 @@
 			<button
 				type="button"
 				title="Logout"
-				class="p-1 border rounded bg-blue-50 dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10 border-slate-300 dark:border-white hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10"
+				class="rounded border border-slate-300 bg-blue-50 p-1 hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10 dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10"
 				on:click={logout}
 			>
 				<Icon icon="mdi:logout" />
