@@ -6,7 +6,8 @@
 
 <button
 	on:click={toggleTheme}
-	class="rounded border border-slate-300 bg-blue-50 p-1 hover:border-transparent hover:bg-blue-900 hover:bg-opacity-10 dark:border-white dark:bg-transparent dark:hover:bg-white dark:hover:bg-opacity-10"
+	class="rounded bg-light p-1 shadow hover:bg-dark hover:text-white dark:bg-light dark:text-black dark:hover:bg-slate-600 dark:hover:text-slate-50"
+	title="Toggle Theme"
 >
 	{#if mode}
 		<Icon icon="carbon:sun" />
