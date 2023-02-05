@@ -1,7 +1,7 @@
 <script lang="ts">
 	import supabase from '$lib/db';
 	import { onMount } from 'svelte';
-	import Loading from '$lib/components/ui/Loading.svelte';
+	import Loading from '$lib/components/ui/loading/Spinner.svelte';
 
 	export let email: string;
 

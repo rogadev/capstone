@@ -28,7 +28,7 @@
 				<p class="mt-2 text-sm text-gray-600">
 					Or
 					{' '}
-					<a href="/trial" class="font-medium text-indigo-600 hover:text-indigo-500"
+					<a href="/onboarding" class="font-medium text-indigo-600 hover:text-indigo-500"
 						>start your 14-day free trial</a
 					>
 				</p>
