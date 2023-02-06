@@ -6,9 +6,7 @@
 </script>
 
 {#if !session}
-	<Auth />
+	<div class=" bg-light text-black dark:bg-light dark:text-black">
+		<Auth />
+	</div>
 {/if}
-
-<div>
-	<button class="flex" title="test" aria-busy="false">test</button>
-</div>
