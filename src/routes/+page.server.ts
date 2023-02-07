@@ -1,4 +1,4 @@
-import supabase from '$lib/db';
+import supabaseClient from '$lib/db';
 import { fail, redirect } from '@sveltejs/kit';
 import { AuthApiError } from '@supabase/supabase-js';
 import type { Actions } from './$types';
@@ -14,7 +14,7 @@ export const actions: Actions = {
 			const email = data.get('email') as string;
 			console.log(`Email: ${email}`);
 			const password = data.get('password') as string;
-			const { error } = (await supabase.auth.signInWithPassword({ email, password })) as AuthError;
+			const { error } = (await supabaseClient.auth.signInWithPassword({ email, password })) as AuthError;
 			console.log(error);
 			// Error short cct.
 			if (error) {
@@ -34,9 +34,9 @@ export const actions: Actions = {
 		const {
 			data: { url },
 			error
-		} = await supabase.auth.signInWithOAuth({
+		} = await supabaseClient.auth.signInWithOAuth({
 			provider,
-			options: { redirectTo: `${event.url.origin}/dashboard` }
+			options: { redirectTo: `${event.url.origin}/launch-pad` }
 		});
 		if (error) {
 			if (error instanceof AuthError) {

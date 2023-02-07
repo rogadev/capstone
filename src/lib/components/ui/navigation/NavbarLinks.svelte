@@ -1,11 +1,9 @@
 <script lang="ts">
 	import NavbarLink from './NavbarLink.svelte';
-
-	import { page } from '$app/stores';
-
-	$: session = $page.data.session;
+	import type { Session } from '@supabase/supabase-js';
 
 	export let links: { name: string; icon: string | undefined; href: string }[];
+	export let session: Session | null;
 
 	const reversedLinks = links.slice().reverse();
 </script>

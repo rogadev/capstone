@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { z } from 'zod';
-	import supabase from '$lib/db';
+	import supabaseClient from '$lib/db';
 
 	interface ValidationErrors {
 		email: string[];
@@ -109,7 +109,7 @@
 		if (!readyToSubmit) return;
 		try {
 			loading = true;
-			const { error } = await supabase.auth.signUp({ email, password });
+			const { error } = await supabaseClient.auth.signUp({ email, password });
 			if (error) throw error;
 			window.location.href = `/confirm?email=${email}`;
 		} catch (error) {
