@@ -1,5 +1,5 @@
 <script lang="ts">
-	import supabase from '$lib/db';
+	import supabaseClient from '$lib/db';
 	import { onMount } from 'svelte';
 	import Loading from '$lib/components/ui/loading/Spinner.svelte';
 
@@ -11,7 +11,7 @@
 	async function handleResetPassword() {
 		loading = true;
 		try {
-			const response = await supabase.auth.resetPasswordForEmail(email);
+			const response = await supabaseClient.auth.resetPasswordForEmail(email);
 			if (response.error) {
 				statusMessage = response.error.message;
 			}

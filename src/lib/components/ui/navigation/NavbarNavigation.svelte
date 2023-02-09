@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import supabase from '$lib/db';
 	import Icon from '@iconify/svelte';
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
+	import type { Session } from '@supabase/supabase-js';
+	import supabaseClient from '$lib/db';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;
-
-	$: session = $page.data.session;
+	export let session: Session | null;
 
 	const logout = async () => {
-		await supabase.auth.signOut();
+		await supabaseClient.auth.signOut();
 		window.location.href = '/';
 	};
 
@@ -58,7 +57,7 @@
 
 {#if session}
 	<div class="flex flex-row gap-2">
-		<NavbarLinks {links} />
+		<NavbarLinks {session} {links} />
 		<!-- Mobile Navigation Hamburger -->
 		<div class="flex md:hidden">
 			<button

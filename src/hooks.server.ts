@@ -4,10 +4,26 @@ import type { Session } from '@supabase/supabase-js';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { fail, redirect } from '@sveltejs/kit';
 
+// LIST OF PUBLIC PATHS
+const PUBLIC_PATHS = [
+	'/forgot',
+	'/reset',
+	'/public',
+	'/confirm'
+];
+
+/**
+ * Evaluates the path to see if it is a public path.
+ */
+const isIntendedPathPublic = (path: string) => {
+	if (PUBLIC_PATHS.some((publicPath) => path === '/' || path.startsWith(publicPath))) {
+		return true;
+	}
+	return false;
+};
+
 /**
  * Reaches out to our getServerSession function from @supabase/auth-helpers-sveltekit to get the current session and returns it, or null if there is no session.
- * @param event Request event
- * @returns Promise<Session | null>
  */
 const getSupabaseSession = async (event: RequestEvent) => {
 	let session: Session | null = null;
@@ -17,30 +33,16 @@ const getSupabaseSession = async (event: RequestEvent) => {
 		console.error('Supabase getServerSession Error: ', e);
 		fail(500, 'Something went wrong');
 	}
+	event.locals.session = session;
 	return session;
 };
 
-export const handle: Handle = async ({ event, resolve }) => {
+/**
+ * This main hook is called on every request.
+ */
+export const handle: Handle = async ({ event, resolve }: RequestResolver) => {
 	const session = await getSupabaseSession(event);
-	const loggedIn = session !== null ? true : false;
 	const intendedPath = event.url.pathname;
-	const loggingIn = intendedPath === '/';
-	const publicPaths = [
-		'/login',
-		'/register',
-		'/forgot',
-		'/reset',
-		'/public',
-		'/onboarding',
-		'/confirm'
-	];
-	const intendedPathIsPublic =
-		intendedPath === '/' || publicPaths.some((publicPath) => intendedPath.startsWith(publicPath));
-
-	if (intendedPath === '/login' && !loggedIn) throw redirect(303, '/');
-	if (intendedPath === '/login') throw redirect(303, '/dashboard');
-	if (loggingIn && loggedIn) throw redirect(303, '/dashboard');
-	if (!loggedIn && !intendedPathIsPublic) throw redirect(303, '/');
 
 	return await resolve(event);
 };
