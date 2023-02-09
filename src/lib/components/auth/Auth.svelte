@@ -1,93 +1,30 @@
 <script lang="ts">
-	import SignInWithEmailAndPassword from './SignInWithEmailAndPassword.svelte';
-	import SignUpEmailAndPassword from './SignUpWithEmailAndPassword.svelte';
-	import SignInWithFacebook from './SignInWithFacebook.svelte';
-	import SignInWithMicrosoft from './SignInWithMicrosoft.svelte';
 	import SignInWithGoogle from './SignInWithGoogle.svelte';
-
-	let signIn = true;
-	const toggleMethod = () => {
-		signIn = !signIn;
-	};
 </script>
 
-<div class="flex items-center">
-	<div
-		class="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24"
-	>
+<div class="flex items-center justify-center">
+	<div class="flex flex-1 flex-col justify-center py-6 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
 		<div class="mx-auto w-full max-w-sm lg:w-96">
-			<div>
+			<div class="flex flex-col items-center">
 				<img
-					class="h-12 w-auto"
+					class="h-16 w-auto"
 					src="https://a-us.storyblok.com/f/1004312/512x512/9a8d0bbf7e/favicon.png"
 					alt="Roga Dev"
 				/>
-				<h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900">
+				<h2
+					class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white"
+				>
 					Sign in to your account
 				</h2>
-				<p class="mt-2 text-sm text-gray-600">
-					Or
-					{' '}
-					<a href="/onboarding" class="font-medium text-indigo-600 hover:text-indigo-500"
-						>start your 14-day free trial</a
-					>
-				</p>
 			</div>
 
 			<!-- Social Sign In -->
 			<form method="POST" class="mt-8">
 				<div>
 					<div>
-						<p class="text-sm font-medium text-gray-700">Sign in with</p>
-						<div class="mt-1 grid grid-cols-3 gap-3">
+						<div class="mt-1 flex flex-row items-center justify-center">
 							<SignInWithGoogle />
-							<SignInWithFacebook />
-							<SignInWithMicrosoft />
 						</div>
-					</div>
-					<div class="relative mt-6">
-						<div class="absolute inset-0 flex items-center" aria-hidden="true">
-							<div class="w-full border-t border-gray-300" />
-						</div>
-						<div class="relative flex justify-center text-sm">
-							<span class="bg-white px-2 text-gray-500">Or continue with</span>
-						</div>
-					</div>
-				</div>
-				{#if signIn}
-					<SignInWithEmailAndPassword />
-				{:else}
-					<SignUpEmailAndPassword />
-				{/if}
-				<!-- "Sign in instead" option -->
-				<div class="mt-6">
-					<div class="relative">
-						<div class="absolute inset-0 flex items-center">
-							<div class="w-full border-t border-gray-300" />
-						</div>
-						<div class="relative flex justify-center text-sm">
-							<span class="bg-white px-2 text-gray-500">
-								{#if signIn}
-									Don't have an account?
-								{:else}
-									Already have an account?
-								{/if}
-							</span>
-						</div>
-					</div>
-
-					<div class="mt-6">
-						<button
-							type="button"
-							on:click={toggleMethod}
-							class="flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-						>
-							{#if signIn}
-								Sign up instead
-							{:else}
-								Sign in instead
-							{/if}
-						</button>
 					</div>
 				</div>
 			</form>
@@ -95,8 +32,8 @@
 	</div>
 	<div class="hidden lg:block">
 		<img
-			class="m-8 h-[80%] object-cover"
-			src="https://a-us.storyblok.com/f/1004312/3456x4435/089aebacda/top-rope-window-cleaner.jpg"
+			class="m-4 rounded object-cover shadow"
+			src="https://a-us.storyblok.com/f/1004312/2137x2849/38ac677c45/driving-with-granny-go-go.jpg/m/0x650/filters:format(webp)"
 			alt=""
 		/>
 	</div>

@@ -5,6 +5,6 @@
 			alt="logo"
 			class="h-[40px] p-1"
 		/>
-		<span class="text-3xl font-semibold">EzEval</span>
+		<span class="text-3xl font-semibold">EzTripr</span>
 	</a>
 </div>

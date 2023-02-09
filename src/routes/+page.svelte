@@ -1,12 +1,16 @@
-<script lang="ts">
-	import { page } from '$app/stores';
-	import Auth from '$lib/components/auth/Auth.svelte';
+<h1>Welcome to the home page.</h1>
 
-	$: session = $page.data.session;
-</script>
+<section class="my-8">
+	<p>About the product</p>
+</section>
 
-{#if !session}
-	<div class=" bg-light text-black dark:bg-light dark:text-black">
-		<Auth />
+<section class="my-8">
+	<p>Call to Action</p>
+</section>
+
+<section class="my-8">
+	<div class="flex flex-col items-center justify-center">
+		<a href="/login">Login</a>
+		<a href="/signup">Sign Up</a>
 	</div>
-{/if}
+</section>

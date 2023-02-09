@@ -45,3 +45,21 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	:global(h1) {
+		font-size: 2rem;
+		font-weight: 700;
+	}
+	:global(h2) {
+		font-size: 1.5rem;
+		font-weight: 700;
+	}
+	:global(h3) {
+		font-size: 1.25rem;
+		font-weight: 700;
+	}
+	:global(p) {
+		margin: 1rem;
+	}
+</style>
