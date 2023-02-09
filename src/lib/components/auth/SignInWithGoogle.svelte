@@ -4,10 +4,10 @@
 
 <div>
 	<button
-		formaction="/?login&provider=google"
-		class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+		formaction="?provider=google"
+		class="inline-flex w-full justify-center rounded-md bg-white p-5 shadow-md hover:bg-gray-50 dark:bg-light dark:hover:bg-mid"
 	>
 		<span class="sr-only">Sign in with Google</span>
-		<Icon icon="logos:google-icon" class="h-5 w-5" />
+		<Icon icon="logos:google-icon" class="h-6 w-6" />
 	</button>
 </div>

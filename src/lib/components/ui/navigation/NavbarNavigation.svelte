@@ -5,6 +5,7 @@
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
 	import type { Session } from '@supabase/supabase-js';
 	import supabaseClient from '$lib/db';
+	import links from './links';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;
@@ -20,39 +21,6 @@
 	const toggleMobileMenu = () => {
 		showMobileMenu = !showMobileMenu;
 	};
-
-	const links = [
-		{
-			name: 'Dashboard',
-			icon: 'mdi:chart-line',
-			href: '/dashboard'
-		},
-		{
-			name: 'Properties',
-			icon: 'mdi:home',
-			href: '/properties'
-		},
-		{
-			name: 'Customers',
-			icon: 'mdi:account-group',
-			href: '/customers'
-		},
-		{
-			name: 'Evaluations',
-			icon: 'mdi:clipboard-check',
-			href: '/evaluations'
-		},
-		{
-			name: 'Quotes',
-			icon: 'mdi:file-document-box',
-			href: '/quotes'
-		},
-		{
-			name: 'Price Sheets',
-			icon: 'mdi:file-document',
-			href: '/price-sheets'
-		}
-	];
 </script>
 
 {#if session}

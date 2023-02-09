@@ -1,4 +1,4 @@
-# EZEval Capstone Project
+# EzTripr Capstone Project
 
 Quick, easy, and accurate window cleaning evaluations, quotes, and more.
 

@@ -4,24 +4,6 @@ import type { Session } from '@supabase/supabase-js';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { fail, redirect } from '@sveltejs/kit';
 
-// LIST OF PUBLIC PATHS
-const PUBLIC_PATHS = [
-	'/forgot',
-	'/reset',
-	'/public',
-	'/confirm'
-];
-
-/**
- * Evaluates the path to see if it is a public path.
- */
-const isIntendedPathPublic = (path: string) => {
-	if (PUBLIC_PATHS.some((publicPath) => path === '/' || path.startsWith(publicPath))) {
-		return true;
-	}
-	return false;
-};
-
 /**
  * Reaches out to our getServerSession function from @supabase/auth-helpers-sveltekit to get the current session and returns it, or null if there is no session.
  */
@@ -30,19 +12,31 @@ const getSupabaseSession = async (event: RequestEvent) => {
 	try {
 		session = await getServerSession(event);
 	} catch (e) {
-		console.error('Supabase getServerSession Error: ', e);
+		session = null;
+		console.error('Error getting the server side session (getSupabaseSession()): ', e);
 		fail(500, 'Something went wrong');
 	}
-	event.locals.session = session;
-	return session;
+	return { session };
 };
 
 /**
  * This main hook is called on every request.
  */
 export const handle: Handle = async ({ event, resolve }: RequestResolver) => {
-	const session = await getSupabaseSession(event);
 	const intendedPath = event.url.pathname;
+	console.log('Request: ', intendedPath, Intl.DateTimeFormat().format(new Date()));
+	const publicPaths = ['/login', '/signup'];
+	const intendedPathIsPublic = () => {
+		if (intendedPath === '/') return true;
+		return publicPaths.includes(intendedPath);
+	};
+	const { session } = await getSupabaseSession(event);
+	event.locals.session = session ? session : null;
+
+	if (intendedPathIsPublic() && session) {
+		throw redirect(302, '/dashboard');
+	}
+	if (!session && !intendedPathIsPublic()) throw redirect(302, '/login');
 
 	return await resolve(event);
 };
