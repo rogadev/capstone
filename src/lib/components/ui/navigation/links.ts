@@ -5,29 +5,34 @@ const links = [
     href: '/dashboard'
   },
   {
-    name: 'Properties',
-    icon: 'mdi:home',
-    href: '/properties'
+    name: 'Drivers',
+    icon: 'mdi:card-account-details',
+    href: '/drivers'
   },
   {
-    name: 'Customers',
+    name: 'Clients',
     icon: 'mdi:account-group',
-    href: '/customers'
+    href: '/clients'
   },
   {
-    name: 'Evaluations',
-    icon: 'mdi:clipboard-check',
+    name: 'Trips',
+    icon: 'fa-solid:route',
     href: '/evaluations'
   },
   {
-    name: 'Quotes',
-    icon: 'mdi:file-document-box',
-    href: '/quotes'
+    name: 'Assignment',
+    icon: 'mdi:transit-connection-variant',
+    href: '/assignment'
   },
   {
-    name: 'Price Sheets',
-    icon: 'mdi:file-document',
-    href: '/price-sheets'
+    name: "Summary",
+    icon: 'carbon:task-complete',
+    href: '/summary'
+  },
+  {
+    name: 'Billing',
+    icon: 'fa6-solid:money-check-dollar',
+    href: '/billing'
   }
 ];
 
