@@ -36,7 +36,7 @@ export const actions: Actions = {
 			error
 		} = await supabaseClient.auth.signInWithOAuth({
 			provider,
-			options: { redirectTo: `${event.url.origin}/account` }
+			options: { redirectTo: `${event.url.origin}` }
 		});
 		if (error) {
 			if (error instanceof AuthError) {
