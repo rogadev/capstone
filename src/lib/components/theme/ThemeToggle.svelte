@@ -10,8 +10,8 @@
 	title="Toggle Theme"
 >
 	{#if mode}
-		<Icon icon="carbon:sun" />
+		<Icon icon="mdi:white-balance-sunny" />
 	{:else}
-		<Icon icon="carbon:moon" />
+		<Icon icon="mdi:weather-night" />
 	{/if}
 </button>

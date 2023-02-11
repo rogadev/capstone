@@ -37,12 +37,12 @@
 	});
 </script>
 
-<div class={useDark ? 'dark' : ''}>
+<div class="min-w-screen flex min-h-screen flex-col overflow-auto {useDark ? 'dark' : ''}">
 	<Navbar {session} mode={useDark} {toggleTheme} />
-	<div class=" bg-light text-black dark:bg-dark dark:bg-opacity-95 dark:text-white">
-		<div class="flex items-stretch justify-items-stretch">
-			<slot />
-		</div>
+	<div
+		class="flex flex-grow flex-col overflow-auto border border-white bg-light text-black dark:bg-dark dark:bg-opacity-95 dark:text-white"
+	>
+		<slot />
 	</div>
 </div>
 

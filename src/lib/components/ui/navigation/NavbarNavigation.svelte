@@ -65,17 +65,15 @@
 			{/if}
 		</div>
 		<div
-			id="account"
 			class="flex flex-row items-center justify-center gap-2 text-2xl font-semibold dark:text-white"
 		>
 			<ThemeToggle {mode} {toggleTheme} />
-
 			<a
-				href="/profile"
-				title="Profile"
+				href="/account"
+				title="Account Settings"
 				class="rounded bg-light p-1 shadow hover:bg-dark hover:text-white dark:bg-light dark:text-black dark:hover:bg-slate-600 dark:hover:text-slate-50"
 			>
-				<Icon icon="mdi:user-circle" />
+				<Icon icon="material-symbols:settings-account-box" />
 			</a>
 
 			<button
