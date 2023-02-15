@@ -5,8 +5,12 @@
 
 <div class="grow overflow-auto ">
 	<div class="grid grid-cols-10">
-		<section class="col-span-2 min-w-0">asslakdjflasjdflajksdfdf</section>
-		<main class="col-span-8">sss</main>
+		<section class="col col-span-2 min-w-0">
+			<slot name="sidebar" />
+		</section>
+		<main class="col-span-8">
+			<slot />
+		</main>
 	</div>
 </div>
 
