@@ -1,39 +1,83 @@
-<!-- <script lang="ts">
-	export let label: string;
-	let showMenu = false;
-</script> -->
+<script lang="ts">
+	import { page } from '$app/stores';
+	import z from 'zod';
+
+	const actionsSchema = z.object({
+		label: z.string(),
+		href: z.string()
+	});
+	type Actions = z.infer<typeof actionsSchema>;
+
+	export let actions: Actions[] | undefined;
+	let currentAction: string;
+	const selectAction = (action: string) => {
+		currentAction = action;
+	};
+
+	export let title: string;
+
+	function isActionActive(href: string) {
+		return $page.url.pathname === href;
+	}
+</script>
 
 <div class="grow overflow-auto ">
-	<div class="grid grid-cols-10">
-		<section class="col col-span-2 min-w-0">
-			<slot name="sidebar" />
+	<div class="hidden md:flex md:flex-row">
+		<section
+			class="h-[92.9vh] w-[20vw] min-w-fit flex-grow bg-mid bg-opacity-75 p-4 dark:bg-dark dark:bg-opacity-75"
+		>
+			<h1 class="mb-4 text-3xl font-semibold">
+				{title}
+			</h1>
+			<nav>
+				{#if actions}
+					{#each actions as action}
+						<a
+							href={action.href}
+							class="my-2 flex w-full flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
+								action.href
+							)
+								? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+								: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+						>
+							<span class="text-lg font-semibold">{action.label}</span>
+						</a>
+					{/each}
+				{/if}
+			</nav>
 		</section>
-		<main class="col-span-8">
+		<main class="w-[80vw] flex-grow p-4">
+			<slot />
+		</main>
+	</div>
+	<div class="flex flex-col items-start justify-start md:hidden">
+		<section
+			class="m-0 flex w-screen flex-row justify-between bg-mid bg-opacity-75 p-4 dark:bg-dark dark:bg-opacity-75"
+		>
+			<h1 class="text-3xl font-semibold">
+				{title}
+			</h1>
+		</section>
+		<nav
+			class="flex w-screen flex-row flex-wrap gap-2 bg-mid bg-opacity-75 px-4 pb-1 dark:bg-dark dark:bg-opacity-75"
+		>
+			{#if actions}
+				{#each actions as action}
+					<a
+						href={action.href}
+						class="my-2 flex w-fit flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
+							action.href
+						)
+							? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+							: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+					>
+						<span class="text-lg font-semibold">{action.label}</span>
+					</a>
+				{/each}
+			{/if}
+		</nav>
+		<main class="w-screen p-4">
 			<slot />
 		</main>
 	</div>
 </div>
-
-<!-- <div class="flex flex-col md:flex-row">
-	<section class="col-span-2 min-w-fit bg-slate-200 p-4 dark:bg-dark dark:bg-opacity-60">
-		<div class="flex flex-grow">
-			<div class="grid w-[20vw] min-w-[200px] grid-cols-1">
-				{#if label}
-					<h1>{label}</h1>
-				{/if}
-				<div class="hidden md:block">
-					<slot name="sidebar" />
-				</div>
-				<div class="md:hidden">
-					<button type="button" on:click={() => (showMenu = !showMenu)}>Show/Hide</button>
-					{#if showMenu}
-						<slot name="sidebar" />
-					{/if}
-				</div>
-			</div>
-		</div>
-	</section>
-	<section class="col-span-8 m-4 w-full max-w-[80vw]">
-		<slot />
-	</section>
-</div> -->
