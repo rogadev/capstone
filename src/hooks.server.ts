@@ -7,6 +7,7 @@ import { SECRET_ENV_MODE } from '$env/static/private';
 
 // CONSTANTS
 const PUBLIC_PATHS = ['/login'];
+const UNIVERSAL_PATHS = ['/terms', '/privacy'];
 const DATE_TIME_OPTIONS = {
 	year: 'numeric',
 	month: 'long',
@@ -78,6 +79,14 @@ const isIntendedPathPublic = (intendedPath: string) => {
 	return PUBLIC_PATHS.includes(intendedPath);
 };
 
+/**
+ * Returns true if the intended path is a universal path.
+ * @param intendedPath 
+ */
+const isIntendedPathUniversal = (intendedPath: string) => {
+	return UNIVERSAL_PATHS.includes(intendedPath);
+};
+
 
 
 /**
@@ -90,15 +99,16 @@ export const handle: Handle = async ({ event, resolve }: RequestResolver) => {
 	const session = await setSessionInLocals(event);
 	const intendedPath: string = event.url.pathname;
 	const intendedPathIsPublic: boolean = isIntendedPathPublic(intendedPath);
+	const intendedPathIsUniversal: boolean = isIntendedPathUniversal(intendedPath);
 
 	// REDIRECTS
 	if (session && intendedPath === '/') throw redirect(302, '/dashboard');
 	if (!session && intendedPath === '/') throw redirect(302, '/login');
 	// TODO -  I might want to make the login/dashboard pages exist at the root route and turn each into components that render dynamically.
 
-	if (intendedPathIsPublic && session) throw redirect(302, '/dashboard');
+	if (!intendedPathIsUniversal && intendedPathIsPublic && session) throw redirect(302, '/dashboard');
 
-	if (!session && !intendedPathIsPublic) throw redirect(302, '/login');
+	if (!intendedPathIsUniversal && !session && !intendedPathIsPublic) throw redirect(302, '/login');
 
 	return await resolve(event);
 };
