@@ -1,13 +1,6 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import Auth from '$lib/components/auth/Auth.svelte';
-	import FeatureSection from '$lib/components/ui/wrappers/FeatureSection.svelte';
-
-	$: session = $page.data.session;
+	import type { User } from '@prisma/client';
+	export let form: User;
 </script>
 
-{#if !session}
-	<FeatureSection>
-		<Auth />
-	</FeatureSection>
-{/if}
+<form method="post" />
