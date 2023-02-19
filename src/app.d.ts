@@ -1,12 +1,13 @@
-declare namespace App {
-	interface Supabase {
-		Database: import('./DatabaseDefinitions').Database;
-		SchemaName: 'public';
+import type { PrismaClient } from "@prisma/client";
+
+declare global {
+	namespace App {
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
+		// interface Platform {}
 	}
-	// interface Locals {}
-	interface PageData {
-		session: import('@supabase/auth-helpers-sveltekit').SupabaseSession;
-	}
-	// interface Error {}
-	// interface Platform {}
+	const prisma: PrismaClient;
 }
+
+export { };
