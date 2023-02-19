@@ -1,27 +1,35 @@
 import type { Actions } from '../$types';
-import supabaseClient from '$lib/db';
-import { redirect } from '@sveltejs/kit';
-
-import { z } from 'zod';
+import supabase from '$lib/db';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { z, type ZodError } from 'zod';
 
 const driverInviteSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(2).max(64).trim(),
-  terms: z.enum(['on'], { message: 'You must agree to the terms.' })
+  email: z.string().min(1, { message: 'Email required to invite a new driver.' }).max(64, { message: 'Maximum email address length is 64 characters.' }).email({ message: 'Please enter a valid email address.' }),
+  name: z.string().min(1, { message: 'Name required to invite a new driver.' }).max(64).trim(),
+  terms: z.enum(['on'], { required_error: 'You must agree to the terms and privacy policy to invite a new user to join the organization.' })
 });
-
-type ValidDriverInvite = z.infer<typeof driverInviteSchema>;
 
 export const actions: Actions = {
   default: async ({ request }) => {
-    const data = Object.fromEntries(await request.formData());
-
+    const formData = Object.fromEntries(await request.formData());
+    let errors = null;
     try {
-      const result = driverInviteSchema.parse(data);
-      console.log('Success.');
-      console.log(result);
-    } catch (error) {
-      console.log(error);
+      const result = driverInviteSchema.parse(formData);
+      try {
+        const { data } = await supabase.auth.admin.inviteUserByEmail(result.email);
+        console.log('user from invite', data);
+        const { data: { users } } = await supabase.auth.admin.listUsers();
+        const user = users.find(user => user.email === result.email);
+        console.log('found user', user);
+      } catch (e) {
+        console.error("error", e);
+      }
+    } catch (error: ZodError) {
+      errors = error.flatten().fieldErrors;
     }
+    return {
+      data: formData,
+      errors
+    };
   }
 };
