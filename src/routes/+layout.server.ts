@@ -1,9 +1,3 @@
-import { getServerSession } from '@supabase/auth-helpers-sveltekit';
-import type { LayoutServerLoad } from './$types';
+import { handleServerSession } from '@lucia-auth/sveltekit';
 
-export const load: LayoutServerLoad = async (event) => {
-	const session = await getServerSession(event);
-	return {
-		session
-	};
-};
+export const load = handleServerSession();

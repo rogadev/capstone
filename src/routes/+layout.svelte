@@ -6,6 +6,9 @@
 	import supabaseClient from '$lib/db';
 	import Navbar from '$lib/components/ui/navigation/Navbar.svelte';
 	import { page } from '$app/stores';
+	import { handleSession } from '@lucia-auth/sveltekit/client';
+
+	handleSession(page);
 
 	const session = $page.data.session;
 
