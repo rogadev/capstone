@@ -5,7 +5,7 @@ declare namespace App {
 	}
 	// interface Locals {}
 	interface PageData {
-		session: import('@supabase/supabase-js').Session | null;
+		session: import('@supabase/auth-helpers-sveltekit').SupabaseSession;
 	}
 	// interface Error {}
 	// interface Platform {}
