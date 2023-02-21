@@ -1,4 +1,4 @@
-import { auth } from "$lib/server/lucia";
+import { auth } from "$lib/server/auth";
 import { handleHooks } from "@lucia-auth/sveltekit";
 
 const authHandle = async (request) => {
