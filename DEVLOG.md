@@ -1,3 +1,11 @@
+### Feb 21
+
+- Continuing work on Lucia & Prisma overhaul.
+
+- Added issues to repo and project. Rearranged to accommodate current project state.
+
+- Fixed issue with Vercel preview deployment environment variables.
+
 ### Feb 19
 
 - Forked the repo for a lucia/prisma integration test.
