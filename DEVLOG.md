@@ -6,6 +6,16 @@
 
 - Fixed issue with Vercel preview deployment environment variables.
 
+- Fixed a number of issues with the lucia-prisma branch causing preview deployment to fail.
+
+- Expanded the `Key` model in Prisma to account for social auth as well as email/password login. HOWEVER, this was all for not. I realized that I had already borrowed this idea when I first started setting up Prisma, only I've named it `Account`. So the `Key` model was removed.
+
+- Major overhaul going through pages and components with old auth types and functions built in. Now using Lucia auth for all auth-related functions.
+
+- Re-worked a temporary "register" page. Also working on a login page which will later become part of the home page - this is purely for testing.
+
+- Started adding protected routes to a `(protected)` folder. Later we will use `hooks.sever.ts` to validate the route and redirect to login if not authenticated.
+
 ### Feb 19
 
 - Forked the repo for a lucia/prisma integration test.
