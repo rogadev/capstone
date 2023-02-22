@@ -1,5 +1,4 @@
 <script lang="ts">
-	import supabaseClient from '$lib/db';
 	import { onMount } from 'svelte';
 	import Loading from '$lib/components/ui/loading/Spinner.svelte';
 
@@ -9,18 +8,18 @@
 	let statusMessage = '';
 
 	async function handleResetPassword() {
-		loading = true;
-		try {
-			const response = await supabaseClient.auth.resetPasswordForEmail(email);
-			if (response.error) {
-				statusMessage = response.error.message;
-			}
-			statusMessage = 'Check your email for a link to reset your password.';
-		} catch (error) {
-			console.error(error);
-		} finally {
-			loading = false;
-		}
+		// loading = true;
+		// try {
+		// 	const response = await supabaseClient.auth.resetPasswordForEmail(email);
+		// 	if (response.error) {
+		// 		statusMessage = response.error.message;
+		// 	}
+		// 	statusMessage = 'Check your email for a link to reset your password.';
+		// } catch (error) {
+		// 	console.error(error);
+		// } finally {
+		// 	loading = false;
+		// }
 	}
 
 	onMount(() => {
