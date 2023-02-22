@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { z } from 'zod';
-	import supabaseClient from '$lib/db';
 
 	interface ValidationErrors {
 		email: string[];
@@ -55,9 +54,10 @@
 		if (!readyToSubmit) return;
 		try {
 			loading = true;
-			const { error } = await supabaseClient.auth.signInWithOtp({ email });
-			if (error) throw error;
-			alert('Check your email for login link!');
+			// TODO - Major overhaul. Supabase to Lucia auth.
+			// const { error } = await supabaseClient.auth.signInWithOtp({ email });
+			// if (error) throw error;
+			// alert('Check your email for login link!');
 		} catch (error) {
 			if (error instanceof Error) {
 				alert(error.message);
