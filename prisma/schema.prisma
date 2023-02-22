@@ -59,15 +59,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   vehicles      Vehicle[]
-  keys          Key[]
   settings      UserSettings?
-}
-
-model Key {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String  @db.Uuid
-  primary   Boolean @default(false)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSettings {
