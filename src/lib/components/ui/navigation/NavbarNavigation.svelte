@@ -3,8 +3,7 @@
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
-	import type { Session } from '@supabase/supabase-js';
-	import supabaseClient from '$lib/db';
+	import type { Session } from 'lucia-auth';
 	import links from './links';
 
 	export let mode: Boolean;
@@ -12,8 +11,7 @@
 	export let session: Session | null;
 
 	const logout = async () => {
-		await supabaseClient.auth.signOut();
-		window.location.href = '/';
+		window.location.href = '/logout';
 	};
 
 	let showMobileMenu = false;
