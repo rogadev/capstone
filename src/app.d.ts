@@ -1,5 +1,3 @@
-import type { PrismaClient } from "@prisma/client";
-
 declare global {
 	/// <reference types="lucia-auth" />
 	declare namespace Lucia {
@@ -16,7 +14,7 @@ declare global {
 		// interface PageData {}
 		// interface Platform {}
 	}
-	const prisma: PrismaClient;
+	const prisma: import("@prisma/client").PrismaClient;
 }
 
 export { };
