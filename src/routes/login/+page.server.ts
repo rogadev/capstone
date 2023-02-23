@@ -9,20 +9,23 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 };
 
+const handleEmailLogin = async (data) => {
+	console.log('Email login', data);
+
+	return {
+		data,
+	};
+};
+
+const handleProviderLogin = async (data) => {
+	console.log('Provider login', data);
+};
+
 export const actions: Action = {
 	default: async ({ request }) => {
 		const formData = Object.fromEntries(await request.formData());
-		return {
-			data: formData,
-		};
-	},
-	with: async ({ request }) => {
-		const provider = request.params.provider;
-		console.log(provider);
-		return {
-			data: {
-				provider,
-			},
-		};
+		const { provider } = formData;
+		if (provider) handleProviderLogin(formData);
+		else handleEmailLogin(formData);
 	}
 };
