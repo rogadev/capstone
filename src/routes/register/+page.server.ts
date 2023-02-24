@@ -7,6 +7,9 @@ import type { PageServerLoad } from './$types';
 import { dev } from "$app/environment";
 import { z } from 'zod';
 
+const MIN_PW_LENGTH = 12;
+const MAX_PW_LENGTH = 64;
+
 export const load: PageServerLoad = async ({ locals }) => {
   // If we're in production, redirect to login
   if (!dev) throw redirect(302, "/login");
@@ -17,9 +20,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 const emailRegistrationSchema = z.object({
-  email: z.string().email().min(3).max(100),
-  password: z.string().min(12).max(64),
-  passwordConfirm: z.string().min(12).max(64),
+  email: z.string().email({ message: "Must enter a valid email." }).min(3, { message: "Must enter an email address to register." }).max(100, { message: "Email address is too long." }),
+  password: z.string().min(MIN_PW_LENGTH, { message: `Password must be at least ${MIN_PW_LENGTH} characters long.` }).max(MAX_PW_LENGTH, { message: `Password must be no more than ${MAX_PW_LENGTH} characters long.` }),
+  passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(MAX_PW_LENGTH + 1),
 });
 type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;
 
