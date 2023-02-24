@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 const MIN_PW_LENGTH = 12;
 const MAX_PW_LENGTH = 64;
+const PW_REGEX = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 
 export const load: PageServerLoad = async ({ locals }) => {
   // If we're in production, redirect to login
@@ -21,7 +22,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 const emailRegistrationSchema = z.object({
   email: z.string().email({ message: "Must enter a valid email." }).min(3, { message: "Must enter an email address to register." }).max(100, { message: "Email address is too long." }),
-  password: z.string().min(MIN_PW_LENGTH, { message: `Password must be at least ${MIN_PW_LENGTH} characters long.` }).max(MAX_PW_LENGTH, { message: `Password must be no more than ${MAX_PW_LENGTH} characters long.` }),
+  password: z.string().min(MIN_PW_LENGTH, { message: `Password must be at least ${MIN_PW_LENGTH} characters long.` }).max(MAX_PW_LENGTH, { message: `Password must be no more than ${MAX_PW_LENGTH} characters long.` }).regex(PW_REGEX, { message: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)." }),
   passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(MAX_PW_LENGTH + 1),
 });
 type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;
@@ -37,7 +38,7 @@ const handleEmailRegistration = async (formData: EmailRegistrationData) => {
       password: [... new Set(issues.filter((issue) => issue.path[0] === 'password').map((issue) => issue.message))],
     };
     errors.passwordConfirm = passwordsMatch ? [] : ['Passwords do not match'];
-    console.log(errors);
+    return { errors };
   }
   const username = formData.email;
   const password = formData.password;
