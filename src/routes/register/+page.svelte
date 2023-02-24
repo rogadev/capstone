@@ -21,7 +21,7 @@
 
 	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			<form class="space-y-6" action="#" method="POST">
+			<form class="space-y-6 text-black" action="#" method="POST">
 				<div>
 					<label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
 					<div class="mt-1">
@@ -29,10 +29,8 @@
 							id="email"
 							name="email"
 							type="email"
-							autocomplete="off"
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-							bind:value={email}
 						/>
 					</div>
 					{#if errors?.email?.length}
@@ -47,7 +45,6 @@
 							id="password"
 							name="password"
 							type="password"
-							autocomplete="off"
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
@@ -66,7 +63,6 @@
 							id="passwordConfirm"
 							name="passwordConfirm"
 							type="password"
-							autocomplete="off"
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
