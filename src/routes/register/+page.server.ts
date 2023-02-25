@@ -29,7 +29,6 @@ const handleEmailRegistration = async (formData: EmailRegistrationData, locals) 
       password: [... new Set(issues.filter((issue) => issue.path[0] === 'password').map((issue) => issue.message))],
     };
     errors.passwordConfirm = passwordsMatch ? [] : ['Passwords do not match'];
-    console.log(errors);
     return { errors };
   }
   const { email, password } = formData;
@@ -61,7 +60,6 @@ const handleEmailRegistration = async (formData: EmailRegistrationData, locals) 
         message: 'Username already in use'
       });
     }
-    console.error(error);
     return fail(500, {
       message: 'Unknown error occurred'
     });
