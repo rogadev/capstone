@@ -46,53 +46,66 @@ enum UserRole {
 // TODO Create your Invite Token model.
 
 model User {
-  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String        @id @default(dbgenerated("gen_random_uuid()"))
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   username      String?       @unique
-  fullName      String
-  email         String       @unique
-  emailVerified Boolean      @default(false)
+  fullName      String?
+  email         String        @unique
+  emailVerified Boolean       @default(false)
   verifiedAt    DateTime?
   image         String?
   role          UserRole      @default(Driver)
+  keys          Key[]
   accounts      Account[]
   sessions      Session[]
   vehicles      Vehicle[]
   settings      UserSettings?
 }
 
+model Key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  primary         Boolean
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  @@index([user_id])
+  @@map("key")
+}
+
 model UserSettings {
-  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String      @unique @db.Uuid
-  onboarded   Boolean     @default(false)
-  colorScheme ColorScheme @default(System)
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) 
+  user_id       String        @unique  @map("userId")
+  onboarded     Boolean       @default(false)
+  color_scheme  ColorScheme   @default(System)
+  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Account {
-  id                String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId            String  @db.Uuid
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text @map("refreshToken")
-  access_token      String? @db.Text @map("accessToken")
-  expires_in        Int?    @map("expiresIn")
-  token_type        String? @map("tokenType")
-  scope             String?
-  id_token          String? @db.Text @map("idToken")
-  session_state     String? @map("sessionState")
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@unique([provider, providerAccountId])
+  id                  String  @id @default(dbgenerated("gen_random_uuid()")) 
+  user_id             String  @map("userId")
+  type                String
+  provider            String
+  provider_account_id String  @map("providerAccountId")
+  refresh_token       String? @db.Text @map("refreshToken")
+  access_token        String? @db.Text @map("accessToken")
+  expires_in          Int?    @map("expiresIn")
+  token_type          String? @map("tokenType")
+  scope               String?
+  id_token            String? @db.Text @map("idToken")
+  session_state       String? @map("sessionState")
+  user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@unique([provider, provider_account_id])
 }
 
 model Session {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId       String   @db.Uuid
-  sessionToken String   @unique
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  @@index([user_id])
+  @@map("session")
 }
 
 model VerificationToken {
@@ -103,8 +116,8 @@ model VerificationToken {
 }
 
 model Vehicle {
-  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId        String        @db.Uuid
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) 
+  userId        String        
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   name          String
