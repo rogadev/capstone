@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let email = '';
 	export let errors = {
 		email: [],
 		password: [],
