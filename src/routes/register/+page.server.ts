@@ -6,15 +6,12 @@ import { LuciaError } from 'lucia-auth';
 import type { PageServerLoad } from './$types';
 import { dev } from "$app/environment";
 import { z } from 'zod';
-
-const MIN_PW_LENGTH = 12;
-const MAX_PW_LENGTH = 64;
-const PW_REGEX = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
+import { PW_MIN_LENGTH, PW_MAX_LENGTH, PW_REGEX } from '$lib/server/constants';
 
 const emailRegistrationSchema = z.object({
   email: z.string().email({ message: "Must enter a valid email." }).min(3, { message: "Must enter an email address to register." }).max(100, { message: "Email address is too long." }),
-  password: z.string().min(MIN_PW_LENGTH, { message: `Password must be at least ${MIN_PW_LENGTH} characters long.` }).max(MAX_PW_LENGTH, { message: `Password must be no more than ${MAX_PW_LENGTH} characters long.` }).regex(PW_REGEX, { message: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)." }),
-  passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(MAX_PW_LENGTH + 1),
+  password: z.string().min(PW_MIN_LENGTH, { message: `Password must be at least ${PW_MIN_LENGTH} characters long.` }).max(PW_MAX_LENGTH, { message: `Password must be no more than ${PW_MAX_LENGTH} characters long.` }).regex(PW_REGEX, { message: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)." }),
+  passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(PW_MAX_LENGTH + 1),
 });
 type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;
 
@@ -66,18 +63,13 @@ const handleEmailRegistration = async (formData: EmailRegistrationData, locals) 
   }
 };
 
-const handleProviderRegistration = async (formData: Record<string, string>) => {
-  console.log('Provider registration', formData);
-};
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
     const formData = Object.fromEntries(
       await request.formData(),
     ) as Record<string, string>;
-
-    if (formData.provider) await handleProviderRegistration(formData);
-    else await handleEmailRegistration(formData, locals);
+    await handleEmailRegistration(formData, locals);
   }
 };
 
