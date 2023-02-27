@@ -12,6 +12,12 @@
 
 - Fixed a number of large issues with auth modules including a broken import, a bugged package import that was causing a package-lock issue, and a bunch of refactoring.
 
+- Worked on writing some automated tests to satisfy DevOps assignment.
+
+- Replaced Playwright. SvelteKit is not designed to play nice with Playwright. I've replaced it with `vitest` + `testing-library`, specifically `testing-library/svelte`. This is a much better solution for SvelteKit.
+
+- I've written a few quick tests for unit (using `vitest`) and integration (using `testing-library/svelte`). In doing so, I've also realized ways to improve the component I was testing - the ThemeToggle component. I've refactored it to be more testable and to be more flexible in the future.
+
 ### Feb 18
 
 - Lots of work went into the UI for '/drivers/new'
