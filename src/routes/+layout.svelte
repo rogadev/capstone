@@ -1,30 +1,34 @@
 <script lang="ts">
-	import '../app.css'; // TailwindCSS Global Styles
-	import { onMount, onDestroy } from 'svelte';
+	import { supabase } from '$lib/db';
 	import { invalidate } from '$app/navigation';
+	import { onMount, onDestroy } from 'svelte';
 	import * as colorTheme from '$lib/stores/colorTheme';
-	import supabaseClient from '$lib/db';
+
 	import Navbar from '$lib/components/ui/navigation/Navbar.svelte';
 	import { page } from '$app/stores';
 
-	const session = $page.data.session;
+	import '../app.css'; // TailwindCSS Global Styles
+
+	colorTheme.useBrowserPreference();
 
 	let mode: 'light' | 'dark';
-	colorTheme.useBrowserPreference();
-	const unsubscribe = colorTheme.mode.subscribe((value) => {
+	const session = $page.data.session;
+
+	const colorThemeUnsubscribe = colorTheme.mode.subscribe((value) => {
 		const useDark = value === 'dark';
 		mode = useDark ? 'dark' : 'light';
 	});
+
 	$: useDark = mode === 'dark';
 
-	function toggleTheme() {
+	const toggleTheme = () => {
 		colorTheme.toggleMode();
-	}
+	};
 
 	onMount(() => {
 		const {
 			data: { subscription }
-		} = supabaseClient.auth.onAuthStateChange(() => {
+		} = supabase.auth.onAuthStateChange(() => {
 			invalidate('supabase:auth');
 		});
 		return () => {
@@ -33,7 +37,7 @@
 	});
 
 	onDestroy(() => {
-		unsubscribe();
+		colorThemeUnsubscribe();
 	});
 </script>
 

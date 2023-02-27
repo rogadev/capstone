@@ -3,7 +3,7 @@ import { getServerSession } from '@supabase/auth-helpers-sveltekit';
 import type { AuthSession, Session } from '@supabase/supabase-js';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { fail, redirect } from '@sveltejs/kit';
-import { SECRET_ENV_MODE } from '$env/static/private';
+import { dev } from '$app/environment';
 
 // CONSTANTS
 const PUBLIC_PATHS = ['/login'];
@@ -18,14 +18,6 @@ const DATE_TIME_OPTIONS = {
 	timeZone: 'America/Vancouver',
 	timeZoneName: 'short',
 	locale: 'en-CA'
-};
-
-/**
- * Determine if the app is running in development mode. Else, assume running in production.
- * @returns True if the app is running in development mode.
- */
-const isInDevelopmentMode = () => {
-	return SECRET_ENV_MODE === 'development';
 };
 
 /**
@@ -51,7 +43,7 @@ const log = (event: RequestEvent) => {
 	// TODO - Start logging to a file.
 	const { method, url, headers } = event.request;
 	const dateTimeStamp = Intl.DateTimeFormat('en-CA', DATE_TIME_OPTIONS).format(new Date());
-	if (isInDevelopmentMode()) {
+	if (dev) {
 		const blue = '\x1b[34m';
 		const reset = '\x1b[0m';
 		const green = '\x1b[32m';

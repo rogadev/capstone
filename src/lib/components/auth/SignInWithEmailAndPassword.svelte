@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { z } from 'zod';
-	import supabaseClient from '$lib/db';
+	import { supabase } from '$lib/db';
 
 	interface ValidationErrors {
 		email: string[];
@@ -55,7 +55,7 @@
 		if (!readyToSubmit) return;
 		try {
 			loading = true;
-			const { error } = await supabaseClient.auth.signInWithOtp({ email });
+			const { error } = await supabase.auth.signInWithOtp({ email });
 			if (error) throw error;
 			alert('Check your email for login link!');
 		} catch (error) {

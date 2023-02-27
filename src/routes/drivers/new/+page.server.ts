@@ -1,5 +1,5 @@
 import type { Actions } from '../$types';
-import supabase from '$lib/db';
+import { supabase } from '$lib/db'; // TODO - THIS WON'T WORK - Needs to be the admin client
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { z, type ZodError } from 'zod';
 
