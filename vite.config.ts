@@ -4,7 +4,12 @@ import type { UserConfig } from 'vite';
 const config: UserConfig = {
 	plugins: [sveltekit()],
 	test: {
-		include: ['src/**/*.{test,spec}.{js,ts}']
+		// Jest like globals
+		globals: true,
+		environment: 'jsdom',
+		include: ['src/**/*.{test,spec}.ts'],
+		// Extend jest-dom matchers
+		setupFiles: ['./test.setup.js']
 	}
 };
 
