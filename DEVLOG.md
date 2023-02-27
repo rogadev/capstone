@@ -8,7 +8,9 @@
   - On the driver app, no registration method will be available, which, considering the fact that we're handling all auth functions in our backend, should make it so that we don't need to worry about drivers registering themselves.
   - Lastly, I'll need to create a server-side Supabase client that uses the `service_role` key to access the `supabase.auth.admin` methods. This will allow us to create new users (drivers and admin) from the admin dashboard.
 
-The goal here is by doing this I will be able to create 1 super admin user that will be able to create new drivers and admins while I'm setting up the project running in the dev environment. This will allow me to create a driver and admin user for myself and the client. Once I have created the primary admin client I can push the app to production where it will function as intended, allowing for the creation, editing, and deletion of driver and admin users.
+> 💡 The goal here is by doing this I will be able to create 1 super admin user that will be able to create new drivers and admins while I'm setting up the project running in the dev environment. This will allow me to create a driver and admin user for myself and the client. Once I have created the primary admin client I can push the app to production where it will function as intended, allowing for the creation, editing, and deletion of driver and admin users.
+
+- Fixed a number of large issues with auth modules including a broken import, a bugged package import that was causing a package-lock issue, and a bunch of refactoring.
 
 ### Feb 18
 
