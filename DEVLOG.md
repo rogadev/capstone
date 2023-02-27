@@ -1,3 +1,15 @@
+### Feb 28
+
+- I've spent several days trying to rework Auth to replace Supabase auth with Lucia. However, I've run into a number of problems with that setup as well. I've created the new `supabase-prisma` branch to do the following:
+
+  - Keep Supabase for Auth only.
+  - Bring in Prisma to act as our ORM and connect to Supabase using connection string.
+  - On the admin dashboard, only allow registration in dev mode. Using a method of doing this that I figured out for the `prisma-lucia-integration` branch.
+  - On the driver app, no registration method will be available, which, considering the fact that we're handling all auth functions in our backend, should make it so that we don't need to worry about drivers registering themselves.
+  - Lastly, I'll need to create a server-side Supabase client that uses the `service_role` key to access the `supabase.auth.admin` methods. This will allow us to create new users (drivers and admin) from the admin dashboard.
+
+The goal here is by doing this I will be able to create 1 super admin user that will be able to create new drivers and admins while I'm setting up the project running in the dev environment. This will allow me to create a driver and admin user for myself and the client. Once I have created the primary admin client I can push the app to production where it will function as intended, allowing for the creation, editing, and deletion of driver and admin users.
+
 ### Feb 18
 
 - Lots of work went into the UI for '/drivers/new'
