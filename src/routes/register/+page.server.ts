@@ -1,14 +1,13 @@
 
 import { dev } from '$app/environment';
 import { z } from 'zod';
-import { supabase } from '$lib/db';
-import { PW_MIN_LENGTH, PW_MAX_LENGTH, PW_REGEX } from '$lib/server/constants';
-import { redirect } from '@sveltejs/kit';
-import { getServerSession } from '@supabase/auth-helpers-sveltekit';
+import { PW_MIN_LENGTH, PW_MAX_LENGTH } from '$lib/server/constants';
+import { redirect, fail } from '@sveltejs/kit';
+import { getServerSession, getSupabase } from '@supabase/auth-helpers-sveltekit';
 
 const emailRegistrationSchema = z.object({
   email: z.string().email({ message: "Must enter a valid email." }).min(3, { message: "Must enter an email address to register." }).max(100, { message: "Email address is too long." }),
-  password: z.string().min(PW_MIN_LENGTH, { message: `Password must be at least ${PW_MIN_LENGTH} characters long.` }).max(PW_MAX_LENGTH, { message: `Password must be no more than ${PW_MAX_LENGTH} characters long.` }).regex(PW_REGEX, { message: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)." }),
+  password: z.string().min(PW_MIN_LENGTH, { message: `Password must be at least ${PW_MIN_LENGTH} characters long.` }).max(PW_MAX_LENGTH, { message: `Password must be no more than ${PW_MAX_LENGTH} characters long.` }).regex(/[a-z]/, { message: "Password must contain at least 1 lower case letter." }).regex(/[A-Z]/, { message: "Password must contain at least 1 upper case letter." }).regex(/\d/, { message: "Password must contain at least 1 number." }).regex(/[@$!.%*?&_-]/, { message: "Password must contain at least 1 special character. (@$!%*?&_-)" }),
   passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(PW_MAX_LENGTH + 1),
 });
 type FormData = z.infer<typeof emailRegistrationSchema>;
@@ -20,7 +19,10 @@ type FormErrors = {
 };
 
 export const actions: Actions = {
-  default: async ({ request, locals }) => {
+  default: async (event) => {
+    // EVENT OBJECTS
+    const { request } = event;
+    const { supabaseClient } = await getSupabase(event);
     // ERRORS OBJECT
     const errors: FormErrors = {
       email: [],
@@ -48,13 +50,12 @@ export const actions: Actions = {
     }
     // ATTEMPT TO REGISTER USER
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabaseClient.auth.signUp({ email, password });
       if (error) {
         throw error;
       }
-      const session = await supabase.auth.session();
-      locals.setSession(session);
     } catch (error) {
+      console.log(error);
       if (error.code === 'auth/email-already-exists') {
         errors.email.push('Email already in use');
         return {
