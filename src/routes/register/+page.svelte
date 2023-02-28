@@ -1,43 +1,84 @@
 <script lang="ts">
-	export let form: any;
-	export let errors: any;
-
-	$: console.log(form, errors);
+	export let errors = {
+		email: [],
+		password: [],
+		passwordConfirm: []
+	};
 </script>
 
-<form method="POST">
-	<div class="mb-4">
-		<label for="email" class="mb-2 block text-sm font-bold text-white">Email</label>
-		<input
-			type="email"
-			name="email"
-			id="email"
-			class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-black shadow focus:outline-none"
+<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+	<div class="sm:mx-auto sm:w-full sm:max-w-md">
+		<img
+			class="mx-auto h-16 w-auto"
+			src="https://a-us.storyblok.com/f/1004312/512x512/9a8d0bbf7e/favicon.png"
+			alt="Roga Dev"
 		/>
+		<h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+			Register a new account
+		</h2>
 	</div>
-	<div class="mb-4">
-		<label for="password" class="mb-2 block text-sm font-bold text-white">Password</label>
-		<input
-			type="password"
-			name="password"
-			id="password"
-			class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-black shadow focus:outline-none"
-		/>
+
+	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+			<form class="space-y-6 text-black" action="#" method="POST">
+				<div>
+					<label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+					<div class="mt-1">
+						<input
+							id="email"
+							name="email"
+							type="email"
+							required
+							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+						/>
+					</div>
+					{#if errors?.email?.length}
+						<div class="mt-2 text-sm text-red-600">{errors.email}</div>
+					{/if}
+				</div>
+
+				<div>
+					<label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+					<div class="mt-1">
+						<input
+							id="password"
+							name="password"
+							type="password"
+							required
+							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+						/>
+					</div>
+					{#if errors?.password?.length}
+						<div class="mt-2 text-sm text-red-600">{errors.password}</div>
+					{/if}
+				</div>
+
+				<div>
+					<label for="passwordConfirm" class="block text-sm font-medium text-gray-700"
+						>Confirm Password</label
+					>
+					<div class="mt-1">
+						<input
+							id="passwordConfirm"
+							name="passwordConfirm"
+							type="password"
+							required
+							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+						/>
+					</div>
+					{#if errors?.passwordConfirm?.length}
+						<div class="mt-2 text-sm text-red-600">{errors.passwordConfirm}</div>
+					{/if}
+				</div>
+
+				<div>
+					<button
+						type="submit"
+						class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+						>Register</button
+					>
+				</div>
+			</form>
+		</div>
 	</div>
-	<div class="mb-4">
-		<label for="passwordConfirm" class="mb-2 block text-sm font-bold text-white"
-			>Confirm Password</label
-		>
-		<input
-			type="password"
-			name="passwordConfirm"
-			id="passwordConfirm"
-			class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-black shadow focus:outline-none"
-		/>
-	</div>
-	<button
-		type="submit"
-		class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-		>Register</button
-	>
-</form>
+</div>

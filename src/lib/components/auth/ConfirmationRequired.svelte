@@ -1,19 +1,13 @@
 <script lang="ts">
-	import { supabase } from '$lib/db';
-
 	export let email: string;
 
+	// 	TODO - Major overhaul.
 	let loading = true;
 
 	const resendConfirmation = async () => {
 		loading = true;
 		try {
-			const baseUrl = window.location.origin;
-			// TODO this may need to go in a back end api route.
-			const { error } = await supabase.auth.admin.inviteUserByEmail(email, {
-				redirectTo: baseUrl + '/confirm'
-			});
-			if (error) throw error;
+			// const baseUrl = window.location.origin;
 		} catch (error) {
 			console.error(error);
 		} finally {

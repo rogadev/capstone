@@ -2,9 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
-	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
-	import type { Session } from '@supabase/supabase-js';
-	import { supabase } from '$lib/db';
+	import type { Session } from 'lucia-auth';
 	import links from './links';
 
 	export let mode: Boolean;
@@ -13,8 +11,7 @@
 
 	// TODO - Move this to the /logout route
 	const logout = async () => {
-		await supabase.auth.signOut();
-		window.location.href = '/';
+		window.location.href = '/logout';
 	};
 
 	let showMobileMenu = false;
@@ -68,7 +65,7 @@
 		<div
 			class="flex flex-row items-center justify-center gap-2 text-2xl font-semibold dark:text-white"
 		>
-			<ThemeToggle {mode} {toggleTheme} />
+			<ThemeToggle {mode} />
 			<a
 				href="/account"
 				title="Account Settings"
@@ -88,5 +85,5 @@
 		</div>
 	</div>
 {:else}
-	<ThemeToggle {mode} {toggleTheme} />
+	<ThemeToggle {mode} />
 {/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import NavbarLink from './NavbarLink.svelte';
-	import type { Session } from '@supabase/supabase-js';
+	import type { Session } from 'lucia-auth';
 
 	export let links: { name: string; icon: string | undefined; href: string }[];
 	export let session: Session | null;

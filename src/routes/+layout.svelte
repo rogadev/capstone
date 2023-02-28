@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { supabase } from '$lib/db';
-	import { invalidate } from '$app/navigation';
-	import { onMount, onDestroy } from 'svelte';
+	import '../app.css'; // TailwindCSS Global Styles
+	import { onDestroy } from 'svelte';
 	import * as colorTheme from '$lib/stores/colorTheme';
-
 	import Navbar from '$lib/components/ui/navigation/Navbar.svelte';
 	import { page } from '$app/stores';
+	import { handleSession } from '@lucia-auth/sveltekit/client';
+
+	handleSession(page);
 
 	import '../app.css'; // TailwindCSS Global Styles
 
@@ -24,17 +25,6 @@
 	const toggleTheme = () => {
 		colorTheme.toggleMode();
 	};
-
-	onMount(() => {
-		const {
-			data: { subscription }
-		} = supabase.auth.onAuthStateChange(() => {
-			invalidate('supabase:auth');
-		});
-		return () => {
-			subscription.unsubscribe();
-		};
-	});
 
 	onDestroy(() => {
 		colorThemeUnsubscribe();

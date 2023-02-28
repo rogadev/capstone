@@ -1,7 +1,7 @@
 <script lang="ts">
 	import NavbarNavigation from '$lib/components/ui/navigation/NavbarNavigation.svelte';
 	import NavbarBrand from '$lib/components/ui/navigation/NavbarBrand.svelte';
-	import type { Session } from '@supabase/supabase-js';
+	import type { Session } from 'lucia-auth';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;

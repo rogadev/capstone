@@ -14,7 +14,9 @@
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^3.0.1",
-		"@playwright/test": "^1.28.1",
+		"@lucia-auth/adapter-prisma": "^0.4.0",
+		"@lucia-auth/oauth": "^0.5.2",
+		"@lucia-auth/sveltekit": "^0.6.3",
 		"@sveltejs/adapter-auto": "^1.0.0",
 		"@sveltejs/adapter-vercel": "^1.0.6",
 		"@sveltejs/kit": "^1.0.0",
@@ -29,6 +31,7 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"jsdom": "^21.1.0",
+		"lucia-auth": "^0.6.2",
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.3",
 		"prettier-plugin-organize-imports": "^3.2.2",
@@ -46,8 +49,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "^4.10.1",
-		"@supabase/auth-helpers-sveltekit": "^0.8.7",
-		"@supabase/supabase-js": "^2.8.0"
+		"@prisma/client": "^4.10.1"
 	}
 }
