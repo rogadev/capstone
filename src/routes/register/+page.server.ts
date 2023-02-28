@@ -6,11 +6,11 @@ import { LuciaError } from 'lucia-auth';
 import type { PageServerLoad } from './$types';
 import { dev } from "$app/environment";
 import { z } from 'zod';
-import { PW_MIN_LENGTH, PW_MAX_LENGTH, PW_REGEX } from '$lib/server/constants';
+import { PW_MIN_LENGTH, PW_MAX_LENGTH } from '$lib/server/constants';
 
 const emailRegistrationSchema = z.object({
   email: z.string().email({ message: "Must enter a valid email." }).min(3, { message: "Must enter an email address to register." }).max(100, { message: "Email address is too long." }),
-  password: z.string().min(PW_MIN_LENGTH, { message: `Password must be at least ${PW_MIN_LENGTH} characters long.` }).max(PW_MAX_LENGTH, { message: `Password must be no more than ${PW_MAX_LENGTH} characters long.` }).regex(PW_REGEX, { message: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&)." }),
+  password: z.string().min(PW_MIN_LENGTH, { message: `Password must be at least ${PW_MIN_LENGTH} characters long.` }).max(PW_MAX_LENGTH, { message: `Password must be no more than ${PW_MAX_LENGTH} characters long.` }).regex(/[a-z]/, { message: "Password must contain at least 1 lower case letter." }).regex(/[A-Z]/, { message: "Password must contain at least 1 upper case letter." }).regex(/\d/, { message: "Password must contain at least 1 number." }).regex(/[@$!.%*?&_-]/, { message: "Password must contain at least 1 special character. (@$!%*?&_-)" }),
   passwordConfirm: z.string().min(1, { message: "Must confirm your password." }).max(PW_MAX_LENGTH + 1),
 });
 type EmailRegistrationData = z.infer<typeof emailRegistrationSchema>;

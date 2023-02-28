@@ -8,22 +8,26 @@
 
 	handleSession(page);
 
-	const session = $page.data.session;
+	import '../app.css'; // TailwindCSS Global Styles
+
+	colorTheme.useBrowserPreference();
 
 	let mode: 'light' | 'dark';
-	colorTheme.useBrowserPreference();
-	const unsubscribe = colorTheme.mode.subscribe((value) => {
+	const session = $page.data.session;
+
+	const colorThemeUnsubscribe = colorTheme.mode.subscribe((value) => {
 		const useDark = value === 'dark';
 		mode = useDark ? 'dark' : 'light';
 	});
+
 	$: useDark = mode === 'dark';
 
-	function toggleTheme() {
+	const toggleTheme = () => {
 		colorTheme.toggleMode();
-	}
+	};
 
 	onDestroy(() => {
-		unsubscribe();
+		colorThemeUnsubscribe();
 	});
 </script>
 

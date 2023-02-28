@@ -21,7 +21,7 @@ export const useBrowserPreference = () => {
 };
 
 export const getMode = () => {
-	let currentMode;
+	let currentMode: 'dark' | 'light';
 	const unsubscribe = mode.subscribe((value) => {
 		currentMode = value;
 	});

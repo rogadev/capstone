@@ -7,11 +7,7 @@
 	const resendConfirmation = async () => {
 		loading = true;
 		try {
-			const baseUrl = window.location.origin;
-			// const { error } = await supabaseClient.auth.admin.inviteUserByEmail(email, {
-			// 	redirectTo: baseUrl + '/confirm'
-			// });
-			// if (error) throw error;
+			// const baseUrl = window.location.origin;
 		} catch (error) {
 			console.error(error);
 		} finally {
