@@ -18,6 +18,12 @@
 
 - I've written a few quick tests for unit (using `vitest`) and integration (using `testing-library/svelte`). In doing so, I've also realized ways to improve the component I was testing - the ThemeToggle component. I've refactored it to be more testable and to be more flexible in the future.
 
+- Added a logout route. This route will be used to log out the user and redirect them to the login page. If not logged in, short cct and redirect to login page anyway.
+
+- TODO Need to add the logout link where applicable, instead of running a logout function.
+
+- WIP - Removed route guarding in `server.hooks.ts`. Instead, trying to route-guard using `(grouping)` folders. I may revert this later if I can find a cleaner solution.
+
 ### Feb 18
 
 - Lots of work went into the UI for '/drivers/new'
