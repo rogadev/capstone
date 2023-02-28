@@ -93,13 +93,13 @@
 				<div class="mt-6 grid grid-cols-3 gap-3">
 					<form method="POST">
 						<input type="hidden" name="provider" value="google" />
-						<button
-							type="submit"
+						<a
+							href="/api/oauth?provider=google"
 							class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
 						>
 							<span class="sr-only">Sign in with Google</span>
 							<Icon icon="logos:google-icon" class="h-5 w-5" />
-						</button>
+						</a>
 					</form>
 
 					<div>
