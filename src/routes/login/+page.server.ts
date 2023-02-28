@@ -1,8 +1,15 @@
-import { supabase } from '$lib/db';
+import { getServerSession } from '@supabase/auth-helpers-sveltekit';
+import { supabase } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { AuthApiError } from '@supabase/supabase-js';
 import type { Actions } from '../$types';
 import type { AuthError, Provider } from '@supabase/supabase-js';
+
+export const load = async (event) => {
+	const { session } = getServerSession(event);
+	console.log(session);
+	if (session) throw redirect(302, '/dashboard');
+};
 
 export const actions: Actions = {
 	default: async (event) => {

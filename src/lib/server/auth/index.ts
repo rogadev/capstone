@@ -11,7 +11,7 @@ const supabase = createClient(PUBLIC_SUPABASE_URL, PRIVATE_SUPABASE_SERVICE_ROLE
 
 const adminAuthClient = supabase.auth.admin;
 
-export = {
+export {
   supabase,
   adminAuthClient
 };
