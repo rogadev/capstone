@@ -4,15 +4,16 @@
 	import NavbarLinks from './NavbarLinks.svelte';
 	import ThemeToggle from '$lib/components/theme/ThemeToggle.svelte';
 	import type { Session } from '@supabase/supabase-js';
-	import supabaseClient from '$lib/db';
+	import { supabase } from '$lib/db';
 	import links from './links';
 
 	export let mode: Boolean;
 	export let toggleTheme: () => void;
 	export let session: Session | null;
 
+	// TODO - Move this to the /logout route
 	const logout = async () => {
-		await supabaseClient.auth.signOut();
+		await supabase.auth.signOut();
 		window.location.href = '/';
 	};
 

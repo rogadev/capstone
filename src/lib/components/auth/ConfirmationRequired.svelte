@@ -1,5 +1,5 @@
 <script lang="ts">
-	import supabaseClient from '$lib/db';
+	import { supabase } from '$lib/db';
 
 	export let email: string;
 
@@ -10,7 +10,7 @@
 		try {
 			const baseUrl = window.location.origin;
 			// TODO this may need to go in a back end api route.
-			const { error } = await supabaseClient.auth.admin.inviteUserByEmail(email, {
+			const { error } = await supabase.auth.admin.inviteUserByEmail(email, {
 				redirectTo: baseUrl + '/confirm'
 			});
 			if (error) throw error;

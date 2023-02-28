@@ -10,4 +10,6 @@
 	<FeatureSection>
 		<Auth />
 	</FeatureSection>
+{:else}
+	<p>You are already logged in.</p>
 {/if}
