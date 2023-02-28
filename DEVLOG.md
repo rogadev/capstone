@@ -1,5 +1,13 @@
 ### Feb 28
 
+- Styled our Register form.
+
+- Simplified the logout script. I had a lot of unnecessary code in there.
+
+- Working on the `register` form. The email registration is not working for some reason. Additionally, I realize that if I use social auth and allow new account creation, I'll be opening up the ability for users to create new accounts through one-click social auth. Supabase doesn't give me the ability to turn off new registration for each type of auth provider, which turns out to be kind of a big deal for us. I need some guidance on how to handle this.
+
+### Feb 28
+
 - I've spent several days trying to rework Auth to replace Supabase auth with Lucia. However, I've run into a number of problems with that setup as well. I've created the new `supabase-prisma` branch to do the following:
 
   - Keep Supabase for Auth only.
