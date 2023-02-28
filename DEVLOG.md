@@ -1,3 +1,9 @@
+### Feb 28
+
+- Back to work on Lucia auth integration with Prisma. I've officially had it with Supabase's auth package and especially their SvelteKit auth helper.
+
+- Realizing that I've added testing to the failed `supabase-prisma` branch, I'm going to have to do a bit of rebase work to get the `lucia-prisma` branch up to date with the latest changes that I actually want to keep.
+
 ### Feb 21
 
 - Continuing work on Lucia & Prisma overhaul.
