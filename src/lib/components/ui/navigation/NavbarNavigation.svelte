@@ -2,11 +2,11 @@
 	import Icon from '@iconify/svelte';
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
+	import ThemeToggle from '../../theme/ThemeToggle.svelte';
 	import type { Session } from 'lucia-auth';
 	import links from './links';
 
 	export let mode: Boolean;
-	export let toggleTheme: () => void;
 	export let session: Session | null;
 
 	// TODO - Move this to the /logout route
