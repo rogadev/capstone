@@ -8,6 +8,21 @@ import { dev } from "$app/environment";
 import { z } from 'zod';
 import { PW_MIN_LENGTH, PW_MAX_LENGTH } from '$lib/server/constants';
 
+let username = '';
+let errors: EmailRegistrationErrors = {
+  username: [],
+  password: [],
+  passwordConfirm: [],
+};
+
+export const load: PageServerLoad = async ({ locals }) => {
+  if (!dev) throw redirect(302, "/login"); // Protects from admin registrations in production.
+  if (await locals.validate()) throw redirect(302, "/dashboard"); // Redirects to dashboard if user is already logged in.
+  return {
+    username, errors
+  };
+};
+
 const emailRegistrationSchema = z.object({
   username: z
     .string({ required_error: "Must enter an email address to register." })
@@ -46,17 +61,19 @@ type EmailRegistrationErrors = {
 
 const { log } = console;
 export const actions: Actions = {
-  default: async ({ request, locals }) => {
+  default: async ({ request }) => {
+
     log('Default action fired.');
     const formData: EmailRegistrationData = Object
       .fromEntries(await request.formData());
+
     log('Data received: ', formData);
     const result = emailRegistrationSchema.safeParse(formData);
-    const { username } = formData;
+    username = formData.username;
 
     if (!result.success) {
       log('Validation failed:');
-      const errors: EmailRegistrationErrors = result.error.flatten().fieldErrors;
+      errors = result.error.flatten().fieldErrors;
       log(errors);
       return { username, errors };
     }
@@ -65,7 +82,7 @@ export const actions: Actions = {
 
     try {
       log('Attempting to admin create user...');
-      const user = await auth.createUser({
+      await auth.createUser({
         key: {
           providerId: 'username',
           providerUserId: username,
@@ -75,9 +92,7 @@ export const actions: Actions = {
           username,
         }
       });
-      log('User created: ', user);
-      const session = await auth.createSession(user.userId);
-      locals.setSession(session);
+
     } catch (error) {
       log('Error occurred creating user: ', error);
       if (
@@ -85,27 +100,17 @@ export const actions: Actions = {
         error.code === 'P2002' &&
         error.message?.includes('username')
       ) {
-        return fail(400, {
-          message: 'Username already in use'
-        });
-      }
-      if (error instanceof LuciaError && error.message === 'AUTH_DUPLICATE_KEY_ID') {
-        return fail(400, {
-          message: 'Username already in use'
-        });
-      }
-      return fail(500, {
-        message: 'Unknown error occurred'
-      });
-    }
-  }
-};
+        errors.username.push('Registration failed. Username already in use.');
 
-export const load: PageServerLoad = async ({ locals }) => {
-  // If we're in production, redirect to login
-  if (!dev) throw redirect(302, "/login");
-  // If the user is already logged in, redirect to the dashboard
-  const session = await locals.validate();
-  if (session) throw redirect(302, "/dashboard");
-  return {};
+      } else if (error instanceof LuciaError && error.message.includes('AUTH_DUPLICATE_KEY_ID')) {
+        errors.username.push('Registration failed. Username already in use.');
+
+      } else {
+        errors.username.push('Registration failed. Please try again later.');
+      }
+      console.log('fffff', errors, username);
+      return { username, errors };
+    }
+    throw redirect(302, '/register/success');
+  }
 };

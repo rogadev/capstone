@@ -1,9 +1,11 @@
 <script lang="ts">
-	export let errors = {
-		email: [],
-		password: [],
-		passwordConfirm: []
-	};
+	import { page } from '$app/stores';
+	let password = '';
+	let passwordConfirm = '';
+	let username = $page.data.username;
+	let errors = $page.data.errors;
+
+	$: console.log(errors);
 </script>
 
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -30,11 +32,14 @@
 							name="username"
 							type="email"
 							required
+							bind:value={username}
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
-					{#if errors?.email?.length}
-						<div class="mt-2 text-sm text-red-600">{errors.email}</div>
+					{#if errors?.username?.length}
+						{#each errors.username as error}
+							<div class="mt-2 text-sm text-red-600">{error}</div>
+						{/each}
 					{/if}
 				</div>
 
@@ -45,12 +50,15 @@
 							id="password"
 							name="password"
 							type="password"
+							bind:value={password}
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
 					{#if errors?.password?.length}
-						<div class="mt-2 text-sm text-red-600">{errors.password}</div>
+						{#each errors.password as error}
+							<div class="mt-2 text-sm text-red-600">{error}</div>
+						{/each}
 					{/if}
 				</div>
 
@@ -63,12 +71,15 @@
 							id="passwordConfirm"
 							name="passwordConfirm"
 							type="password"
+							bind:value={passwordConfirm}
 							required
 							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
 					{#if errors?.passwordConfirm?.length}
-						<div class="mt-2 text-sm text-red-600">{errors.passwordConfirm}</div>
+						{#each errors.passwordConfirm as error}
+							<div class="mt-2 text-sm text-red-600">{error}</div>
+						{/each}
 					{/if}
 				</div>
 
