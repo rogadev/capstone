@@ -1,4 +1,4 @@
-import { type Actions, fail } from "@sveltejs/kit";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { auth } from "$lib/server/auth";
 
@@ -12,9 +12,7 @@ export const actions: Actions = {
 };
 
 export const load: PageServerLoad = async ({ locals }) => {
-  await locals.actions.default();
-  return {
-    status: 302,
-    redirect: "/"
-  };
+  // Automatically trigger the logout action and redirect to the home page
+  await actions.default({ locals });
+  throw redirect(302, "/");
 };

@@ -3,11 +3,11 @@
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
 	import ThemeToggle from '../../theme/ThemeToggle.svelte';
-	import type { Session } from 'lucia-auth';
 	import links from './links';
+	import { getUser } from '@lucia-auth/sveltekit/client';
 
 	export let mode: Boolean;
-	export let session: Session | null;
+	const user = getUser();
 
 	// TODO - Move this to the /logout route
 	const logout = async () => {
@@ -21,9 +21,9 @@
 	};
 </script>
 
-{#if session}
+{#if $user}
 	<div class="flex flex-row gap-2">
-		<NavbarLinks {session} {links} />
+		<NavbarLinks {links} />
 		<!-- Mobile Navigation Hamburger -->
 		<div class="flex md:hidden">
 			<button

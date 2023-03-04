@@ -13,7 +13,6 @@
 	colorTheme.useBrowserPreference();
 
 	let mode: 'light' | 'dark';
-	const session = $page.data.session;
 
 	const colorThemeUnsubscribe = colorTheme.mode.subscribe((value) => {
 		const useDark = value === 'dark';
@@ -22,17 +21,13 @@
 
 	$: useDark = mode === 'dark';
 
-	const toggleTheme = () => {
-		colorTheme.toggleMode();
-	};
-
 	onDestroy(() => {
 		colorThemeUnsubscribe();
 	});
 </script>
 
 <div class="min-w-screen flex min-h-screen flex-col overflow-auto {useDark ? 'dark' : ''}">
-	<Navbar {session} mode={useDark} {toggleTheme} />
+	<Navbar mode={useDark} />
 	<div
 		class="flex flex-grow flex-col overflow-auto bg-light text-black dark:bg-dark dark:bg-opacity-95 dark:text-white"
 	>

@@ -2,41 +2,44 @@ import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
 import type { PageServerLoad, Actions } from "./$types";
 
+let username: string;
+let password: string;
+let errors: string[] = [];
+
 export const load: PageServerLoad = async ({ locals }) => {
-	// If the user is already logged in, redirect to the dashboard
 	const session = await locals.validate();
 	if (session) throw redirect(302, '/dashboard');
+	return { username, errors };
 };
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
+		// reset errors
+		errors = [];
+
+		// get form data
 		const form = Object.fromEntries(await request.formData());
-		console.log('I should have form data', form);
-		const { username, password } = form;
+		username = form.username;
+		password = form.password;
+
+		// validate form data for empty or invalid values
 		if (typeof username !== 'string' || typeof password !== 'string') {
-			console.log('Failed for some reason because type of username or pw was not a string.');
-			return fail(400, 'Invalid form data');
+			if (typeof username !== 'string') errors.push('Valid email was not provided.');
+			if (typeof password !== 'string') errors.push('Valid password was not provided.');
+			return fail(400, { username, errors });
 		}
+
+		// attempt to sign in
 		try {
-			console.log('trying...');
-			fetch('/api/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ username, password })
-			})
-				.then(response => response.json())
-				.then(data => {
-					console.log('Success:', data);
-				})
-				.catch((error) => {
-					console.error('Error:', error);
-				});
-			const session = await auth.createSession(username);
-			locals.setSession(session);
-		} catch {
-			return fail(400);
+			const key = await auth.validateKeyPassword('username', username, password);
+			if (key) {
+				const { userId } = key;
+				const session = await auth.createSession(userId);
+				locals.setSession(session);
+				throw redirect(302, '/dashboard');
+			}
+		} catch (e) {
+			return fail(400, { username, errors });
 		}
 	}
 };

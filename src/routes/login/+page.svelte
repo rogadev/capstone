@@ -1,13 +1,18 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
 	let forgotLink = '/forgot';
 	let email = '';
 	let password = '';
+	let errors: string[] = [];
 
-	$: {
-		if (email !== '') {
-			forgotLink = `/forgot?email=${email}`;
-		}
-	}
+	$: forgotLink = email ? `/forgot?email=${email}` : '/forgot';
+
+	onMount(() => {
+		email = $page.data.username;
+		errors = $page.data.errors;
+	});
 </script>
 
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -36,7 +41,7 @@
 							autocomplete="email"
 							bind:value={email}
 							required
-							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-black placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
 				</div>
@@ -51,7 +56,7 @@
 							autocomplete="current-password"
 							bind:value={password}
 							required
-							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+							class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-black placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
 				</div>
@@ -63,6 +68,18 @@
 						>
 					</div>
 				</div>
+
+				<!-- errors -->
+				{#if errors.length}
+					{#each errors as error}
+						<div
+							class="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+							role="alert"
+						>
+							<span class="block sm:inline">{error}</span>
+						</div>
+					{/each}
+				{/if}
 
 				<div>
 					<button
