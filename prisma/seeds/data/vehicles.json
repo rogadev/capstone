@@ -1,0 +1,35 @@
+[
+  {
+    "created_by": "1",
+    "name": "Van 1",
+    "description": "A relevant description that helps you know which van this is.",
+    "make": "GMC",
+    "model": "Ambulance",
+    "year": 2018,
+    "type": "Van",
+    "fuel_type": "Gasoline",
+    "departing_from": "626 Haliburton St, Nanaimo, BC V9R 4W5"
+  },
+  {
+    "created_by": "1",
+    "name": "Van 2",
+    "description": "A different description distinguishing this vehicle.",
+    "make": "Ford",
+    "model": "Passenger Van",
+    "year": 2015,
+    "type": "Van",
+    "fuel_type": "Diesel",
+    "departing_from": "415 Poets Trail Dr, Nanaimo, BC V9R 6H2"
+  },
+  {
+    "created_by": "1",
+    "name": "Car 1",
+    "description": "Luxury sedan for those premium clients.",
+    "make": "BMW",
+    "model": "M5",
+    "year": 2022,
+    "type": "Sedan",
+    "fuel_type": "Hybrid",
+    "departing_from": "415 Poets Trail Dr, Nanaimo, BC V9R 6H2"
+  }
+]
