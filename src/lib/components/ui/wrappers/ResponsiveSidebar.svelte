@@ -2,20 +2,27 @@
 	import { page } from '$app/stores';
 	import z from 'zod';
 
-	const actionsSchema = z.object({
+	// TYPES
+	const LinkToActionSchema = z.object({
 		label: z.string(),
 		href: z.string()
 	});
-	type Actions = z.infer<typeof actionsSchema>;
+	const HandleActionSchema = z.object({
+		label: z.string(),
+		action: z.function().args(z.any()).returns(z.void())
+	});
+	const ActionArraySchema = z.array(z.union([LinkToActionSchema, HandleActionSchema]));
+	type ActionArray = z.infer<typeof ActionArraySchema>;
 
-	export let actions: Actions[] | undefined;
+	// PROPS
+	export let actions: ActionArray | undefined;
 	let currentAction: string;
 	const selectAction = (action: string) => {
 		currentAction = action;
 	};
-
 	export let title: string;
 
+	// ACTIONS
 	function isActionActive(href: string) {
 		return $page.url.pathname === href;
 	}
@@ -32,16 +39,28 @@
 			<nav>
 				{#if actions}
 					{#each actions as action}
-						<a
-							href={action.href}
-							class="my-2 flex w-full flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
-								action.href
-							)
-								? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
-								: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
-						>
-							<span class="text-lg font-semibold">{action.label}</span>
-						</a>
+						{#if 'href' in action}
+							<a
+								href={action.href}
+								class="my-2 flex w-full flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
+									action.href
+								)
+									? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+									: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+							>
+								<span class="text-lg font-semibold">{action.label}</span>
+							</a>
+						{:else if 'action' in action}
+							<button
+								on:click={action.action}
+								class="my-2 flex w-full flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {currentAction ===
+								action.label
+									? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+									: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+							>
+								<span class="text-lg font-semibold">{action.label}</span>
+							</button>
+						{/if}
 					{/each}
 				{/if}
 			</nav>
@@ -63,16 +82,28 @@
 		>
 			{#if actions}
 				{#each actions as action}
-					<a
-						href={action.href}
-						class="my-2 flex w-fit flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
-							action.href
-						)
-							? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
-							: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
-					>
-						<span class="text-lg font-semibold">{action.label}</span>
-					</a>
+					{#if 'action' in action}
+						<button
+							on:click={action.action}
+							class="my-2 flex w-fit flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {currentAction ===
+							action.label
+								? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+								: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+						>
+							<span class="text-lg font-semibold">{action.label}</span>
+						</button>
+					{:else if 'href' in action}
+						<a
+							href={action.href}
+							class="my-2 flex w-fit flex-row items-center justify-start rounded-md px-3 py-2 hover:bg-accent hover:text-white  dark:hover:bg-accent {isActionActive(
+								action.href
+							)
+								? 'bg-primary text-dark hover:bg-primary hover:text-dark dark:hover:bg-primary'
+								: 'bg-black bg-opacity-5 text-black dark:bg-white dark:bg-opacity-5 dark:text-white'}"
+						>
+							<span class="text-lg font-semibold">{action.label}</span>
+						</a>
+					{/if}
 				{/each}
 			{/if}
 		</nav>

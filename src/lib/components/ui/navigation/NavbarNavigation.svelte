@@ -3,7 +3,7 @@
 	import NavbarLinksMobile from './NavbarLinksMobile.svelte';
 	import NavbarLinks from './NavbarLinks.svelte';
 	import ThemeToggle from '../../theme/ThemeToggle.svelte';
-	import links from './links';
+	import links from '$lib/config/links'
 	import { getUser } from '@lucia-auth/sveltekit/client';
 
 	export let mode: Boolean;
