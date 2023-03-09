@@ -1,8 +1,13 @@
 const links = [
   {
     name: 'Dashboard',
-    icon: 'mdi:chart-line',
+    icon: 'mdi:view-dashboard-variant-outline',
     href: '/dashboard'
+  },
+  {
+    name: 'Vehicles',
+    icon: 'mdi:car',
+    href: '/vehicles'
   },
   {
     name: 'Drivers',
@@ -18,11 +23,6 @@ const links = [
     name: 'Trips',
     icon: 'fa-solid:route',
     href: '/evaluations'
-  },
-  {
-    name: 'Assignment',
-    icon: 'mdi:transit-connection-variant',
-    href: '/assignment'
   },
   {
     name: "Summary",
