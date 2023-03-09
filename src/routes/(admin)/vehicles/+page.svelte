@@ -49,7 +49,7 @@
 				<div class="col-span-4 text-sm">{description}</div>
 				<div class="col-span-1">{type}</div>
 				<div class="col-span-1 flex flex-row items-center justify-end gap-2">
-					<a class="rounded bg-primary p-2 hover:bg-green-300" href="/vehicles/{id}">
+					<a class="rounded bg-primary p-2 hover:bg-green-300" href="/vehicles/edit/{id}">
 						<Icon icon="mdi:pencil" />
 					</a>
 					<button
@@ -64,7 +64,7 @@
 	</div>
 </ResponsiveSidebar>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 	.vehicles-container {
 		@apply grid grid-cols-1 gap-3;
 	}
