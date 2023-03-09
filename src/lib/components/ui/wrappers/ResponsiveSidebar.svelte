@@ -1,18 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import z from 'zod';
-
-	// TYPES
-	const LinkToActionSchema = z.object({
-		label: z.string(),
-		href: z.string()
-	});
-	const HandleActionSchema = z.object({
-		label: z.string(),
-		action: z.function().args(z.any()).returns(z.void())
-	});
-	const ActionArraySchema = z.array(z.union([LinkToActionSchema, HandleActionSchema]));
-	type ActionArray = z.infer<typeof ActionArraySchema>;
+	import type { ActionArray } from './ActionArray';
 
 	// PROPS
 	export let actions: ActionArray | undefined;
