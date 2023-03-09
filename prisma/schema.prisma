@@ -107,7 +107,7 @@ model VerificationToken {
 
 model Vehicle {
   // PK
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              Int        @id @default(autoincrement()) @map("vehicle_id") @unique
   created_by      String
   date_added      DateTime
   last_updated    DateTime
