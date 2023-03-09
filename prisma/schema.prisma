@@ -21,7 +21,7 @@ enum VehicleType {
   Van
   Compact
   Luxury
-  Sadan
+  Sedan
   Other
 }
 
@@ -46,13 +46,13 @@ enum UserRole {
 // TODO Create your Invite Token model.
 
 model User {
-  id          String         @id @unique
+  id          String          @id @unique
   session     Session[]
   Key         Key[]
 
-  username    String         @unique
-  Role        UserRole       @default(Driver) @map("role")
-  UserDetails UserDetails[]
+  username    String          @unique
+  Role        UserRole        @default(Driver) @map("role")
+  UserDetails UserDetails?
 
   @@map("user")
 }
@@ -83,21 +83,19 @@ model Key {
 }
 
 model UserDetails {
-  id            String          @id @unique
-  user_id       String
+  id            String        @id @unique
+  user_id       String        @unique
   name          String
-  email         String          @unique
-  phone         String          @unique
+  email         String        @unique
+  phone         String        @unique
   color_scheme  ColorScheme
-  vehicle_type  VehicleType
-  vehicle_fuel  VehicleFuelType
-  vehicle_color String
-  user          User            @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  user          User          @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("user_details")
 }
 
+//TODO Are we still going to use the verification token model?
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -105,4 +103,26 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_token")
+}
+
+model Vehicle {
+  // PK
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_by      String
+  date_added      DateTime
+  last_updated    DateTime
+  // INFORMATION
+  name            String
+  description     String?
+  // DESCRIPTION
+  make            String
+  model           String
+  year            Int
+  // DETAILS
+  type            VehicleType
+  fuel_type       VehicleFuelType
+  // LOCATION
+  departing_from  String
+
+  @@map("vehicle")
 }
