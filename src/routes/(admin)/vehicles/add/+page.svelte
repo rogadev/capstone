@@ -1,5 +1,7 @@
 <script lang="ts">
 	import ResponsiveSidebar from '$lib/components/ui/wrappers/ResponsiveSidebar.svelte';
+	import NewVehicleForm from '$lib/components/forms/NewVehicleForm.svelte';
+
 	const actions = [
 		{
 			label: 'Save',
@@ -17,5 +19,5 @@
 </script>
 
 <ResponsiveSidebar title="Add Vehicle" {actions}>
-	<p>hello</p>
+	<NewVehicleForm />
 </ResponsiveSidebar>
