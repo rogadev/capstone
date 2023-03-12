@@ -1,5 +1,5 @@
 <div id="brand">
-	<a href="/dashboard" class="flex flex-row items-center gap-2">
+	<a href="/" class="flex flex-row items-center gap-2">
 		<img
 			src="https://a.storyblok.com/f/192938/512x512/384274f919/app-logo.png/m/40x0/filters:format(webp)"
 			alt="logo"
