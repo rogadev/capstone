@@ -13,6 +13,7 @@ export const GET = (async ({ locals }) => {
 }) satisfies RequestHandler;
 
 export const POST = (async ({ locals, request }) => {
+  // TODO - Fix posting of new vehicles. Not receiving request data. Unclear why.
   console.log('POST /api/vehicles');
   const form = await request.formData();
   const data = Object.fromEntries(form.entries());
