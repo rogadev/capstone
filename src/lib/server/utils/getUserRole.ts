@@ -5,7 +5,7 @@ type User = {
   id: string;
 };
 
-export const getRole = async (user: User) => {
+const getRole = async (user: User) => {
   const { username } = user;
   console.log('getRole', username);
   let data = null;
@@ -25,3 +25,5 @@ export const getRole = async (user: User) => {
   if (!data) throw new Error('User not found');
   return data.Role;
 };
+
+export default getRole;
