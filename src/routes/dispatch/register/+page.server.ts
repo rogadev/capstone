@@ -3,7 +3,7 @@ import { fail, type Actions } from '@sveltejs/kit';
 import { Prisma } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 import { LuciaError } from 'lucia-auth';
-import type { PageServerLoad, Actions } from './$types';
+import type { PageServerLoad } from './$types';
 import { dev } from "$app/environment";
 import { z } from 'zod';
 import { PW_MIN_LENGTH, PW_MAX_LENGTH } from '$lib/server/constants';
@@ -17,9 +17,10 @@ let errors: EmailRegistrationErrors = {
 
 export const load: PageServerLoad = async ({ locals }) => {
   if (!dev) throw redirect(302, "/login"); // Protects from admin registrations in production.
-  const session = await locals.validate();
-  if (session) throw redirect(302, "/atc");
-  return {};
+  if (await locals.validate()) throw redirect(302, "/dashboard"); // Redirects to dashboard if user is already logged in.
+  return {
+    username, errors
+  };
 };
 
 const emailRegistrationSchema = z.object({

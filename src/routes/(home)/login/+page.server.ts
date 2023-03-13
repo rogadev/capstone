@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/auth";
 import type { PageServerLoad, Actions } from "./$types";
 
@@ -7,8 +7,8 @@ let password: string;
 let errors: string[] = [];
 
 export const load: PageServerLoad = async ({ locals }) => {
-	const { user } = locals.validateUser();
-	console.log(user);
+	const session = await locals.validate();
+	if (session) throw redirect(302, '/dashboard');
 	return { username, errors };
 };
 
@@ -18,23 +18,28 @@ export const actions: Actions = {
 		errors = [];
 
 		// get form data
-		const form = await request.formData();
-		username = form.get("username");
-		password = form.get("password");
+		const form = Object.fromEntries(await request.formData());
+		username = form.username;
+		password = form.password;
 
 		// validate form data for empty or invalid values
-		if (!username) errors.push('Valid email was not provided.');
-		if (!password) errors.push('Valid password was not provided.');
-		if (errors.length) return fail(400);
+		if (typeof username !== 'string' || typeof password !== 'string') {
+			if (typeof username !== 'string') errors.push('Valid email was not provided.');
+			if (typeof password !== 'string') errors.push('Valid password was not provided.');
+			return fail(400, { username, errors });
+		}
 
 		// attempt to sign in
 		try {
-			const key = await auth.validateKeyPassword("username", username, password);
-			const session = await auth.createSession(key.userId);
-			locals.setSession(session);
+			const key = await auth.validateKeyPassword('username', username, password);
+			if (key) {
+				const { userId } = key;
+				const session = await auth.createSession(userId);
+				locals.setSession(session);
+				throw redirect(302, '/dashboard');
+			}
 		} catch (e) {
-			console.error(e);
-			return fail(400);
+			return fail(400, { username, errors });
 		}
 	}
 };

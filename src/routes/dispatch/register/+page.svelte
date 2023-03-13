@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
-
 	let password = '';
 	let passwordConfirm = '';
 	let username = $page.data.username;
@@ -24,7 +22,7 @@
 
 	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			<form class="space-y-6 text-black" method="POST" use:enhance>
+			<form class="space-y-6 text-black" action="#" method="POST">
 				<div>
 					<label for="username" class="block text-sm font-medium text-gray-700">Email address</label
 					>
