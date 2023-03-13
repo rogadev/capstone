@@ -3,20 +3,15 @@ import { sequence } from "@sveltejs/kit/hooks";
 import { handleHooks } from "@lucia-auth/sveltekit";
 import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment"; // TODO Remove for production
-import getRole from "$lib/server/utils/getUserRole";
 
 export const postAuthHooksHandler: Handle = async ({ resolve, event }) => {
-	const { locals } = event;
-	const { session, user } = await locals.validateUser();
-	locals.session = session;
-	if (session && user) {
-		const role = await getRole(user);
-		user.role = role;
-	}
-	locals.user = user;
+	const session = await event.locals.validate();
 	if (dev) {
-		console.log("User", user);
-		console.log("Session", session);
+		if (!session) console.log('Not authenticated.');
+		else {
+			console.log('Authenticated.');
+			console.log('User:', session.user);
+		}
 	}
 	return resolve(event);
 };
