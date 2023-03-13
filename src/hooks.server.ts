@@ -6,12 +6,10 @@ import { dev } from "$app/environment"; // TODO Remove for production
 
 export const postAuthHooksHandler: Handle = async ({ resolve, event }) => {
 	const session = await event.locals.validate();
+	// TODO Remove for production
 	if (dev) {
 		if (!session) console.log('Not authenticated.');
-		else {
-			console.log('Authenticated.');
-			console.log('User:', session.user);
-		}
+		else console.log('Authenticated.');
 	}
 	return resolve(event);
 };
