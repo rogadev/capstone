@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../../app.css'; // TailwindCSS Global Styles
+	import '../app.css'; // TailwindCSS Global Styles
 	import { onDestroy } from 'svelte';
 	import * as colorTheme from '$lib/stores/colorTheme';
 	import { page } from '$app/stores';
@@ -23,7 +23,6 @@
 	});
 </script>
 
-<div class={useDark ? 'dark' : ''}>
-	<p>Driver Layout</p>
+<div class="min-w-screen flex min-h-screen flex-col overflow-auto {useDark ? 'dark' : ''}">
 	<slot />
 </div>

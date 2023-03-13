@@ -8,7 +8,7 @@ let errors: string[] = [];
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validate();
-	if (session) throw redirect(302, '/dashboard');
+	if (session) throw redirect(302, '/admin');
 	return { username, errors };
 };
 
@@ -36,7 +36,6 @@ export const actions: Actions = {
 				const { userId } = key;
 				const session = await auth.createSession(userId);
 				locals.setSession(session);
-				throw redirect(302, '/dashboard');
 			}
 		} catch (e) {
 			return fail(400, { username, errors });

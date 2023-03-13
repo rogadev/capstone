@@ -2,7 +2,7 @@ const links = [
   {
     name: 'Dashboard',
     icon: 'mdi:view-dashboard-variant-outline',
-    href: '/dashboard'
+    href: '/admin'
   },
   {
     name: 'Vehicles',
