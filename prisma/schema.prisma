@@ -43,16 +43,24 @@ enum UserRole {
   Driver
 }
 
-// TODO Create your Invite Token model.
+enum RequestStatus {
+  Pending
+  Approved
+  Rejected
+  Cancelled
+  Completed
+}
 
 model User {
-  id          String          @id @unique
-  session     Session[]
-  Key         Key[]
+  id      String    @id @unique
+  session Session[]
+  Key     Key[]
 
-  username    String          @unique
-  Role        UserRole        @default(Driver) @map("role")
+  username    String       @unique
+  Role        UserRole     @default(Driver) @map("role")
   UserDetails UserDetails?
+  Trips       Trip[]
+  Payable     Payable[]
 
   @@map("user")
 }
@@ -83,46 +91,175 @@ model Key {
 }
 
 model UserDetails {
-  id            String        @id @unique
-  user_id       String        @unique
-  name          String
-  email         String        @unique
-  phone         String        @unique
-  color_scheme  ColorScheme
-  user          User          @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id           String      @id @unique
+  user_id      String      @unique
+  name         String
+  email        String      @unique
+  phone        String      @unique
+  color_scheme ColorScheme
+  user         User        @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("user_details")
 }
 
-//TODO Are we still going to use the verification token model?
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_token")
-}
-
 model Vehicle {
-  // PK
-  id              Int        @id @default(autoincrement()) @map("vehicle_id") @unique
-  created_by      String
-  date_added      DateTime
-  last_updated    DateTime
-  // INFORMATION
-  name            String
-  description     String?
-  // DESCRIPTION
-  make            String
-  model           String
-  year            Int
-  // DETAILS
-  type            VehicleType
-  fuel_type       VehicleFuelType
-  // LOCATION
-  departing_from  String
+  id             Int             @id @unique @default(autoincrement()) @map("vehicle_id")
+  created_by     String
+  date_added     DateTime
+  last_updated   DateTime
+  name           String
+  description    String?
+  make           String
+  model          String
+  year           Int
+  type           VehicleType
+  fuel_type      VehicleFuelType
+  departing_from String
 
   @@map("vehicle")
+}
+
+model TripRequest {
+  id              Int      @id @default(autoincrement())
+  billingName     String
+  billingAddress  String
+  billingAddress2 String?
+  billingCity     String
+  billingProvince String   @default("BC")
+  billingPostal   String
+  billingPhone    String
+  billingEmail    String
+  passengerName   String
+  passengerEmail  String?
+  passengerPhone  String
+  pickupName      String?
+  pickupAddress   String
+  pickupCity      String
+  pickupDate      DateTime
+  pickupTime      String
+  dropOffName     String?
+  dropOffAddress  String
+  dropOffCity     String
+  dropOffTime     String
+  wheelchair      Boolean  @default(false)
+  walker          Boolean  @default(false)
+  blind           Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BillingDetails {
+  id         Int     @id @default(autoincrement())
+  name       String
+  address    String
+  address2   String?
+  city       String
+  province   String  @default("BC")
+  postalCode String
+  phone      String
+  email      String
+  Trips      Trip[]
+
+  @@map("billing_details")
+}
+
+model Passenger {
+  id         Int     @id @default(autoincrement())
+  name       String
+  email      String?
+  phone      String
+  wheelchair Boolean @default(false)
+  walker     Boolean @default(false)
+  blind      Boolean @default(false)
+  Trips      Trip[]
+
+  @@map("passenger")
+}
+
+model Trip {
+  id               Int             @id @default(autoincrement())
+  pickupTripId     Int?
+  dropoffTripId    Int?
+  pickupLocation   String?
+  pickupAddress    String
+  pickupCity       String
+  pickupDate       DateTime
+  pickupTime       String
+  dropoffLocation  String?
+  dropoffAddress   String
+  dropoffCity      String
+  dropoffTime      String
+  wheelchair       Boolean         @default(false)
+  walker           Boolean         @default(false)
+  blind            Boolean         @default(false)
+  notes            String?
+  completed        Boolean         @default(false)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  Driver           User            @relation(fields: [driverId], references: [id])
+  driverId         String
+  Passenger        Passenger?      @relation(fields: [passengerId], references: [id])
+  passengerId      Int?
+  BillingDetails   BillingDetails? @relation(fields: [billingDetailsId], references: [id])
+  billingDetailsId Int?
+  TripStops        TripStop[]
+  Billable         Billable[]
+  Payable          Payable[]
+  Location         Location?       @relation(fields: [locationId], references: [id])
+  locationId       Int?
+
+  @@map("trip")
+}
+
+model TripStop {
+  id       Int      @id @default(autoincrement())
+  type     String
+  location String?
+  address  String
+  city     String
+  date     DateTime
+  time     String
+  Trip     Trip     @relation(fields: [tripId], references: [id])
+  tripId   Int
+
+  @@map("trip_stop")
+}
+
+model Billable {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String
+  Trip        Trip     @relation(fields: [tripId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tripId      Int
+
+  @@map("billable")
+}
+
+model Payable {
+  id          Int      @id @default(autoincrement())
+  amount      Float
+  description String
+  Driver      User     @relation(fields: [userId], references: [id])
+  Trip        Trip     @relation(fields: [tripId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  tripId      Int
+
+  @@map("payable")
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Trips     Trip[]
+
+  @@map("location")
 }
