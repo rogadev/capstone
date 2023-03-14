@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
     else if (role.includes("Driver")) {
       // log('Redirecting to /app/drive...');
-      throw redirect(302, "/app/drive");
+      throw redirect(302, "/app");
     }
   }
   // log("Not authenticated. Continue to '/'");
