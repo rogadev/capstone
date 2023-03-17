@@ -12,6 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const { role } = user;
     // log('User role: ', role);
     if (role.includes("Admin")) {
+      console.log('Home page redirecting to Admin');
       // log('Redirecting to /admin...');
       throw redirect(302, "/admin");
     }
