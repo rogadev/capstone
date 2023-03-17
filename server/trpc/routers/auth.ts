@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure } from '../trpc/trpc';
+import { router, publicProcedure } from '../trpc';
 
 export const authRouter = router({
   login: publicProcedure
@@ -12,11 +12,10 @@ export const authRouter = router({
     .mutation(({ input }) => {
       // TODO: Implement login
       // TODO: Decide on model of user data to return (change below)
+      console.log(input?.email, input?.password);
       return {
-        user: {
-          name: 'John Doe',
-          role: 'admin'
-        }
+        success: false,
+        error: 'Not implemented'
       };
     })
 });
