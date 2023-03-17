@@ -11,7 +11,6 @@ const breadcrumbs = [
 </script>
 
 <template>
-  <public-navbar />
   <HeroSection />
   <Breadcrumbs :breadcrumbs="breadcrumbs" />
   <main class="flex flex-col p-8 items-center">
