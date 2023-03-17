@@ -2,12 +2,13 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/eslint-module',
     '@nuxtjs/color-mode',
     'nuxt-icon',
-    'trpc-nuxt/module'
   ],
   typescript: {
     strict: true
   },
+  build: {
+    transpile: ['trpc-nuxt']
+  }
 });
