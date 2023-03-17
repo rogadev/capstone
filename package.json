@@ -8,6 +8,17 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "^3.3.1"
+    "@nuxtjs/color-mode": "^3.2.0",
+    "@nuxtjs/eslint-module": "^4.0.2",
+    "@nuxtjs/tailwindcss": "^6.6.0",
+    "eslint": "^8.36.0",
+    "nuxt": "^3.3.1",
+    "nuxt-icon": "^0.3.3"
+  },
+  "dependencies": {
+    "@trpc/client": "^10.16.0",
+    "@trpc/server": "^10.16.0",
+    "trpc-nuxt": "^0.7.0",
+    "zod": "^3.21.4"
   }
 }
