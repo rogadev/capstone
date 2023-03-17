@@ -1,20 +1,26 @@
 <template>
-  <nav class="bg-base-200 p-4 sticky top-0">
+  <nav class="bg-base-200 p-4 sticky top-0 z-10">
     <ul class="flex justify-around">
       <li class="nav-item">
-        <a href="#how-it-works" class="btn btn-ghost">How It Works</a>
+        <HomeButton />
       </li>
       <li class="nav-item">
-        <a href="#fees" class="btn btn-ghost">Fees</a>
+        <nuxt-link to="/#how-it-works" class="btn btn-ghost">How It Works</nuxt-link>
       </li>
       <li class="nav-item">
-        <a href="#contact" class="btn btn-ghost">Contact Us</a>
+        <nuxt-link to="/#fees" class="btn btn-ghost">Fees</nuxt-link>
       </li>
       <li class="nav-item">
-        <a href="/request-trip" class="btn btn-ghost">Request a Trip</a>
+        <nuxt-link to="/#contact" class="btn btn-ghost">Contact Us</nuxt-link>
       </li>
       <li class="nav-item">
-        <a href="/driver-login" class="btn btn-ghost">Driver Login</a>
+        <nuxt-link to="/request-trip" class="btn btn-ghost">Request a Trip</nuxt-link>
+      </li>
+      <li class="nav-item">
+        <nuxt-link to="/driver-login" class="btn btn-ghost">Driver Login</nuxt-link>
+      </li>
+      <li class="nav-item">
+        <ThemeToggler />
       </li>
     </ul>
   </nav>

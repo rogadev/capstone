@@ -1,5 +1,5 @@
 <template>
-  <button :type="type" :rel="rel ?? undefined" :disabled="disabled ?? undefined" class="btn btn-accent btn-wide"
+  <button :type="type" :rel="rel ?? undefined" :disabled="disabled ?? undefined" class="btn btn-primary btn-wide"
     :class="className">
     <nuxt-link v-if="href" :to="href" :target="target">
       <slot />
