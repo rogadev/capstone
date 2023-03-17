@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { router, publicProcedure } from '../trpc';
+import { router, publicProcedure } from '../trpc/trpc';
 
 export const authRouter = router({
   login: publicProcedure

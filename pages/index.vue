@@ -1,11 +1,13 @@
 <script setup lang="ts">
-const { $client } = useNuxtApp();
+const { $trpc } = useNuxtApp();
 
-const { data: hello } = await $client.hello.useQuery({ text: 'client' });
+const { data } = await $trpc.hello.hello.useQuery({ text: 'Ryan' });
+const { data: test } = await $trpc.test.one.useQuery({ text: 'success' });
 </script>
 
 <template>
   <div>
-    <p>{{ hello?.greeting }}</p>
+    <p>{{ data?.greeting }}</p>
+    <p>{{ test?.result }}</p>
   </div>
 </template>

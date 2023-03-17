@@ -6,7 +6,7 @@ export default defineNuxtPlugin(() => {
    * createTRPCNuxtClient adds a `useQuery` composable
    * built on top of `useAsyncData`.
    */
-  const client = createTRPCNuxtClient<AppRouter>({
+  const trpc = createTRPCNuxtClient<AppRouter>({
     links: [
       httpBatchLink({
         url: '/api/trpc',
@@ -16,7 +16,7 @@ export default defineNuxtPlugin(() => {
 
   return {
     provide: {
-      client,
+      trpc,
     },
   };
 });
