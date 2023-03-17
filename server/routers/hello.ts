@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { router, procedure } from '../trpc';
+import { router, publicProcedure } from '../trpc';
 
 export const helloRouter = router({
-  hello: procedure
+  greet: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -10,7 +10,7 @@ export const helloRouter = router({
     )
     .query(({ name }) => {
       return {
-        greeting; `Hello ${input?.name ?? 'world'}!`,
-      }
+        greeting: `Hello ${input?.name ?? 'world'}!`,
+      };
     })
-})
+});
