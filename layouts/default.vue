@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Greeting />
-    <Testing />
+    <slot />
   </div>
 </template>

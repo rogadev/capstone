@@ -9,6 +9,7 @@ export const testRouter = router({
       }),
     )
     .query(({ input }) => {
+      console.log('Testing one', input.text);
       return {
         result: `Testing: ${input.text}`,
       };
