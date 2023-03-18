@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     }
   },
   modules: [
+    '@nuxtjs/supabase',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     'nuxt-icon',

@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.2.0",
+    "@nuxtjs/supabase": "^0.3.1",
     "@nuxtjs/tailwindcss": "^6.6.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
@@ -18,6 +19,7 @@
     "nuxt-icon": "^0.3.3"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.11.0",
     "daisyui": "^2.51.4",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"
