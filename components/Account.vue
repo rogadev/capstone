@@ -13,14 +13,14 @@ const editingMode = ref(false);
 </script>
 
 <template>
-  <div>
+  <div class="m-4">
     <div class="prose">
       <h1>Account Info</h1>
     </div>
     <EditAccountDetails :cancel="() => editingMode = !editingMode" v-if="editingMode" :email="email" :name="name"
       :website="website" :picture="picture" />
     <DisplayAccountDetails v-else :email="email" :name="name" :website="website" :picture="picture" />
-    <div v-if="!editingMode" class="flex flex-row gap-4 items-center justify-center">
+    <div v-if="!editingMode" class="flex sm:flex-row flex-col gap-4 items-center justify-center max-w-screen">
       <div class="p-4">
         <button class="btn btn-primary btn-wide" @click="() => editingMode = !editingMode">{{ editingMode ? 'Cancel' :
           'Edit'

@@ -27,7 +27,7 @@ loadingAccountData.value = false;
     <button v-for="(tab, index) in tabs" @click="() => currentTab = index + 1" class="tab"
       :class="currentTab === index + 1 && 'tab-active'">{{ tab }}</button>
   </div>
-  <div class="w-full mx-8 my-4">
+  <div>
     <div v-if="currentTab === 1">Requests</div>
     <div v-else-if="currentTab === 2">Scheduling</div>
     <Account :userData="userData" v-else-if="currentTab === 3" />
