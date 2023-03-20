@@ -1,14 +1,11 @@
 <script setup lang="ts">
-onMounted(async () => {
-  const user = useSupabaseUser();
-  if (!user.value) {
-    window.location.href = '/';
-  }
+definePageMeta({
+  middleware: 'auth-guard',
 });
+const user = useSupabaseUser();
 </script>
 
 <template>
-  <div class="container" style="padding: 50px 0 100px 0">
-    <Account />
-  </div>
+  <DashboardTabs v-if="user" :user="user" />
+  <Auth v-else />
 </template>
