@@ -20,7 +20,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="grid grid-flow-col gap-4">
+  <div class="grid grid-flow-col gap-4 prose">
     <div>
       <h3>Avatar</h3>
       <img :src="picture" />
