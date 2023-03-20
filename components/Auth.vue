@@ -20,10 +20,17 @@ const handleGoogleLogin = async () => {
 </script>
 
 <template>
-  <PrimaryButton @click="handleGoogleLogin" :loading="loading">
-    <div class="flex flex-row gap-4">
-      <Icon name="mdi:google" />
-      Sign in with Google
+  <div class="flex justify-center items-center flex-col">
+    <div class="mt-12 mb-4 px-6 text-center prose">
+      <h1>Driver Login</h1>
+      <p>This page is for drivers only. If you are a client, we don't have a login page for you yet. But it's coming soon.
+      </p>
     </div>
-  </PrimaryButton>
+    <PrimaryButton @click="handleGoogleLogin" :loading="loading">
+      <div class="flex flex-row gap-4">
+        <Icon name="mdi:google" />
+        Sign in with Google
+      </div>
+    </PrimaryButton>
+  </div>
 </template>

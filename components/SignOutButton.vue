@@ -15,7 +15,7 @@ const logout = () => {
   loading.value = false;
   const user = useSupabaseUser();
   if (!user.value) {
-    window.location.href = '/';
+    navigateTo('/');
   } else {
     console.error('Log out was attempted but failed.');
   }

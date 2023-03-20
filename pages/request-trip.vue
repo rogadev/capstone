@@ -4,7 +4,7 @@
       <div class="relative px-4 mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
         <div class="max-w-md mx-auto">
           <h1 class="text-2xl font-semibold mb-6">Request a Quote</h1>
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="handleSubmit">
             <!-- Payer Details -->
             <div class="space-y-6">
               <h2 class="text-xl font-semibold mb-2">Payer Details</h2>
@@ -42,13 +42,9 @@
   </div>
 </template>
 
-<script>
-export default {
-  methods: {
-    submitForm() {
-      // Handle form submission here
-    },
-  },
+<script setup>
+const handleSubmit = () => {
+  console.log('submitting form');
 };
 </script>
 

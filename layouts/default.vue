@@ -1,4 +1,4 @@
 <template>
-  <public-navbar />
+  <Navbar />
   <slot />
 </template>
