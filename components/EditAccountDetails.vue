@@ -1,12 +1,12 @@
 <template>
-  <form @submit="updateAccount" class="grid grid-flow-col gap-4 prose">
-    <div class="form-group">
-      <label for="picture">Avatar</label>
-      <input type="text" name="picture" id="picture" :value="picture">
+  <form @submit="updateAccount" class="grid grid-flow-col gap-4 prose mt-4">
+    <div>
+      <label>Email</label>
+      <p class="mt-[0.4rem]">{{ email }}</p>
     </div>
     <div class="form-group">
-      <label for="email">Email</label>
-      <input type="text" name="email" id="email" :value="email">
+      <label for="picture">Avatar URL</label>
+      <input type="text" name="picture" id="picture" :value="picture">
     </div>
     <div class="form-group">
       <label for="name">Username</label>
