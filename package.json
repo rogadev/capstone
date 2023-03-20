@@ -1,4 +1,7 @@
 {
+  "overrides": {
+    "vue": "latest"
+  },
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -19,8 +22,10 @@
     "nuxt-icon": "^0.3.3"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.4.7",
     "@supabase/supabase-js": "^2.11.0",
     "daisyui": "^2.51.4",
+    "pinia": "^2.0.33",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"
   }

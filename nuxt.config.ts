@@ -11,5 +11,12 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     'nuxt-icon',
+    '@pinia/nuxt'
   ],
+  imports: {
+    dirs: ['./stores'],
+  },
+  pinia: {
+    autoImports: ['defineStore', 'acceptHMRUpdate'],
+  },
 });
