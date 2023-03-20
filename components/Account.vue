@@ -9,30 +9,23 @@ const email = ref(props.userData.email);
 const name = ref(props.userData.name);
 const website = ref(props.userData.website);
 const picture = ref(props.userData.picture);
+const editingMode = ref(false);
 </script>
 
 <template>
-  <div class="prose">
-    <h1>Account Info</h1>
-    <div class="grid grid-flow-col gap-4">
-      <div>
-        <h3>Avatar</h3>
-        <img :src="picture" />
-      </div>
-      <div>
-        <h3>Email</h3>
-        <p>{{ email }}</p>
-      </div>
-      <div>
-        <h3>Username</h3>
-        <p>{{ name }}</p>
-      </div>
-      <div v-if="website">
-        <h3>Website</h3>
-        <p>{{ website }}</p>
-      </div>
+  <div>
+    <div class="prose">
+      <h1>Account Info</h1>
     </div>
-    <div class="flex flex-col items-center">
+    <EditAccountDetails :cancel="() => editingMode = !editingMode" v-if="editingMode" :email="email" :name="name"
+      :website="website" :picture="picture" />
+    <DisplayAccountDetails v-else :email="email" :name="name" :website="website" :picture="picture" />
+    <div v-if="!editingMode" class="flex flex-row gap-4 items-center justify-center">
+      <div class="p-4">
+        <button class="btn btn-primary btn-wide" @click="() => editingMode = !editingMode">{{ editingMode ? 'Cancel' :
+          'Edit'
+        }}</button>
+      </div>
       <SignOutButton />
     </div>
   </div>
