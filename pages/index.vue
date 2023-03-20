@@ -2,6 +2,9 @@
 useHead({
   title: "Medical Transport Services - Reliable and Convenient"
 });
+definePageMeta({
+  middleware: 'direct-user'
+});
 const breadcrumbs = [
   { text: 'Home', url: '/' },
   { text: 'How It Works', url: '#how-it-works' },
