@@ -1,0 +1,71 @@
+<template>
+  <form @submit="updateAccount" class="grid grid-flow-col gap-4 prose">
+    <div class="form-group">
+      <label for="picture">Avatar</label>
+      <input type="text" name="picture" id="picture" :value="picture">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="text" name="email" id="email" :value="email">
+    </div>
+    <div class="form-group">
+      <label for="name">Username</label>
+      <input type="text" name="name" id="name" :value="name">
+    </div>
+    <div class="form-group">
+      <label for="website">Website</label>
+      <input type="text" name="website" id="website" :value="website">
+    </div>
+  </form>
+  <div class="flex flex-row gap-4 items-center justify-center">
+    <button @click="() => cancel()" type="button" class="btn btn-secondary btn-wide m-4">Cancel</button>
+    <button type="submit" class="btn btn-primary btn-wide m-4">Save</button>
+  </div>
+</template>
+  
+
+
+<script setup lang="ts">
+defineProps({
+  email: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  website: {
+    type: String,
+    required: false,
+  },
+  picture: {
+    type: String,
+    required: true,
+  },
+  cancel: {
+    type: Function,
+    required: true,
+  },
+});
+
+const updateAccount = async () => {
+  const supabase = useSupabaseClient();
+  // const { data, error } = await supabase
+  //   .from('profiles')
+  //   .update({ name, website, picture })
+  //   .match({ id: user.id });
+  // if (error) {
+  //   console.error(error);
+  // }
+  // if (data) {
+  //   console.log(data);
+  // }
+};
+</script>
+
+<style scoped>
+input {
+  color: black;
+}
+</style>
