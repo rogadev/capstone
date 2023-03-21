@@ -7,7 +7,7 @@
   </li>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const colorMode = useColorMode();
 const toggleColorMode = () => {
   colorMode.value = colorMode.value === 'light' ? 'dark' : 'light';
