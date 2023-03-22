@@ -19,4 +19,7 @@ export default defineNuxtConfig({
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
+  runtimeConfig: {
+    gptApiKey: process.env.GPT_API_KEY,
+  },
 });
