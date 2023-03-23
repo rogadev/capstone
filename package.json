@@ -24,7 +24,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.4.7",
     "@supabase/supabase-js": "^2.12.1",
-    "daisyui": "^2.51.4",
+    "daisyui": "^2.51.5",
     "openai": "^3.2.1",
     "pinia": "^2.0.33",
     "superjson": "^1.12.2",
