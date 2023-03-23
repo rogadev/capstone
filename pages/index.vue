@@ -13,7 +13,7 @@ const breadcrumbs = [
 const user = useSupabaseUser();
 watchEffect(() => {
   if (user.value) {
-    router.push('/dashboard');
+    navigateTo('/dashboard');
   }
 });
 </script>
