@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient();
-
 const loading = ref(false);
+const { BaseUrl } = useRuntimeConfig();
 
 const handleGoogleLogin = async () => {
   try {
@@ -9,7 +9,7 @@ const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/dashboard'
+        redirectTo: `${BaseUrl}/auth/callback}`
       }
     });
     if (error) throw error;
