@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-  title: "Medical Transport Services - Reliable and Convenient"
+  title: "Medical Transport Services - Reliable and Convenient",
 });
 
 const breadcrumbs = [
@@ -10,9 +10,9 @@ const breadcrumbs = [
   { text: 'Contact Us', url: '#contact' },
 ];
 
-onMounted(async () => {
-  const { data } = await useSupabaseAuthClient().auth.getUser();
-  if (data?.user) {
+const user = useSupabaseUser();
+watchEffect(() => {
+  if (user.value !== null) {
     navigateTo('/dashboard');
   }
 });
