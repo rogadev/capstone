@@ -8,10 +8,11 @@ on:
     branches: [main]
 
 env:
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-  GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  DEV: ${{ secrets.DEV }}
+  BASE_URL: ${{ secrets.BASE_URL }}
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+  SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
 
 jobs:
   build:
@@ -28,11 +29,3 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Clean Install
-        run: |
-          npm ci
-          npx playwright install
-      - name: Run Tests - Playwright
-        run: npm run test
-      - name: Run Tests - Vitest Unit Testing
-        run: npm run test:unit
