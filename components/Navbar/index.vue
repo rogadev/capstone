@@ -1,7 +1,7 @@
 <template>
   <nav class="bg-base-200 p-4 sticky top-0 z-10">
     <ul class="flex justify-around">
-      <HomeButton />
+      <NavbarHomeButton />
       <NavbarLink to="/#how-it-works" icon="ic:baseline-contact-support" text="How It Works" :showIf="!user" />
       <NavbarLink to="/#fees" icon="ic:baseline-attach-money" text="Fees" :showIf="!user" />
       <NavbarLink to="/#contact" icon="ic:baseline-contact-support" text="Contact Us" :showIf="!user" />
