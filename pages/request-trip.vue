@@ -43,6 +43,9 @@
 </template>
 
 <script setup>
+useHead({
+  title: "Request Trip - Roga Medical Transport Services"
+});
 const handleSubmit = () => {
   console.log('submitting form');
 };
