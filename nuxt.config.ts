@@ -20,6 +20,6 @@ export default defineNuxtConfig({
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
   runtimeConfig: {
-    gptApiKey: process.env.GPT_API_KEY,
+    BaseURL: process.env.BASE_URL,
   },
 });
