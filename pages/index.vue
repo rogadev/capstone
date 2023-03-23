@@ -10,10 +10,10 @@ const breadcrumbs = [
   { text: 'Contact Us', url: '#contact' },
 ];
 
-onMounted(async () => {
-  const { data } = await useSupabaseAuthClient().auth.getUser();
-  if (data?.user) {
-    navigateTo('/dashboard');
+const user = useSupabaseUser();
+watchEffect(() => {
+  if (user.value) {
+    router.push('/dashboard');
   }
 });
 </script>
