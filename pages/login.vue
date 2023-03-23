@@ -5,7 +5,7 @@ try {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${BaseUrl}/auth/callback}`
+      redirectTo: `${BaseUrl}/auth/callback`
     }
   });
   if (error) throw error;

@@ -9,6 +9,13 @@ const breadcrumbs = [
   { text: 'Fees', url: '#fees' },
   { text: 'Contact Us', url: '#contact' },
 ];
+
+onMounted(async () => {
+  const { data } = await useSupabaseAuthClient().auth.getUser();
+  if (data?.user) {
+    navigateTo('/dashboard');
+  }
+});
 </script>
 
 <template>
