@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+const { BaseUrl } = useRuntimeConfig();
 try {
   const supabase = useSupabaseClient();
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'http://localhost:3000/dashboard'
+      redirectTo: `${BaseUrl}/auth/callback}`
     }
   });
   if (error) throw error;
