@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'driver',
-  // middleware: 'auth-guard'
+  middleware: 'auth'
 });
 useHead({
   title: 'Driver Dashboard',
