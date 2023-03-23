@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 definePageMeta({
   layout: 'driver',
-  middleware: 'auth-guard',
+  middleware: 'auth',
 });
 useHead({
   title: 'New Trip',
