@@ -10,16 +10,16 @@
     </header>
     <div class="mx-4 md:mx-0 mt-6">
       <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:justify-between">
-        <ButtonLink to="/trips" classes="btn-primary btn-wide">
-          <span class="flex items-center gap-4">
-            <Icon name="bx:trip" classes="w-5 h-5 mr-2" />
-            Trips
-          </span>
-        </ButtonLink>
         <ButtonLink to="/trips/new" classes="btn-primary btn-wide">
           <span class="flex items-center gap-4">
             <Icon name="material-symbols:add-circle-outline-rounded" classes="w-5 h-5 mr-2" />
             Add Trips
+          </span>
+        </ButtonLink>
+        <ButtonLink to="/trips" classes="btn-primary btn-wide">
+          <span class="flex items-center gap-4">
+            <Icon name="bx:trip" classes="w-5 h-5 mr-2" />
+            Trips
           </span>
         </ButtonLink>
       </div>
