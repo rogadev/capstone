@@ -15,6 +15,6 @@ const user = useSupabaseUser();
   -->
 
 <template>
-  <DashboardTabs v-if="user" :user="user" />
+  <Dashboard v-if="user" :user="user" />
   <Auth v-else />
 </template>
