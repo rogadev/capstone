@@ -23,6 +23,7 @@ model Trips {
   id                    Int       @id @default(autoincrement()) @unique
   createdAt             DateTime  @default(now())
   updatedAt             String?
+  confirmed             Boolean   @default(false)
   date                  String
   pickupTime            String
   passengerName         String
