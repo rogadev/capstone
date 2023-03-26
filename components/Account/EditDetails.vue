@@ -52,7 +52,7 @@ defineProps({
 });
 
 const updateAccount = async () => {
-  const supabase = useSupabaseClient();
+  // const supabase = useSupabaseClient();
   // TODO Update user data.
   // const { data, error } = await supabase
   //   .from('profiles')

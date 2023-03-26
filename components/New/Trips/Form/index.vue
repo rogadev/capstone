@@ -4,6 +4,11 @@
       <div class="input-group-lg">
         <label for="prompt" class="text-3xl font-bold">Trip List</label>
         <p>Copy and paste your list of trips from email into the text area below.</p>
+        <div class="flex flex-row gap-16 items-baseline mb-4">
+          <label for="date">Trip Date <small>(tomorrow by default):</small></label>
+          <input v-model="date" type="date" name="date" id="date" class="input" :disabled="generated || generating"
+            :class="generated || generating ? 'disabled input-disabled' : 'input-sm input-accent'">
+        </div>
         <textarea autocomplete="off" v-model="prompt" name="prompt" id="prompt" class="w-full textarea"
           :class="generated || generating ? 'textarea-disabled text-gray-500' : 'text-white'" rows="10"></textarea>
       </div>
@@ -14,30 +19,30 @@
         </button>
       </div>
     </form>
-    <div class="font-semibold text-red-600 dark:text-red-500" v-if="error !== ''">
-      {{ error }}
+    <div class="font-semibold text-red-600 dark:text-red-500" v-if="errorMessage !== ''">
+      {{ errorMessage }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  handleSubmit: {
-    type: Function as PropType<(e: Event) => void>,
-    required: true,
-  },
-  generated: {
-    type: Boolean as PropType<boolean>,
-    required: true,
-  },
-  generating: {
-    type: Boolean as PropType<boolean>,
-    required: true,
-  },
-  error: {
-    type: String as PropType<string>,
-    required: true,
-  },
-});
+const date = ref(new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+const generated = ref(false);
+const generating = ref(false);
+const errorMessage = ref('');
 const prompt = ref('');
+
+const handleSubmit = async (e: Event) => {
+  e.preventDefault();
+  const { generateTrips } = useTripsStore();
+  errorMessage.value = '';
+  generating.value = true;
+  const { data, error } = await generateTrips(prompt.value, date.value);
+  if (error) {
+    errorMessage.value = error;
+  } else {
+    generated.value = true;
+  }
+  generating.value = false;
+};
 </script>

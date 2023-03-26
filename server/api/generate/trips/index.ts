@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
   const messages = [{
     role: "system", content: `You are an AI language model that converts text input to JSON data output. Each user provided input will be a text describing one or more trips. Your task is to parse the trips and return them as a formatted JSON array of objects. Even if there's only one trip you must always return an array of the JSON object(s). All time values need to be converted from am/pm into the 24-hour format HH:MM (examples: "8:15 pm" becomes "20:15" and "6:00 am" becomes "06:00"). Ensure that each trip object has the following properties, formatted accordingly:
 
+      date: A string representing the date of the trip in the format "YYYY-MM-DD".
       pickup_time: A string representing the time to arrive at the pickup location in 24-hour format "HH:MM".
       passenger_name: A string containing the passenger's name.
       passenger_phone: A string containing the passenger's phone number in the format "###-###-####".

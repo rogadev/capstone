@@ -19,22 +19,47 @@ model Preference {
   colorMode             ColorMode   @default(dark)
 }
 
-model Trip {
-  id                    Int       @id @default(autoincrement())
+model Trips {
+  id                    Int       @id @default(autoincrement()) @unique
   createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  date                  DateTime
+  updatedAt             String?
+  date                  String
   pickupTime            String
   passengerName         String
   passengerPhone        String
-  pickupAddressName     String
+  pickupAddressName     String?
   pickupAddressUnit     String?
   pickupAddressStreet   String
   pickupAddressCity     String
-  dropOffAddressName    String
+  dropOffAddressName    String?
   dropOffAddressUnit    String?
   dropOffAddressStreet  String
   dropOffAddressCity    String
   dropOffTime           String?
   notes                 String?
+  closed                Boolean    @default(false)
+
+  CompletionNotes       CompletionNotes[]
+  CancelationNotes      CancelationNotes[]
+}
+
+model CompletionNotes {
+  id                    Int       @id @default(autoincrement()) @unique
+  createdAt             DateTime  @default(now())
+  updatedAt             String?
+  tripId                Int
+  notes                 String?
+
+  Trips                 Trips     @relation(fields: [tripId], references: [id])
+}
+
+model CancelationNotes {
+  id                    Int       @id @default(autoincrement()) @unique
+  createdAt             DateTime  @default(now())
+  updatedAt             String?
+  tripId                Int
+  cancelationType       String
+  notes                 String?
+
+  Trips                 Trips     @relation(fields: [tripId], references: [id])
 }

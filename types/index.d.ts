@@ -13,6 +13,7 @@ declare global {
   };
 
   type GeneratedTrip = {
+    date: string;
     pickup_time: string;
     passenger_name: string;
     passenger_phone: string;
