@@ -31,5 +31,8 @@
     "pinia": "^2.0.33",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
