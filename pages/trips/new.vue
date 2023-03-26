@@ -3,6 +3,10 @@
     <Auth v-if="!user" />
     <div v-else class="container px-4 md:px-0">
       <NewTripsForm :handleSubmit="generateTrips" :generated="generated" :generating="generating" :error="error" />
+      <div class="flex flex-row gap-16 items-baseline">
+        <h3>Trip Date <small>(tomorrow by default):</small></h3>
+        <input v-model="tripDate" type="date" name="date" id="date" class="input input-sm input-accent">
+      </div>
       <div v-if="trips.length > 0">
         <div v-for="(trip, index) in trips">
           <NewTripForm :showTrip="!submittedTripIds.has(index)" :trip="trip" :index="index"
@@ -27,6 +31,7 @@ const submittedTripIds: Ref<Set<number>> = ref(new Set());
 const generated = ref(false);
 const generating = ref(false);
 const error = ref('');
+const tripDate = ref(new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
 
 async function generateTrips(e: Event) {
   e.preventDefault();
@@ -84,7 +89,7 @@ async function submitNewTrip(e: Event) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(trip),
+      body: JSON.stringify({ trip, date: tripDate.value }),
     });
     if (response.status === 200) {
       // console.log('success');
