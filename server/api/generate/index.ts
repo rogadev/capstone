@@ -1,16 +1,18 @@
 import { Configuration, OpenAIApi } from "openai";
 
 export default defineEventHandler(async (event) => {
+  const startTime = Date.now();
+  console.log("'/api/generate'\tGenerating Trips...");
+
+  const model = "gpt-3.5-turbo";
+  const { OpenAI_API_KEY } = useRuntimeConfig();
+
   const body = await readBody(event);
   const input = body.prompt.trim();
-  const model = "gpt-3.5-turbo";
-
-  const { OpenAI_API_KEY } = useRuntimeConfig();
 
   const configuration = new Configuration({
     apiKey: OpenAI_API_KEY,
   });
-
   const openai = new OpenAIApi(configuration);
 
   const messages = [{
@@ -57,5 +59,14 @@ export default defineEventHandler(async (event) => {
   const end = content.lastIndexOf("]") + 1;
   const json = content.substring(start, end);
   const data = JSON.parse(json);
+  const duration = Date.now() - startTime;
+  const minutes = Math.floor(duration / 60000);
+  const seconds = ((duration % 60000) / 1000).toFixed(0);
+  const milliseconds = duration % 1000;
+
+  // format the duration as a string in the format XX:XX:XXX
+  const durationString = `${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s ${milliseconds.toString().padStart(3, '0')}ms`;
+
+  console.log(`'/api/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${durationString}`);
   return data;
 });
