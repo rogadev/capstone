@@ -5,13 +5,13 @@ export default defineEventHandler(async (event) => {
   console.log("'/api/generate'\tGenerating Trips...");
 
   const model = "gpt-3.5-turbo";
-  const { OpenAI_API_KEY } = useRuntimeConfig();
+  const { OPENAI_API_KEY } = useRuntimeConfig();
 
   const body = await readBody(event);
   const input = body.prompt.trim();
 
   const configuration = new Configuration({
-    apiKey: OpenAI_API_KEY,
+    apiKey: OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
 
