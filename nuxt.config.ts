@@ -20,8 +20,8 @@ export default defineNuxtConfig({
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
   runtimeConfig: {
-    BaseURL: process.env.BASE_URL,
-    OpenAI_API_KEY: process.env.OPENAI_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
+    BASE_URL: process.env.BASE_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
 });
