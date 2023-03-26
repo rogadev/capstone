@@ -1,0 +1,37 @@
+datasource db {
+  provider          = "postgresql"
+  url               = "postgres://postgres:Sfi0A4p03mKMJ3l7@db.rrvrwuggttedpzhopbop.supabase.co:6543/postgres"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
+
+model Trip {
+  id                    Int       @id @default(autoincrement())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  date                  DateTime
+  userId                String
+  pickupTime            String
+  passengerName         String
+  passengerPhone        String
+  pickupAddressName     String
+  pickupAddressUnit     String?
+  pickupAddressStreet   String
+  pickupAddressCity     String
+  dropOffAddressName    String
+  dropOffAddressUnit    String?
+  dropOffAddressStreet  String
+  dropOffAddressCity    String
+  dropOffTime           String?
+  notes                 String?
+}
