@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container m-4">
     <Auth v-if="!user" />
     <div v-else class="container px-4 md:px-0">
       <NewTripsForm :handleSubmit="generateTrips" :generated="generated" :generating="generating" :error="error" />
@@ -22,7 +22,7 @@ useHead({
   title: 'Add New Trip',
 });
 const user = useSupabaseUser();
-const trips: Ref<Trip[]> = ref([]);
+const trips: Ref<GeneratedTrip[]> = ref([]);
 const submittedTripIds: Ref<Set<number>> = ref(new Set());
 const generated = ref(false);
 const generating = ref(false);
@@ -62,7 +62,7 @@ async function submitNewTrip(e: Event) {
   e.preventDefault();
   const formData = new FormData(e.target as HTMLFormElement);
   const index = Number.parseInt(formData.get('index') as string);
-  const trip: Trip = {
+  const trip: GeneratedTrip = {
     pickup_time: formData.get('pickup_time') as string,
     passenger_name: formData.get('passenger_name') as string,
     passenger_phone: formData.get('passenger_phone') as string,
