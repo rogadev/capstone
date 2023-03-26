@@ -63,7 +63,7 @@ const handleFormatArrivalTime = () => {
 };
 
 const handleSubmit = () => {
-  console.log('Handling Form Submit');
+  // console.log('Handling Form Submit');
 };
 
 const handleCancel = () => {

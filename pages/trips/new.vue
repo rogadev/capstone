@@ -87,7 +87,7 @@ async function submitNewTrip(e: Event) {
       body: JSON.stringify(trip),
     });
     if (response.status === 200) {
-      console.log('success');
+      // console.log('success');
       submittedTripIds.value.add(index);
     }
   } catch (e) {
