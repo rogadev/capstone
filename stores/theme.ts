@@ -1,19 +1,22 @@
 export const useThemeStore = defineStore('theme', () => {
-  const colorMode = useColorMode();
-  const mode = ref<'light' | 'dark'>(colorMode.value === 'light' ? 'light' : 'dark');
-  const theme = ref<'dracula' | 'light'>(mode.value === 'light' ? 'light' : 'dracula');
+  const mode: Ref<'dark' | 'light'> = ref('dark');
   const darkMode = computed(() => mode.value === 'dark');
 
-  const toggleTheme = () => {
-    mode.value = mode.value === 'light' ? 'dark' : 'light';
-    theme.value = mode.value === 'light' ? 'light' : 'dracula';
+  const updateTheme = () => {
     useHead({
       htmlAttrs: {
+        "data-theme": mode.value === 'dark' ? 'dracula' : 'light',
         class: mode.value,
-        "data-theme": theme.value
       },
     });
   };
 
-  return { mode, theme, darkMode, toggleTheme };
+  updateTheme();
+
+  const toggleTheme = () => {
+    mode.value = mode.value === 'dark' ? 'light' : 'dark';
+    updateTheme();
+  };
+
+  return { darkMode, toggleTheme, updateTheme };
 });

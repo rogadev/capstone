@@ -24,4 +24,9 @@ export default defineNuxtConfig({
     BASE_URL: process.env.BASE_URL,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    classSuffix: '',
+  },
 });
