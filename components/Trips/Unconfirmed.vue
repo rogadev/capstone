@@ -80,7 +80,7 @@ onMounted(async () => {
     console.log(error);
   } else {
     console.log('got trips');
-    const sorted = data.sort((a, b) => {
+    const sorted = data.sort((a: Trips, b: Trips) => {
       const hourA = a.pickupTime.split(':')[0];
       const hourB = b.pickupTime.split(':')[0];
       const minuteA = a.pickupTime.split(':')[1];
