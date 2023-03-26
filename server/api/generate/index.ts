@@ -51,7 +51,6 @@ export default defineEventHandler(async (event) => {
   });
 
   const content = completion.data.choices[0].message?.content;
-  console.log(content);
   if (!content) throw createError(500, "No content returned from OpenAI 🤷");
   // extract json from the content, because it could include regular text, even though we specified json in the prompt
   const start = content.indexOf("[");
