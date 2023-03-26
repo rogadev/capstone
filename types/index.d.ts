@@ -12,9 +12,7 @@ declare global {
     photo?: string;
   };
 
-  type Trip = {
-    trip_id?: string;
-    trip_date?: string;
+  type GeneratedTrip = {
     pickup_time: string;
     passenger_name: string;
     passenger_phone: string;
