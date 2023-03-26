@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const openai = new OpenAIApi(configuration);
 
   const messages = [{
-    role: "system", content: `You are an AI language model that converts text input to JSON data output. The input will be a string of text describing one or more trips. Your task is to parse the trips and return them as a JSON array of objects, even if there's only one trip. Each trip object should have the following properties:
+    role: "system", content: `You are an AI language model that converts text input to JSON data output. Each user provided input will be a text describing one or more trips. Your task is to parse the trips and return them as a formatted JSON array of objects. Even if there's only one trip you must always return an array of the JSON object(s). All time values need to be converted from am/pm into the 24-hour format HH:MM (examples: "8:15 pm" becomes "20:15" and "6:00 am" becomes "06:00"). Ensure that each trip object has the following properties, formatted accordingly:
 
       pickup_time: A string representing the time to arrive at the pickup location in 24-hour format "HH:MM".
       passenger_name: A string containing the passenger's name.
@@ -29,14 +29,19 @@ export default defineEventHandler(async (event) => {
       drop_off_location_city: A string for the city of the drop-off location address.
       drop_off_time: A string for the start time of the passenger's appointment in 24-hour format "HH:MM" or an empty string if there is no appointment start time.
       notes: A string for any additional notes about the trip or an empty string if there are no additional notes. Notes may include information about the passenger's mobility aids, directions to find locations, or other helpful details for the driver.
-      In some cases, the pickup or drop-off location might be abbreviated as "NRGH", "Community Dialysis", or "Nanaimo Dialysis". Please substitute these abbreviations with the following addresses:
 
-      NRGH: 1200 Dufferin Crescent, Nanaimo
-      Community Dialysis: 1351 Estevan Rd, Nanaimo
-      Nanaimo Dialysis: 1351 Estevan Rd, Nanaimo
-      Parse the input text and return a JSON array of trip objects with the specified properties, ensuring the response is always inside a JSON array, even for a single trip.
-      
-      Do not respond with anything other than valid JSON.` },
+    Please expand the following locations to include the full address:
+
+    "NRGH"
+      location name: NRGH
+      location address: 1200 Dufferin Crescent
+      location city: Nanaimo
+
+    "Nanaimo Dialysis" or "Community Dialysis"
+      location name: Nanaimo Dialysis
+      location address: 1351 Estevan Rd
+      location city: Nanaimo`
+  },
   { role: "user", content: input }
   ];
 
