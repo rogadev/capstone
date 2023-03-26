@@ -21,5 +21,6 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     BaseURL: process.env.BASE_URL,
+    OpenAI_API_KEY: process.env.OPENAI_API_KEY,
   },
 });
