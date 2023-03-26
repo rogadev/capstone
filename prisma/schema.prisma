@@ -1,24 +1,28 @@
 datasource db {
   provider          = "postgresql"
-  url               = "postgres://postgres:Sfi0A4p03mKMJ3l7@db.rrvrwuggttedpzhopbop.supabase.co:6543/postgres"
+  url               = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
+enum ColorMode {
+  light
+  dark
+}
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Preference {
+  id                    Int         @id @default(autoincrement())
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  colorMode             ColorMode   @default(dark)
 }
 
 model Trip {
   id                    Int       @id @default(autoincrement())
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-
   date                  DateTime
   userId                String
   pickupTime            String
