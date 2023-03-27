@@ -19,7 +19,6 @@ async function fetchTrips() {
   if (error) {
     console.log(error);
   } else {
-    console.log('got trips');
     const sorted = data.sort((a: Trips, b: Trips) => {
       const hourA = a.pickupTime.split(':')[0];
       const hourB = b.pickupTime.split(':')[0];

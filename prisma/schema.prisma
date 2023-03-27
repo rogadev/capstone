@@ -19,7 +19,7 @@ model Preference {
   colorMode             ColorMode   @default(dark)
 }
 
-model Trips {
+model Trip {
   id                    Int       @id @default(autoincrement()) @unique
   createdAt             DateTime  @default(now())
   updatedAt             String?
@@ -40,21 +40,26 @@ model Trips {
   notes                 String?
   closed                Boolean    @default(false)
 
-  CompletionNotes       CompletionNotes[]
-  CancelationNotes      CancelationNotes[]
+  Stops                 Stop[]
+  CompletionNotes       CompletionNote[]
+  CancelationNotes      CancelationNote[]
+
+	@@map("trips")
 }
 
-model CompletionNotes {
+model CompletionNote {
   id                    Int       @id @default(autoincrement()) @unique
   createdAt             DateTime  @default(now())
   updatedAt             String?
   tripId                Int
   notes                 String?
 
-  Trips                 Trips     @relation(fields: [tripId], references: [id])
+  Trips                 Trip     @relation(fields: [tripId], references: [id])
+
+  @@map("completion_notes")
 }
 
-model CancelationNotes {
+model CancelationNote {
   id                    Int       @id @default(autoincrement()) @unique
   createdAt             DateTime  @default(now())
   updatedAt             String?
@@ -62,5 +67,28 @@ model CancelationNotes {
   cancelationType       String
   notes                 String?
 
-  Trips                 Trips     @relation(fields: [tripId], references: [id])
+  Trips                 Trip     @relation(fields: [tripId], references: [id])
+
+  @@map("cancelation_notes")
+}
+
+model Stop {
+  // PK
+  id                    Int       @id @default(autoincrement()) @unique
+  // FK
+  tripId                Int
+  // System
+  createdAt             DateTime  @default(now())
+  updatedAt             String?
+  // Data
+  stopAddressName       String?
+  stopAddressUnit       String?
+  stopAddressStreet     String
+  stopAddressCity       String
+  arrivalTime           String
+  departureTime         String
+  notes                 String?
+  // Relations
+  Trips                 Trip     @relation(fields: [tripId], references: [id])
+  @@map("stops")
 }
