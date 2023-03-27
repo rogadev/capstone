@@ -1,19 +1,19 @@
 <template>
   <div>
-    <button @click="() => showModal = true">Show Modal</button>
-    <CancelTripModal v-if="showModal" :cancelCloseModal="cancelCloseModal" :confirmCloseModal="confirmCloseModal" />
+    <button @click="action" class="btn btn-primary">Action</button>
   </div>
 </template>
 
 <script lang="ts" setup>
-const showModal = ref(false);
-
-function cancelCloseModal() {
-  showModal.value = false;
-  console.log('cancelCloseModal');
-}
-function confirmCloseModal() {
-  showModal.value = false;
-  console.log('confirmCloseModal');
+async function action() {
+  const response = await fetch('/api/distance', {
+    method: 'POST',
+    body: JSON.stringify({
+      origin: "805 Wentworth St, Nanaimo",
+      destination: 'viking way, Parksville',
+    }),
+  });
+  const data = await response.json();
+  console.log(data);
 }
 </script>
