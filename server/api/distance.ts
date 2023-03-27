@@ -7,10 +7,12 @@ export default defineEventHandler(async (event) => {
   }
   try {
     const { distance, duration } = await getDistanceAndDuration(origin, destination);
-    return { status: 200, body: { distance, duration } };
+    setResponseStatus(200);
+    return { distance, duration };
   } catch (e) {
     console.log('An error occurred getting distance and duration', e.message);
-    return { status: 500, body: e.message };
+    setResponseStatus(500);
+    return { body: e.message };
   }
 })
 
