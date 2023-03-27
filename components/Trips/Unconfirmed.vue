@@ -1,23 +1,33 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col border border-gray-400 p-4 rounded-md">
     <div v-for="trip in trips" class="mb-6 font-semibold">
-      <p>{{ trip.pickupTime }} </p>
-      <p>{{ dateFormat(trip.date) }}</p>
-      <p>{{ trip.passengerName }} <a class="link hover:link-hover link-secondary" :href="'tel:' + trip.passengerPhone">{{
-        trip.passengerPhone }}</a></p>
-      <p>
-        From: <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
-          :href="formatPickupMapLink(trip.pickupAddressStreet + ', ' + trip.pickupAddressCity)">
-          {{ trip.pickupAddressStreet }}, {{ trip.pickupAddressCity }}</a>
-      </p>
-      <p>
-        To: <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
-          :href="formatDropOffMapLink(trip.pickupAddressStreet, trip.pickupAddressCity, trip.dropOffAddressStreet, trip.dropOffAddressCity)">
-          {{ trip.dropOffAddressStreet }}, {{ trip.dropOffAddressCity }}</a>
-      </p>
-      <p v-if="trip.dropOffTime && trip.dropOffTime !== ''">
+      <div class="flex flex-col justify-center sm:flex-row sm:justify-between text-center">
+        <div>{{ trip.pickupTime }} </div>
+        <div>{{ dateFormat(trip.date) }}</div>
+        <div class="text-center">{{ trip.passengerName }} <a class="link hover:link-hover link-secondary"
+            :href="'tel:' + trip.passengerPhone">{{
+              trip.passengerPhone }}</a></div>
+      </div>
+      <div class="flex flex-col items-center justify-center sm:flex-row sm:justify-between">
+        <div class="text-center sm:text-left">
+          <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
+            :href="formatPickupMapLink(trip.pickupAddressStreet + ', ' + trip.pickupAddressCity)">
+            {{ trip.pickupAddressStreet }}, {{ trip.pickupAddressCity }}
+          </a>
+        </div>
+        <div>
+          <Icon name="circum:route" class="w-6 h-6" />
+        </div>
+        <div class="text-center sm:text-right">
+          <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
+            :href="formatDropOffMapLink(trip.pickupAddressStreet, trip.pickupAddressCity, trip.dropOffAddressStreet, trip.dropOffAddressCity)">
+            {{ trip.dropOffAddressStreet }}, {{ trip.dropOffAddressCity }}
+          </a>
+        </div>
+      </div>
+      <div class="text-center sm:text-right text-accent font-semibold" v-if="trip.dropOffTime && trip.dropOffTime !== ''">
         Appointment Time: {{ trip.dropOffTime }}
-      </p>
+      </div>
 
       <div class="flex flex-row gap-6 justify-evenly items-center my-4">
         <button class="btn w-[100px] btn-error">Cancel</button>
@@ -30,10 +40,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Trips } from '@prisma/client';
+import type { Trip } from '@prisma/client';
+
 const supabase = useSupabaseClient();
-const trips: Ref<Trips[]> = ref([]);
-const dateFormat = (date: string) => {
+const trips: Ref<Trip[]> = ref([]);
+const dateFormat = (date: Date | string) => {
   return Intl.DateTimeFormat('us-en', {
     weekday: 'long',
     month: 'long',
@@ -80,7 +91,7 @@ onMounted(async () => {
     console.log(error);
   } else {
     console.log('got trips');
-    const sorted = data.sort((a: Trips, b: Trips) => {
+    const sorted = data.sort((a: Trip, b: Trip) => {
       const hourA = a.pickupTime.split(':')[0];
       const hourB = b.pickupTime.split(':')[0];
       const minuteA = a.pickupTime.split(':')[1];
