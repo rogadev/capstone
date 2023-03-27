@@ -13,7 +13,7 @@ useHead({
   <div class="container">
     <div class="flex flex-col justify-center items-center m-4 mb-8">
       <ButtonLink to="/trips/new" class="btn btn-primary btn-wide">
-        New Trip
+        Add Trips
       </ButtonLink>
     </div>
     <!-- Unconfirmed Trips -->

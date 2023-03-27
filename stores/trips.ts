@@ -12,7 +12,7 @@ export const useTripsStore = defineStore('trips', () => {
     } else {
       // GENERATE TRIPS
       try {
-        const result = await fetch('/api/generate/trips', {
+        const result = await fetch('/api/trips/generate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

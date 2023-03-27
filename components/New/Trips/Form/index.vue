@@ -10,7 +10,8 @@
             :class="generated || generating ? 'disabled input-disabled' : 'input-sm input-accent'">
         </div>
         <textarea autocomplete="off" v-model="prompt" name="prompt" id="prompt" class="w-full textarea"
-          :class="generated || generating ? 'textarea-disabled text-gray-500' : 'text-white'" rows="10"></textarea>
+          :class="generated || generating ? 'textarea-disabled text-gray-500' : 'text-white input-accent'"
+          rows="10"></textarea>
       </div>
       <div class="flex flex-row-reverse">
         <button type="submit" class="btn"

@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 async function action() {
-  const response = await fetch('/api/distance', {
+  const response = await fetch('/api/maps/metrics', {
     method: 'POST',
     body: JSON.stringify({
       origin: "805 Wentworth St, Nanaimo",

@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 
 export default defineEventHandler(async (event) => {
   const startTime = Date.now();
-  console.log("'/api/generate'\tGenerating Trips...");
+  console.log("'/api/trips/generate'\tGenerating Trips...");
 
   const model = "gpt-3.5-turbo";
   const { OPENAI_API_KEY } = useRuntimeConfig();
@@ -68,6 +68,6 @@ export default defineEventHandler(async (event) => {
   // format the duration as a string in the format XX:XX:XXX
   const durationString = `${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s ${milliseconds.toString().padStart(3, '0')}ms`;
 
-  console.log(`'/api/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${durationString}`);
+  console.log(`'/api/trips/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${durationString}`);
   return data;
 });
