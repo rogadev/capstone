@@ -17,6 +17,15 @@ enum StopType {
   dropoff
 }
 
+enum StopStatus {
+  scheduled
+  enroute
+  arrived
+  departed
+  completed
+  canceled
+}
+
 model Preference {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
@@ -60,7 +69,7 @@ model CompletionNote {
   createdAt DateTime @default(now())
   updatedAt String?
   notes     String?
-  Trips Trip @relation(fields: [tripId], references: [id])
+  Trips     Trip     @relation(fields: [tripId], references: [id])
 
   @@map("completion_notes")
 }
@@ -72,32 +81,33 @@ model CancelationNote {
   updatedAt       String?
   cancelationType String
   notes           String?
-  Trips Trip @relation(fields: [tripId], references: [id])
+  Trips           Trip     @relation(fields: [tripId], references: [id])
 
   @@map("cancelation_notes")
 }
 
 model Stop {
   // PK
-  id            Int      @id @unique @default(autoincrement())
+  id            Int        @id @unique @default(autoincrement())
   // FK
   tripId        Int
   // System
-  createdAt     DateTime @default(now())
+  createdAt     DateTime   @default(now())
   updatedAt     String?
   // Data
   date          String
-  type          StopType
   passenger     String
-  name          String?
-  unit          String?
   street        String
   city          String
   arrivalTime   Int
   departureTime Int
+  name          String?
+  unit          String?
   notes         String?
+  type          StopType
+  status        String     @default("scheduled")
   // Relations
-  Trips         Trip     @relation(fields: [tripId], references: [id])
+  Trips         Trip       @relation(fields: [tripId], references: [id])
 
   @@map("stops")
 }
