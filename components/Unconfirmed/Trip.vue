@@ -36,7 +36,7 @@
 
 <script lang="ts" setup>
 import type { Trip } from '@prisma/client';
-const props = defineProps({
+defineProps({
   trip: {
     type: Object as PropType<Trip>,
     required: true,
@@ -50,7 +50,8 @@ const confirmTrip = async (id: number) => {
     method: 'POST',
     body: JSON.stringify(tripId),
   });
-  if (response.status === 200) {
+  const { error, success } = await response.json();
+  if (!error && success) {
     emit('confirm', id);
   }
 };

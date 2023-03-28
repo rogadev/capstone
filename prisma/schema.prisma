@@ -86,13 +86,15 @@ model Stop {
   createdAt     DateTime @default(now())
   updatedAt     String?
   // Data
+  date          String
   type          StopType
+  passenger     String
   name          String?
   unit          String?
   street        String
   city          String
-  arrivalTime   String
-  departureTime String
+  arrivalTime   Int
+  departureTime Int
   notes         String?
   // Relations
   Trips         Trip     @relation(fields: [tripId], references: [id])
