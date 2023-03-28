@@ -38,7 +38,7 @@ const handleSubmit = async (e: Event) => {
   const { generateTrips } = useTripsStore();
   errorMessage.value = '';
   generating.value = true;
-  const { data, error } = await generateTrips(prompt.value, date.value);
+  const { error } = await generateTrips(prompt.value, date.value);
   if (error) {
     errorMessage.value = error;
   } else {

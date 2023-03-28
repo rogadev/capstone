@@ -28,4 +28,11 @@ declare global {
     drop_off_time: string;
     notes: string;
   };
+
+  type ChatMessage = {
+    role: "system" | "user" | "assistant",
+    message: string;
+  };
+
+  type ChatConversation = ChatMessage[];
 }

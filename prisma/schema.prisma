@@ -56,11 +56,10 @@ model Trip {
 
 model CompletionNote {
   id        Int      @id @unique @default(autoincrement())
+  tripId    Int
   createdAt DateTime @default(now())
   updatedAt String?
-  tripId    Int
   notes     String?
-
   Trips Trip @relation(fields: [tripId], references: [id])
 
   @@map("completion_notes")
@@ -68,12 +67,11 @@ model CompletionNote {
 
 model CancelationNote {
   id              Int      @id @unique @default(autoincrement())
+  tripId          Int
   createdAt       DateTime @default(now())
   updatedAt       String?
-  tripId          Int
   cancelationType String
   notes           String?
-
   Trips Trip @relation(fields: [tripId], references: [id])
 
   @@map("cancelation_notes")
