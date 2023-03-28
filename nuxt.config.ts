@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
   runtimeConfig: {
+    DEV: process.env.DEV,
     DATABASE_URL: process.env.DATABASE_URL,
     BASE_URL: process.env.BASE_URL,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,

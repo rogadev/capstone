@@ -35,23 +35,20 @@
 </template>
 
 <script lang="ts" setup>
-import type { Trips } from '@prisma/client';
+import type { Trip } from '@prisma/client';
 const props = defineProps({
   trip: {
-    type: Object as PropType<Trips>,
+    type: Object as PropType<Trip>,
     required: true,
   },
 });
 const emit = defineEmits(['confirm']);
 
 const confirmTrip = async (id: number) => {
-  const trip = {
-    id,
-    confirmed: true,
-  };
+  const tripId = id;
   const response = await fetch('/api/trips/confirm', {
     method: 'POST',
-    body: JSON.stringify(trip),
+    body: JSON.stringify(tripId),
   });
   if (response.status === 200) {
     emit('confirm', id);

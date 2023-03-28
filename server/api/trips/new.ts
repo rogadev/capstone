@@ -5,16 +5,12 @@ export default defineEventHandler(async (event) => {
   if (!trip) {
     return { status: 400, body: 'Request was missing trip details' };
   }
-  console.log(trip);
   try {
-    const { error, data } = await supabase.from('Trips').insert(trip);
-    if (error) {
-      return { status: 500, body: error.message };
-    }
+    const { error, data } = await supabase.from('trips').insert(trip);
+    if (error) throw error;
     return { status: 200, body: data };
   } catch (e) {
     return { status: 500, body: e.message };
   }
-
   return {};
 });

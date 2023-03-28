@@ -166,7 +166,7 @@ const handleSubmit = async (e: Event) => {
     notes: notes.value,
   };
   submitting.value = true;
-  const response = await fetch(`/api/new/trip`, {
+  const response = await fetch(`/api/trips/new`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

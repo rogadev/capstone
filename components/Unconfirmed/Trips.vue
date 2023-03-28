@@ -5,21 +5,21 @@
 </template>
 
 <script lang="ts" setup>
-import type { Trips } from '@prisma/client';
+import type { Trip } from '@prisma/client';
 
 const supabase = useSupabaseClient();
-const unconfirmedTrips: Ref<Trips[]> = ref([]);
+const unconfirmedTrips: Ref<Trip[]> = ref([]);
 
 async function fetchTrips() {
   const { data, error } = await supabase
-    .from('Trips')
+    .from('trips')
     .select('*')
     .eq('confirmed', false);
 
   if (error) {
     console.log(error);
   } else {
-    const sorted = data.sort((a: Trips, b: Trips) => {
+    const sorted = data.sort((a: Trip, b: Trip) => {
       const hourA = a.pickupTime.split(':')[0];
       const hourB = b.pickupTime.split(':')[0];
       const minuteA = a.pickupTime.split(':')[1];

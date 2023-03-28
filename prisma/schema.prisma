@@ -1,6 +1,6 @@
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -12,83 +12,92 @@ enum ColorMode {
   dark
 }
 
+enum StopType {
+  pickup
+  dropoff
+}
+
 model Preference {
-  id                    Int         @id @default(autoincrement())
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
-  colorMode             ColorMode   @default(dark)
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  colorMode ColorMode @default(dark)
 }
 
 model Trip {
-  id                    Int       @id @default(autoincrement()) @unique
-  createdAt             DateTime  @default(now())
-  updatedAt             String?
-  confirmed             Boolean   @default(false)
-  date                  String
-  pickupTime            String
-  passengerName         String
-  passengerPhone        String
-  pickupAddressName     String?
-  pickupAddressUnit     String?
-  pickupAddressStreet   String
-  pickupAddressCity     String
-  dropOffAddressName    String?
-  dropOffAddressUnit    String?
-  dropOffAddressStreet  String
-  dropOffAddressCity    String
-  dropOffTime           String?
-  notes                 String?
-  closed                Boolean    @default(false)
+  id                   Int      @id @unique @default(autoincrement())
+  createdAt            DateTime @default(now())
+  updatedAt            String?
+  confirmed            Boolean  @default(false)
+  date                 String
+  pickupTime           String
+  passengerName        String
+  passengerPhone       String
+  pickupAddressName    String?
+  pickupAddressUnit    String?
+  pickupAddressStreet  String
+  pickupAddressCity    String
+  dropOffAddressName   String?
+  dropOffAddressUnit   String?
+  dropOffAddressStreet String
+  dropOffAddressCity   String
+  dropOffTime          String?
+  notes                String?
+  closed               Boolean  @default(false)
+  distance             Float?
+  duration             Float?
 
-  Stops                 Stop[]
-  CompletionNotes       CompletionNote[]
-  CancelationNotes      CancelationNote[]
+  Stops            Stop[]
+  CompletionNotes  CompletionNote[]
+  CancelationNotes CancelationNote[]
 
-	@@map("trips")
+  @@map("trips")
 }
 
 model CompletionNote {
-  id                    Int       @id @default(autoincrement()) @unique
-  createdAt             DateTime  @default(now())
-  updatedAt             String?
-  tripId                Int
-  notes                 String?
+  id        Int      @id @unique @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt String?
+  tripId    Int
+  notes     String?
 
-  Trips                 Trip     @relation(fields: [tripId], references: [id])
+  Trips Trip @relation(fields: [tripId], references: [id])
 
   @@map("completion_notes")
 }
 
 model CancelationNote {
-  id                    Int       @id @default(autoincrement()) @unique
-  createdAt             DateTime  @default(now())
-  updatedAt             String?
-  tripId                Int
-  cancelationType       String
-  notes                 String?
+  id              Int      @id @unique @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       String?
+  tripId          Int
+  cancelationType String
+  notes           String?
 
-  Trips                 Trip     @relation(fields: [tripId], references: [id])
+  Trips Trip @relation(fields: [tripId], references: [id])
 
   @@map("cancelation_notes")
 }
 
 model Stop {
   // PK
-  id                    Int       @id @default(autoincrement()) @unique
+  id            Int      @id @unique @default(autoincrement())
   // FK
-  tripId                Int
+  tripId        Int
   // System
-  createdAt             DateTime  @default(now())
-  updatedAt             String?
+  createdAt     DateTime @default(now())
+  updatedAt     String?
   // Data
-  stopAddressName       String?
-  stopAddressUnit       String?
-  stopAddressStreet     String
-  stopAddressCity       String
-  arrivalTime           String
-  departureTime         String
-  notes                 String?
+  type          StopType
+  name          String?
+  unit          String?
+  street        String
+  city          String
+  arrivalTime   String
+  departureTime String
+  notes         String?
   // Relations
-  Trips                 Trip     @relation(fields: [tripId], references: [id])
+  Trips         Trip     @relation(fields: [tripId], references: [id])
+
   @@map("stops")
 }
