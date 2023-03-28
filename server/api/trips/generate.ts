@@ -25,11 +25,11 @@ export default defineEventHandler(async (event) => {
       pickup_time: (Required) A string representing the time to arrive at the pickup location in 24-hour format "HH:MM".
       passenger_name: (Required) A string containing the passenger's name.
       passenger_phone: A string containing the passenger's phone number in the format "###-###-####".
-      pickup_location_name: A string for the pickup location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
+      pickup_location_name: (Required) A string for the pickup location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
       pickup_location_unit: A string for the unit number of the pickup location address or an empty string if there is no unit number.
       pickup_location_street: (Required) A string for the street name of the pickup location address.
       pickup_location_city: (Required) A string for the city of the pickup location address.
-      drop_off_name: A string for the drop-off location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
+      drop_off_location_name: (Required) A string for the drop-off location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
       drop_off_location_unit: A string for the unit number of the drop-off location address or an empty string if there is no unit number.
       drop_off_location_street: (Required) A string for the street name of the drop-off location address.
       drop_off_location_city: (Required) A string for the city of the drop-off location address.
@@ -63,6 +63,7 @@ export default defineEventHandler(async (event) => {
         "raw": "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there."
         "passenger_name": "Glen K"
         "passenger_phone": ""
+        "pickup_time": "17:45"
         "pickup_location_name": "Nanaimo Dialysis"
         "pickup_location_unit": ""
         "pickup_location_street": "1351 Estevan Rd"
@@ -90,6 +91,7 @@ export default defineEventHandler(async (event) => {
   if (!content) return createError(event, "No content returned from OpenAI 🤷", DEBUG_IN_DEV);
   // extract json from the content, because it could include regular text, even though we specified json in the prompt
   let data: Trip[] = await extractJsonData(content);
+  console.log(data.length, data);
   // Make sure that we have all the required fields in each trip returned.
   // If we're missing a field, we need to fill it with "!!!!!!!!!!" to get the user's attention.
   let missingFields = false;
@@ -97,10 +99,8 @@ export default defineEventHandler(async (event) => {
     "raw",
     "pickup_time",
     "passenger_name",
-    "pickup_location_unit",
     "pickup_location_street",
     "pickup_location_city",
-    "drop_off_location_unit",
     "drop_off_location_street",
     "drop_off_location_city",
   ];
@@ -174,6 +174,6 @@ function extractJsonData(content: string) {
   const start = content.indexOf("[");
   const end = content.lastIndexOf("]");
   const json = content.substring(start, end + 1);
-  const data: Trip[] = JSON.parse(JSON.stringify(json));
+  const data: Trip[] = JSON.parse(json);
   return data;
 }

@@ -8,8 +8,10 @@ export default defineEventHandler(async (event) => {
   try {
     const { error, data } = await supabase.from('trips').insert(trip);
     if (error) throw error;
+    console.log("Message from '/api/trips/new': Trip added to database.");
     return { status: 200, body: data };
   } catch (e) {
+    console.log("Message from '/api/trips/new': There was an error adding trip to database.", e.message);
     return { status: 500, body: e.message };
   }
   return {};

@@ -86,7 +86,7 @@
       <div class="flex flex-row items-center justify-center mb-12">
         <button type="submit" class="btn btn-primary btn-wide"
           :class="{ 'loading': submitting, 'btn-disabled': submitted }">
-          Save
+          Validate
         </button>
       </div>
     </form>
@@ -110,9 +110,10 @@
 </template>
 
 <script lang="ts" setup>
+const { validateTrip } = useTripsToValidateStore();
 const props = defineProps({
   trip: {
-    type: Object,
+    type: Object as PropType<GeneratedTrip>,
     required: true,
   },
 });
@@ -177,6 +178,7 @@ const handleSubmit = async (e: Event) => {
     console.info('Trip submitted successfully!');
     showTrip.value = false;
     submitted.value = true;
+    validateTrip(props.trip.id);
   } else {
     console.error('Error submitting trip');
   }

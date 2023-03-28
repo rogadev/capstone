@@ -13,7 +13,9 @@ declare global {
   };
 
   type GeneratedTrip = {
+    id: string;
     date: string;
+    raw: string;
     pickup_time: string;
     passenger_name: string;
     passenger_phone: string;

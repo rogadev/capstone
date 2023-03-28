@@ -92,4 +92,23 @@ const formatDropOffMapLink = (fromStreet: string, fromCity: string, toStreet: st
     .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
   return `https://www.google.com/maps/dir/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
 };
+
+
+// [
+//   {
+//     "raw": "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there."
+//     "passenger_name": "Glen K"
+//     "passenger_phone": ""
+//     "pickup_location_name": "Nanaimo Dialysis"
+//     "pickup_location_unit": ""
+//     "pickup_location_street": "1351 Estevan Rd"
+//     "pickup_location_city": "Nanaimo"
+//     "drop_off_location_name": "Home"
+//     "drop_off_location_unit": ""
+//     "drop_off_location_street": "555 Aurora Street"
+//     "drop_off_location_city": "Parksville"
+//     "drop_off_time": ""
+//     "notes": "Please call the unit and get his actual time so you know exactly what time to be there."
+//   }
+// ]
 </script>

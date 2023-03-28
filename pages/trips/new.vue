@@ -2,11 +2,9 @@
   <div class="container m-4">
     <Auth v-if="!user" />
     <div v-else class="container px-4 md:px-0">
-      <NewTripsForm />
+      <GenerateTripsForm />
       <div v-if="trips.length > 0">
-        <div v-for="(trip, index) in trips">
-          <NewTripForm :trip="trip" :key="index" />
-        </div>
+        <ValidateTripForm v-for="(trip, index) in trips" :trip="trip" :key="index" />
       </div>
     </div>
   </div>
@@ -22,6 +20,6 @@ useHead({
 });
 
 const user = useSupabaseUser();
-const tripStore = useTripsStore();
-const trips = computed(() => tripStore.tripsToConfirm);
+const { tripsToValidate } = useTripsToValidateStore();
+const trips = computed(() => tripsToValidate);
 </script>
