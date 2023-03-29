@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '@/stores/auth';
-const { refreshUser } = useAuthStore();
-refreshUser();
-const { user } = useAuthStore();
-if (user === null) navigateTo('/');
+const user = useSupabaseUser();
+if (!user.value) navigateTo('/');
 else navigateTo('/dashboard');
 </script>

@@ -12,7 +12,7 @@ const breadcrumbs = [
 
 const user = useSupabaseUser();
 watchEffect(() => {
-  if (user.value !== null) {
+  if (user.value) {
     navigateTo('/dashboard');
   }
 });
