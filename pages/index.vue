@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-  title: "Medical Transport Services - Reliable and Convenient"
+  title: "Medical Transport Services - Reliable and Convenient",
 });
 
 const breadcrumbs = [

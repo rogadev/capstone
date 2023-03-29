@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'driver',
-  middleware: 'auth-guard'
+  middleware: 'auth'
 });
 useHead({
   title: 'Driver Dashboard',
@@ -15,6 +15,6 @@ const user = useSupabaseUser();
   -->
 
 <template>
-  <DashboardTabs v-if="user" :user="user" />
+  <Dashboard v-if="user" :user="user" />
   <Auth v-else />
 </template>

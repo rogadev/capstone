@@ -1,0 +1,113 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ColorMode {
+  light
+  dark
+}
+
+enum StopType {
+  pickup
+  dropoff
+}
+
+enum StopStatus {
+  scheduled
+  enroute
+  arrived
+  departed
+  completed
+  canceled
+}
+
+model Preference {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  colorMode ColorMode @default(dark)
+}
+
+model Trip {
+  id                   Int      @id @unique @default(autoincrement())
+  createdAt            DateTime @default(now())
+  updatedAt            String?
+  confirmed            Boolean  @default(false)
+  date                 String
+  pickupTime           String
+  passengerName        String
+  passengerPhone       String
+  pickupAddressName    String?
+  pickupAddressUnit    String?
+  pickupAddressStreet  String
+  pickupAddressCity    String
+  dropOffAddressName   String?
+  dropOffAddressUnit   String?
+  dropOffAddressStreet String
+  dropOffAddressCity   String
+  dropOffTime          String?
+  notes                String?
+  closed               Boolean  @default(false)
+  distance             Float?
+  duration             Float?
+
+  Stops            Stop[]
+  CompletionNotes  CompletionNote[]
+  CancelationNotes CancelationNote[]
+
+  @@map("trips")
+}
+
+model CompletionNote {
+  id        Int      @id @unique @default(autoincrement())
+  tripId    Int
+  createdAt DateTime @default(now())
+  updatedAt String?
+  notes     String?
+  Trips     Trip     @relation(fields: [tripId], references: [id])
+
+  @@map("completion_notes")
+}
+
+model CancelationNote {
+  id              Int      @id @unique @default(autoincrement())
+  tripId          Int
+  createdAt       DateTime @default(now())
+  updatedAt       String?
+  cancelationType String
+  notes           String?
+  Trips           Trip     @relation(fields: [tripId], references: [id])
+
+  @@map("cancelation_notes")
+}
+
+model Stop {
+  // PK
+  id            Int        @id @unique @default(autoincrement())
+  // FK
+  tripId        Int
+  // System
+  createdAt     DateTime   @default(now())
+  updatedAt     String?
+  // Data
+  date          String
+  passenger     String
+  street        String
+  city          String
+  arrivalTime   Int
+  departureTime Int
+  name          String?
+  unit          String?
+  notes         String?
+  type          StopType
+  status        String     @default("scheduled")
+  // Relations
+  Trips         Trip       @relation(fields: [tripId], references: [id])
+
+  @@map("stops")
+}

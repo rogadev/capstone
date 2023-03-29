@@ -47,7 +47,7 @@ useHead({
   title: "Request Trip - Roga Medical Transport Services"
 });
 const handleSubmit = () => {
-  console.log('submitting form');
+  // console.log('submitting form');
 };
 </script>
 

@@ -20,6 +20,25 @@ export default defineNuxtConfig({
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
   runtimeConfig: {
-    BaseURL: process.env.BASE_URL,
+    DEV: process.env.DEV,
+    DATABASE_URL: process.env.DATABASE_URL,
+    BASE_URL: process.env.BASE_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_KEY: process.env.SUPABASE_KEY,
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+  },
+  colorMode: {
+    preference: 'dark',
+    fallback: 'dark',
+    classSuffix: '',
+  },
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    serviceKey: process.env.SUPABASE_SERVICE_KEY,
+    redirect: {
+      callback: '/auth/callback',
+    }
   },
 });
