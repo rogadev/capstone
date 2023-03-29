@@ -8,9 +8,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^3.3.2",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/supabase": "^0.3.1",
     "@nuxtjs/tailwindcss": "^6.6.4",
@@ -20,7 +22,8 @@
     "eslint": "^8.36.0",
     "nuxt": "^3.3.1",
     "nuxt-icon": "^0.3.3",
-    "prisma": "^4.11.0"
+    "prisma": "^4.11.0",
+    "vitest": "^0.29.8"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.27",
