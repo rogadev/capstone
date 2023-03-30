@@ -1,3 +1,4 @@
+import { useTheme } from '../../composables/useTheme';
 <template>
   <li class="nav-item">
     <button class="btn btn-outline md:btn-ghost" @click="() => toggleTheme()">
@@ -8,5 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-const { darkMode, toggleTheme } = useThemeStore();
+const { toggleTheme } = useTheme();
+const { darkMode } = useThemeStore();
 </script>

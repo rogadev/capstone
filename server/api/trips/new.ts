@@ -1,4 +1,4 @@
-import supabase from '~/server/db/supabase.ts';
+import * as supabase from '~/server/db/supabase.ts';
 
 export default defineEventHandler(async (event) => {
   const trip = await readBody(event);
@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     return { status: 400, body: 'Request was missing trip details' };
   }
   try {
-    const { error, data } = await supabase.from('trips').insert(trip);
+    const { error, data } = await supabase.createTrip(trip);
     if (error) throw error;
     console.log("Message from '/api/trips/new': Trip added to database.");
     return { status: 200, body: data };
