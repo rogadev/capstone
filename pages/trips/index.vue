@@ -21,7 +21,7 @@ useHead({
       <div class="mb-4 text-center w-full container">
         <h2 class="text-2xl font-bold">Confirm Trips</h2>
       </div>
-      <UnconfirmedTrips />
+      <TripsUnconfirmedList />
     </div>
   </div>
 </template>
