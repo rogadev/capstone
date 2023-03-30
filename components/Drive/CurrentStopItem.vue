@@ -1,11 +1,24 @@
 <template>
-  <div>
-    <DriveLateIndicator v-if="timeRemaining === '00:00' && stop.status !== 'completed'" />
-    <p v-else>{{ timeRemaining }}</p>
-    <p>{{ stopType }}</p>
-    <p>{{ stop.passenger }}</p>
-    <p>{{ stop.street }}, {{ stop.city }}</p>
-    <p>{{ arrivalTime }}</p>
+  <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
+    <div class="container mx-auto">
+      <DriveLateIndicator v-if="arrivingLate" />
+      <div class="flex flex-col">
+        <div class="flex flex-row justify-between">
+          <p>{{ stopType }}</p>
+          <p class="font-semibold" v-if="!arrivingLate">{{ timeRemaining }}</p>
+          <p>{{ arrivalTime }}</p>
+        </div>
+        <div class="flex flex-row justify-between">
+          <p>{{ stop.passenger }}</p>
+          <p><span v-if="stop.unit !== ''">{{ stop.unit }} - </span>{{ stop.street }}, {{ stop.city }}</p>
+        </div>
+        <div class="flex flex-row justify-between py-4">
+          <button class="btn btn-primary btn-wide mx-auto" @click="enroute" v-if="progress === 0">Enroute</button>
+        </div>
+        <div class="flex flex-row justify-between">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -22,7 +35,14 @@ const props = defineProps({
     required: true,
   }
 });
+
 const progress = ref(-1);
+const currentTime = ref(new Date());
+
+const timeClock = setInterval(() => {
+  currentTime.value = new Date();
+}, 1000);
+
 switch (props.stop.status) {
   case "scheduled":
     progress.value = 0;
@@ -54,10 +74,6 @@ const arrivalTime = computed(() => {
   return new Date(props.stop.arrivalTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 });
 
-const currentTime = ref(new Date());
-const timeClock = setInterval(() => {
-  currentTime.value = new Date();
-}, 1000);
 
 const timeRemaining = computed(() => {
   const time = new Date(props.stop.arrivalTime).getTime() - currentTime.value.getTime();
@@ -70,9 +86,20 @@ const timeRemaining = computed(() => {
   return `${minutes}:${seconds}`;
 });
 
+const arrivingLate = computed(() => {
+  return timeRemaining.value === "00:00" && props.stop.status !== "completed";
+});
+
 function enroute() {
   incStopStatus(props.stop);
   progress.value = 1;
+  const addressString = `${props.stop.street} ${props.stop.city}`;
+  const slugAddress = addressString.replace(/ /g, '+');
+  navigator.geolocation.getCurrentPosition(function (position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');
+  });
 }
 
 function arrived() {
@@ -94,6 +121,10 @@ function canceled() {
   cancelStop(props.stop, cancellationReason.value, cancellationNotes.value);
   progress.value = 5;
 }
+
+onMounted(() => {
+  navigator.geolocation.getCurrentPosition(() => console.log('Using geolocation'));
+});
 
 onUnmounted(() => {
   clearInterval(timeClock);
