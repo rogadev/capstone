@@ -2,9 +2,9 @@
   <div class="container m-4">
     <Auth v-if="!user" />
     <div v-else class="container px-4 md:px-0">
-      <GenerateTripsForm />
+      <TripsGenerateForm />
       <div v-if="trips.length > 0">
-        <ValidateTripForm v-for="(trip, index) in trips" :trip="trip" :key="index" />
+        <TripsValidateItem v-for="(trip, index) in trips" :trip="trip" :key="index" />
       </div>
     </div>
   </div>
