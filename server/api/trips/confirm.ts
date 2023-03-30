@@ -1,4 +1,5 @@
 import { Trip, Stop } from '@prisma/client';
+
 import * as supabase from '../../db/supabase';
 import { getDistanceAndDuration } from "~/server/maps";
 

@@ -8,7 +8,6 @@ useHead({
 });
 </script>
 
-
 <template>
   <div class="container">
     <div class="flex flex-col justify-center items-center m-4 mb-8">
