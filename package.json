@@ -29,7 +29,7 @@
     "@googlemaps/google-maps-services-js": "^3.3.27",
     "@pinia/nuxt": "^0.4.7",
     "@prisma/client": "^4.11.0",
-    "@supabase/supabase-js": "^2.12.1",
+    "@supabase/supabase-js": "^2.13.0",
     "daisyui": "^2.51.5",
     "nanoid": "^4.0.2",
     "openai": "^3.2.1",
