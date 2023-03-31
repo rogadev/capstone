@@ -102,6 +102,7 @@ model Stop {
   city          String
   arrivalTime   Int
   departureTime Int
+  distance      Float?
   name          String?
   unit          String?
   notes         String?
