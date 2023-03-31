@@ -89,11 +89,11 @@ model CancelationNote {
 
 model Stop {
   // PK
-  id            Int        @id @unique @default(autoincrement())
+  id            Int      @id @unique @default(autoincrement())
   // FK
   tripId        Int
   // System
-  createdAt     DateTime   @default(now())
+  createdAt     DateTime @default(now())
   updatedAt     String?
   // Data
   date          String
@@ -107,9 +107,10 @@ model Stop {
   unit          String?
   notes         String?
   type          StopType
-  status        String     @default("scheduled")
+  closed        Boolean  @default(false)
+  status        String   @default("scheduled")
   // Relations
-  Trips         Trip       @relation(fields: [tripId], references: [id])
+  Trips         Trip     @relation(fields: [tripId], references: [id])
 
   @@map("stops")
 }

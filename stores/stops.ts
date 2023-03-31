@@ -8,6 +8,7 @@ export const useStopStore = defineStore('auth', () => {
   const fetchStops = async () => {
     try {
       const response = await fetch('/api/stops');
+      if (!response.ok) throw new Error(response.statusText);
       const { data } = await response.json();
       stops.value = data;
     } catch (error) {
@@ -15,7 +16,9 @@ export const useStopStore = defineStore('auth', () => {
     }
   };
 
+  // ✅ Working ✅
   const getStopsForDate = (date: string) => {
+    if (!stops.value) return [];
     const relevantStops: Stop[] = [];
     for (const stop of stops.value) {
       if (stop.date === date) relevantStops.push(stop);
@@ -24,10 +27,16 @@ export const useStopStore = defineStore('auth', () => {
   };
 
   // Moves the stop status forward
-  const incStopStatus = async (stop: Stop) => { };
-
-  // Moves the stop status backward
-  const decStopStatus = async (stop: Stop) => { };
+  async function updateStopStatus(stop: Stop, status: 'scheduled' | 'enroute' | 'completed' | 'canceled') {
+    const updatedStop = { ...stop, status };
+    const response = await fetch(`/api/stops/update/${stop.id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedStop),
+    });
+    if (response.error) console.error(response.error);
+    else stops.value = response.data;
+  };
 
   /**
    * Cancels a stop and updates the associated trip and any additional related stops
@@ -36,105 +45,112 @@ export const useStopStore = defineStore('auth', () => {
    * @param notes Any notes related to the cancelation
    * @returns { success: boolean, error: Error }
    */
-  const cancelStop = async (stop: Stop, cancelationType: string, notes: string = '') => {
-    // Cancel Stop Validation
-    if (!trip) throw new Error('useStopStore() - cancelStop() - Could not find trip with tripId:' + stop.tripId);
-    if (!cancelationType) throw new Error('useStopStore() - cancelStop() - cancelationType is required');
-    // Vars
-    const errors = [];
-    const tripId = stop.tripId;
-    let trip: Trip;
-    let stopsToUpdate: Stop[];
-    let response: { data: Trip | Stop | CancelationNote | CompletionNote, error: Error; };
-    // Fetch the trip associated to this stop
-    try {
-      response = await supabase.fetchTrip(tripId);
-      if (response.error) throw response.error;
-      trip = response.data;
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-    // Fetch all stops associated to this trip
-    try {
-      response = await supabase.fetchStops(tripId);
-      if (response.error) throw response.error;
-      stopsToUpdate = response.data;
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-    // Create the cancelation note
-    const cancelationNote: CancelationNote = {
-      tripId: trip.id,
-      cancelationType,
-      notes,
-    };
-    // Update the trip, stops, and create the cancelation note
-    try {
-      response = await supabase.updateTrip({ ...trip, closed: true, canceled: true });
-      if (response.error) errors.push(response.error);
+  async function cancelStop(stop: Stop, cancelationType: string, notes: string = '') {
+    const { tripId } = stop;
+    const tripToUpdate: Trip = await fetchTrip(tripId);
+    const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
+    const cancelationNote: CancelationNote = { tripId, cancelationType, notes, };
+    // ✅ Working ✅
 
-      for (const stop of stopsToUpdate) {
-        if (stop.status !== 'cancelled') {
-          response = await supabase.updateStop({ ...stop, status: 'cancelled' });
-          if (response.error) errors.push(response.error);
-          else stops.value = response.data;
-        }
-      }
+    // Update Trip
+    const updatedTrip = { ...tripToUpdate, closed: true, canceled: true };
+    const tripUpdateResult = await updateTrip(updatedTrip);
+    await fetchStops();
 
-      response = await supabase.createCancelationNote(cancelationNote);
-      if (response.error) errors.push(response.error);
+    // try {
+    //   response = await fetch(`/api/trips/update/${tripId}`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ ...trip, closed: true, canceled: true }),
+    //   });
+    //   if (response.error) errors.push(response.error);
 
-      if (errors.length > 0) throw new Error(errors.join(', '));
-      else return { success: true, error: null };
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    } finally {
-      response = await supabase.fetchStops(tripId);
-      if (response.error) console.error(response.error);
-      else stops.value = response.data;
-    }
+    //   for (const stop of stopsToUpdate) {
+    //     if (stop.status !== 'cancelled') {
+    //       response = await fetch(`/api/stops/update/${stop.id}`, {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ ...stop, status: 'cancelled' }),
+    //       });
+    //       if (response.error) errors.push(response.error);
+    //       else stops.value = response.data;
+    //     }
+    //   }
+
+    //   response = await fetch('/api/cancelationNotes', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(cancelationNote),
+    //   });
+    //   if (response.error) errors.push(response.error);
+
+    //   if (errors.length > 0) throw new Error(errors.join(', '));
+    //   else return { success: true, error: null };
+    // } catch (error) {
+    //   console.error(error);
+    //   return { success: false, error };
+    // } finally {
+    //   response = await fetch('/api/stops');
+    //   if (response.error) console.error(response.error);
+    //   else stops.value = response.data;
+    //   console.log(stops.value);
+    // }
   };
 
-  const completeStop = async (stop: Stop, notes: string = '') => {
-    let response: { data: Trip | Stop | CompletionNote, error: Error; };
-    const tripId = stop.tripId;
-    response = await supabase.fetchTrip(tripId);
+  // const completeStop = async (stop: Stop, notes: string = '') => {
+  //   let response: { data: Trip | Stop | CompletionNote, error: Error; };
+  //   const tripId = stop.tripId;
+  //   response = await supabase.fetchTrip(tripId);
+  //   if (response.error) throw response.error;
+  //   const trip = response.data as Trip;
+  //   const completionNote: CompletionNote = {
+  //     tripId,
+  //     notes,
+  //   };
+  //   try {
+  //     response = await supabase.updateTrip({ ...trip, closed: true });
+  //     if (response.error) throw response.error;
+  //     response = await supabase.updateStop({ ...stop, status: 'completed', closed: false });
+  //     if (response.error) throw response.error;
+  //     response = await supabase.createCompletionNote(completionNote);
+  //     if (response.error) throw response.error;
+  //     stops.value = response.data;
+  //     return { success: true, error: null };
+  //   } catch (error) {
+  //     console.error(error);
+  //     return { success: false, error };
+  //   }
+  // };
+
+  // const addStop = async (stop: Stop) => {};
+
+  async function fetchTrip(tripId: number) {
+    const response = await fetch(`/api/trips/${tripId}`);
     if (response.error) throw response.error;
-    const trip = response.data as Trip;
-    const completionNote: CompletionNote = {
-      tripId,
-      notes,
-    };
-    try {
-      response = await supabase.updateTrip({ ...trip, closed: true });
-      if (response.error) throw response.error;
-      response = await supabase.updateStop({ ...stop, status: 'completed', closed: false });
-      if (response.error) throw response.error;
-      response = await supabase.createCompletionNote(completionNote);
-      if (response.error) throw response.error;
-      stops.value = response.data;
-      return { success: true, error: null };
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-  };
+    const { data } = await response.json();
+    return data[0];
+  }
 
-  // TODO - Should add a stop to the database
-  const addStop = async (stop: Stop) => { };
+  async function updateTrip(trip: Trip) {
+    const response = await fetch(`/api/trips/update/one`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(trip),
+    });
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    return { data, error: null };
+  }
 
   return {
     stops,
     StopStatus,
-    addStop,
+    // addStop,
     fetchStops,
     cancelStop,
-    completeStop,
-    incStopStatus,
-    decStopStatus,
+    // completeStop,
+    // incStopStatus,
+    // decStopStatus,
     getStopsForDate,
   };
 });

@@ -12,16 +12,33 @@
           <p>{{ stop.passenger }}</p>
           <p><span v-if="stop.unit !== ''">{{ stop.unit }} - </span>{{ stop.street }}, {{ stop.city }}</p>
         </div>
-        <div class="flex flex-row justify-between mt-8 mb-3">
-          <button class="btn btn-error btn-wide mx-auto" @click="canceled" v-if="progress !== 2">Cancel</button>
+        <div v-if="!confirmCancel" class="flex flex-row justify-between mt-8 mb-3">
+          <button class="btn btn-error btn-wide mx-auto" @click="handleCancellation" v-if="progress !== 2">Cancel</button>
           <button class="btn btn-info btn-wide mx-auto" @click="enroute" v-if="progress === 0">Enroute</button>
           <button class="btn btn-success btn-wide mx-auto" @click="completed" v-if="progress === 1">Completed</button>
         </div>
-        <div v-if="progress > 0" class="flex flex-row justify-evenly gap-10 m-4">
+        <div class="mt-6" v-else="cancel">
+          <h3 class="text-2xl font-bold text-center">Cancel Trip</h3>
+          <div class="flex flex-row justify-center items-center gap-4 my-4">
+            <label for="cancellationReason">Cancellation Reason</label>
+            <select id="cancellationReason" class="text-black" v-model="cancellationReason">
+              <option value="no-show">No Show</option>
+              <option value="wrong-address">Wrong Address</option>
+              <option value="wrong-time">Wrong Time</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="flex flex-row justify-between mt-8 mb-3">
+            <button class="btn btn-error btn-wide mx-auto" @click="() => confirmCancel = false">Wait, Go Back</button>
+            <button class="btn btn-success btn-wide mx-auto" @click="cancel">Yes, Cancel</button>
+          </div>
           <div class="flex flex-col w-full">
             <label for="cancellationNotes" class="text-center">Cancellation Notes</label>
             <textarea id="cancellationNotes" v-model="cancellationNotes" class="w-full" rows="3"></textarea>
           </div>
+        </div>
+        <div v-if="progress > 0" class="flex flex-row justify-evenly gap-10 m-4">
+
           <div class="flex flex-col w-full">
             <label for="completionNotes" class="text-center">Completion Notes</label>
             <textarea id="completionNotes" v-model="completionNotes" class="w-full" rows="3"></textarea>
@@ -40,8 +57,9 @@ import type { Stop } from '@prisma/client';
 const { incStopStatus, completeStop, cancelStop } = useStopStore();
 
 const completionNotes = ref("");
-const cancellationReason = ref("");
+const cancellationReason = ref("no-show");
 const cancellationNotes = ref("");
+const confirmCancel = ref(false);
 
 const props = defineProps({
   stop: {
@@ -133,12 +151,21 @@ function enroute() {
 
 function completed() {
   completeStop(props.stop, completionNotes.value);
-  progress.value = 4;
+  progress.value = 2;
 }
 
-function canceled() {
+function cancel() {
   cancelStop(props.stop, cancellationReason.value, cancellationNotes.value);
-  progress.value = 5;
+  progress.value = 3;
+}
+
+function handleCancellation() {
+  if (confirmCancel.value) {
+    cancel();
+  } else {
+    confirmCancel.value = true;
+  }
+
 }
 
 onMounted(() => {
