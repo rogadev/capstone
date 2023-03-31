@@ -1,18 +1,17 @@
-import { Client } from '@googlemaps/google-maps-services-js';
-const { GOOGLE_MAPS_API_KEY } = useRuntimeConfig();
+import { Client, type DistanceMatrixResponse } from '@googlemaps/google-maps-services-js';
 
+const { GOOGLE_MAPS_API_KEY } = useRuntimeConfig();
 const client = new Client({});
 
 /**
  * Get distance and duration between two addresses.
  * @param origin Origin string including street address and city.
  * @param destination Destination string including street address and city.
- * @returns Distance in km. 
- * @returns Duration in minutes.
- */
+ * @returns {Promise<{ distance: number, duration: number; }>} Distance in km and duration in minutes.
+*/
 export async function getDistanceAndDuration(origin: string, destination: string):
   Promise<{ distance: number, duration: number; }> {
-  const response = await client.distancematrix({
+  const response: DistanceMatrixResponse = await client.distancematrix({
     params: {
       origins: [origin],
       destinations: [destination],
@@ -21,12 +20,16 @@ export async function getDistanceAndDuration(origin: string, destination: string
     },
     timeout: 1000, // milliseconds
   });
-
-  const element = response.data.rows[0].elements[0];
-
-  const distanceKM = Number.parseFloat((element.distance.value / 1000).toFixed(2));
-  const durationMinutes = Number.parseInt(element.duration.value / 60) || 1; // Duration should be at least 1 minute.
-
+  const data = response.data.rows[0].elements[0];
+  if (!data) sendError(event, 'Data expected but no data returned from Google Maps API. 🤷');
+  /**
+   * Distance in km, rounded to 2 decimal places.
+   */
+  const distanceKM = Number.parseFloat((data.distance.value / 1000).toFixed(2));
+  /**
+   * Duration in minutes, rounded to 1 decimal place, and rounded to 1 if duration is less than 0.5 minutes.
+   */
+  const durationMinutes = Number.parseInt(data.duration.value / 60) || 1; // Duration should be at least 1 minute.
   return {
     distance: distanceKM,
     duration: durationMinutes,

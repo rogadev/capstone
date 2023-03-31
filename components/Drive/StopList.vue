@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="flex flex-col justify-center">
     <DriveCurrentStopItem v-if="currentStop" :stop="currentStop" />
-    <div v-else>No Stops</div>
+    <div v-else class="text-center">No Stops</div>
     <DriveNextStops v-if="nextStops.length > 0" v-for="stop in nextStops" :key="stop.id" :stop="stop" />
   </div>
 </template>
@@ -28,8 +28,8 @@ const nextStops: ComputedRef<Stop[]> = computed(() => {
   return todaysStops.value.slice(1);
 });
 
-onBeforeMount(() => {
-  fetchStops();
+onBeforeMount(async () => {
+  await fetchStops();
 });
 </script>
 

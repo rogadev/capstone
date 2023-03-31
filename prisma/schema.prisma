@@ -59,7 +59,7 @@ model Trip {
 
   Stops            Stop[]
   CompletionNotes  CompletionNote[]
-  CancelationNotes CancelationNote[]
+  CancellationNotes CancellationNote[]
 
   @@map("trips")
 }
@@ -75,16 +75,16 @@ model CompletionNote {
   @@map("completion_notes")
 }
 
-model CancelationNote {
+model CancellationNote {
   id              Int      @id @unique @default(autoincrement())
   tripId          Int
   createdAt       DateTime @default(now())
   updatedAt       String?
-  cancelationType String
+  cancellationType String
   notes           String?
   Trips           Trip     @relation(fields: [tripId], references: [id])
 
-  @@map("cancelation_notes")
+  @@map("cancellation_notes")
 }
 
 model Stop {

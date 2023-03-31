@@ -20,6 +20,6 @@ useHead({
 });
 
 const user = useSupabaseUser();
-const { tripsToValidate } = useTripsToValidateStore();
+const { tripsToValidate } = useTripStore();
 const trips = computed(() => tripsToValidate);
 </script>

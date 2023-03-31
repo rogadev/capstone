@@ -1,56 +1,40 @@
 import { Trip, Stop } from '@prisma/client';
 
-import * as supabase from '../../db/supabase';
+import supabase from '~~/server/db/supabase';
+import { errorLog, info, log } from "~/server/utils/logging";
 import { getDistanceAndDuration } from "~/server/maps";
 
 const { DEV } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === "true" || DEV === true;
+const DEBUG_IN_DEV = DEV.toLowerCase() === "true";
 
 export default defineEventHandler(async (event) => {
-  console.log("Endpoint '/api/trips/confirm' called...");
-  let success = false;
-  let error = '';
   const tripId = await readBody(event);
-  if (!tripId) return sendError(event, 'Client Error: No data was provided.', DEBUG_IN_DEV);
-  console.log('Confirming trip with ID', tripId);
-
+  if (!tripId) return { status: 400, body: "Request to '/api/trips/confirm' was missing parameter tripId" };
+  log("API request to update trip with id", tripId, 'to "confirmed"');
   // Fetch our trip data.
-  console.log("Fetching trip data from database...");
+  // info("API is fetching trip data from database...");
   let trip: Trip;
   try {
-    const { data, error } = await supabase.fetchTrip(tripId);
-    trip = data[0];
+    const { data, error } = await supabase.fetchTrip(tripId) as { data: Trip; error: Error | PostgrestError | null; };
     if (error) throw error;
+    trip = data;
   } catch (e) {
-    console.log('An error occurred fetching the trip data from the database', e.message);
-    return sendError(event, e.message, DEBUG_IN_DEV);
+    errorLog(e, __filename);
+    sendError(event, e.message, DEBUG_IN_DEV);
   }
-
-  // Check if the trip is already confirmed or canceled.
-  console.log("Checking if trip is already confirmed or canceled...");
-  if (trip.confirmed || trip.closed) return sendError(event, `Client Error: Trip is already confirmed or closed.\nConfirmed: ${trip.confirmed}\nClosed: ${trip.closed}`, DEBUG_IN_DEV);
 
   // Get our trip distance and duration. Add it to our trip object. We will save the trip object later.
-  console.log("Getting trip distance and duration...");
-  const tripOriginString = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
-  const tripDestinationString = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
-  let distance: number, duration: number;
-  try {
-    const response = await getDistanceAndDuration(tripOriginString, tripDestinationString);
-    distance = response.distance;
-    duration = response.duration;
-    trip.distance = distance;
-    trip.duration = duration;
-  } catch (e) {
-    console.log('An error occurred getting the trip distance and duration', e.message);
-    return sendError(event, e.message, DEBUG_IN_DEV);
-  }
+  // info("Getting trip distance and duration, and updating local trip object...");
+  const originAddressString: string = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
+  const destinationAddressString: string = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
+  const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString);
+  trip.distance = distance;
+  trip.duration = duration;
 
   // Create our stop objects.
-  console.log("Creating stop objects...");
+  // info("Creating local stop objects...");
   const originDepartureTime = calcTimeAsMinutes(trip.pickupTime);
   const originArrivalTime = originDepartureTime - 5;
-  const originAddressString = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
   const origin: Stop = {
     tripId: trip.id,
     type: 'pickup',
@@ -67,7 +51,6 @@ export default defineEventHandler(async (event) => {
   const hasFixedDropoffTime = trip.dropOffTime && trip.dropOffTime !== '';
   const destinationArrivalTime = hasFixedDropoffTime ? calcTimeAsMinutes(trip.dropOffTime) : originDepartureTime + duration;
   const destinationDepartureTime = destinationArrivalTime + 5;
-  const destinationAddressString = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
   const destination: Stop = {
     tripId: trip.id,
     type: 'dropoff',
@@ -83,29 +66,14 @@ export default defineEventHandler(async (event) => {
   };
 
   // Insert the stops into the database.
-  console.log("Inserting stops into the database...");
-  try {
-    const { data, error } = await supabase.createStops([origin, destination]);
-    if (error) throw error;
-  } catch (e) {
-    console.log('An error occurred inserting the stops into the database', e.message);
-    return sendError(event, e.message, DEBUG_IN_DEV);
-  }
+  // info("Inserting local stop objects into the database...");
+  await supabase.createStops([origin, destination]);
 
   // Update the trip data.
-  console.log("Updating the trip data...");
+  // info("Updating the trip data...");
   trip.confirmed = true;
-  try {
-    const { data, error } = await supabase.updateTrip(trip);
-    if (error) throw error;
-  } catch (e) {
-    console.log('An error occurred updating the trip', e.message);
-    return sendError(event, e.message, DEBUG_IN_DEV);
-  }
-
-  console.log("Trip confirmed successfully!");
-  success = true;
-  return { success, error };
+  await supabase.updateTrip(trip);
+  return { status: 200, body: "Trip confirmed" };
 });
 
 function calcTimeAsMinutes(time: string) {

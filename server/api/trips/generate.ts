@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 import type { Trip } from '@prisma/client';
 
 const { DEV, OPENAI_API_KEY } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === "true" ? true : false;
+const DEBUG_IN_DEV = DEV.toLowerCase() === "true";
 let startTime: number;
 const model = "gpt-3.5-turbo";
 

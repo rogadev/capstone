@@ -1,15 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { PostgrestError, createClient } from '@supabase/supabase-js';
 import type { Trip, Stop, CancelationNote, CompletionNote } from '@prisma/client';
+import { errorLog } from '../utils/logging';
 
 const { SUPABASE_URL, SUPABASE_KEY } = useRuntimeConfig();
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const { log, info } = console;
 
 /**
  * Creates a new trip in the database
  * @param trip The trip to create
  * @returns { data: Trip, error: Error }
  */
-export const createTrip = async (trip: Trip) => {
+const createTrip = async (trip: Trip) => {
   let result = { data: null, error: null };
   try {
     result = await supabase.from('trips').insert(trip);
@@ -21,22 +23,25 @@ export const createTrip = async (trip: Trip) => {
   return result;
 };
 
+// ✅ Working ✅
 /**
  * Fetches a single trip from the database by id
- * @param tripId The id of the trip to fetch
+ * @param tripID The id of the trip to fetch
  * @returns { data: Trip, error: Error }
  */
-export const fetchTrip = async (tripId: number) => {
-  const result = { data: null, error: null };
+const fetchTrip = async (tripID: number) => {
+  console.log('Supabase fetching trip', tripID);
   try {
-    const response = await supabase.from('trips').select('*').eq('id', tripId);
-    if (response.error) throw response.error;
-    result.data = response.data as Trip;
-  } catch (error) {
-    result.error = error;
-    console.log(error);
+    const response = await supabase.from('trips').select('*').eq('id', tripID).single();
+    const { data, error } = response as { data: Trip | null; error: PostgrestError | null; };
+    if (error) throw error;
+    console.log('Trip found. Supabase returning trip...');
+    const trip = data as Trip;
+    return { data: trip, error };
+  } catch (error: any) {
+    console.error(error);
+    return { data: null, error };
   }
-  return result;
 };
 
 /**
@@ -44,7 +49,7 @@ export const fetchTrip = async (tripId: number) => {
  * @param stopID The id of the stop to fetch
  * @returns { data: Stop, error: Error }
  */
-export const fetchStop = async (stopID: number) => {
+const fetchStop = async (stopID: number) => {
   let result: {
     data: Stop | null;
     error: Error | null;
@@ -64,7 +69,7 @@ export const fetchStop = async (stopID: number) => {
  * @param stop The stop to create
  * @returns { data: Stop, error: Error }
  */
-export const createStop = async (stop: Stop) => {
+const createStop = async (stop: Stop) => {
   let result = { data: null, error: null };
   try {
     result = await supabase.from('stops').insert(stop);
@@ -79,18 +84,16 @@ export const createStop = async (stop: Stop) => {
 /**
  * Creates multiple stops in the database
  * @param stops The stops to create
- * @returns { data: Stop[], error: Error }
  */
-export const createStops = async (stops: Stop[]) => {
-  let result = { data: null, error: null };
+const createStops = async (stops: Stop[]) => {
+  if (!stops || stops.length < 1) throw new Error('supabase.createStops() expects an array of stops. None provided.');
+  log('Supabase is creating', stops.length, 'stops');
   try {
-    result = await supabase.from('stops').insert([...stops]);
-    const { data, error } = result;
-    if (error) throw error;
-  } catch (error) {
-    console.error(error);
+    await supabase.from('stops').insert([...stops]);
+  } catch (error: any) {
+    errorLog(error, 'server/db/supabase.ts');
+    throw error;
   }
-  return result;
 };
 
 
@@ -99,7 +102,7 @@ export const createStops = async (stops: Stop[]) => {
  * @param tripID The id of the trip to fetch stops for
  * @returns { data: Stop[], error: Error }
  */
-export const fetchStops = async (tripID: number) => {
+const fetchStops = async (tripID: number) => {
   let response: {
     data: Stop[] | null;
     error: Error | null;
@@ -121,7 +124,7 @@ export const fetchStops = async (tripID: number) => {
  * Fetches all stops for a trip from the database that are not closed
  * @returns { data: Stop[], error: Error }
  */
-export const fetchAllStops = async () => {
+const fetchAllStops = async () => {
   try {
     const response = await supabase.from('stops').select('*').eq('closed', false);
     console.log(response.data[5]);
@@ -137,33 +140,76 @@ export const fetchAllStops = async () => {
  * @param trip The trip to update
  * @returns { data: Trip, error: Error }
  */
-export const updateTrip = async (trip: Trip) => {
+const updateTrip = async (trip: Trip) => {
+  const tripID = trip.id;
+  console.log('Supabase is updating trip', tripID);
+  const updatedTrip: Trip = {
+    updatedAt: new Date().toISOString(),
+    date: trip.date,
+    pickupTime: trip.pickupTime,
+    passengerName: trip.passengerName,
+    passengerPhone: trip.passengerPhone,
+    pickupAddressName: trip.pickupAddressName,
+    pickupAddressUnit: trip.pickupAddressUnit,
+    pickupAddressStreet: trip.pickupAddressStreet,
+    pickupAddressCity: trip.pickupAddressCity,
+    dropOffAddressName: trip.dropOffAddressName,
+    dropOffAddressUnit: trip.dropOffAddressUnit,
+    dropOffAddressStreet: trip.dropOffAddressStreet,
+    dropOffAddressCity: trip.dropOffAddressCity,
+    dropOffTime: trip.dropOffTime,
+    notes: trip.notes,
+    confirmed: trip.confirmed,
+    closed: trip.closed,
+    canceled: trip.canceled,
+    distance: trip.distance,
+    duration: trip.duration,
+  };
   try {
-    // TODO tomorrow --- I am NOT getting the right id.
-    console.log(trip.id);
-    const result = await supabase.from('trips').update(trip).eq('id', trip.id);
-    return { data: result, error: null };
+    const { data, error } = await supabase
+      .from('trips')
+      .update(updatedTrip)
+      .eq('id', tripID) as { data: Trip | null, error: PostgrestError | null; };
+    if (error) throw error;
+    return { data, error: null };
   } catch (error) {
     console.error(error);
     return { data: null, error };
   }
 };
 
+// ✅ I believe this is working ✅
 /**
  * Fetches all stops for a trip from the database
- * @param stop The stop to update
+ * @param updatedStop The stop to update
  * @returns { data: Stop, error: Error }
  */
-export const updateStop = async (stop: Stop) => {
-  let result = { data: null, error: null };
+const updateStop = async (stop: Stop) => {
+  const stopID = stop.id;
+  console.log("Supabase is updating stop", stopID);
+  const updatedStop: Stop = {
+    updatedAt: new Date().toISOString(),
+    date: stop.date,
+    passenger: stop.passenger,
+    street: stop.street,
+    city: stop.city,
+    arrivalTime: stop.arrivalTime,
+    departureTime: stop.departureTime,
+    distance: stop.distance,
+    name: stop.name,
+    unit: stop.unit,
+    notes: stop.notes,
+    type: stop.type,
+    closed: stop.closed,
+    status: stop.status,
+  };
   try {
-    result = await supabase.from('stops').update(stop).eq('id', stop.id);
-    const { data, error } = result;
+    const { data, error } = await supabase.from('stops').update(updatedStop).eq('id', stopID) as { data: Stop | null; error: PostgrestError | null; };
     if (error) throw error;
-  } catch (error) {
+    return { data, error: null };
+  } catch (error: PostgrestError | Error) {
     console.error(error);
-  } finally {
-    return result;
+    return { data: null, error };
   }
 };
 
@@ -172,7 +218,7 @@ export const updateStop = async (stop: Stop) => {
  * @param cancelationNote The cancelation note to create
  * @returns { data: CancelationNote, error: Error }
  */
-export const createCancelationNote = async (cancelationNote: CancelationNote) => {
+const createCancellationNote = async (cancelationNote: CancelationNote) => {
   let result = { data: null, error: null };
   try {
     result = await supabase.from('cancelation_notes').insert(cancelationNote);
@@ -190,7 +236,7 @@ export const createCancelationNote = async (cancelationNote: CancelationNote) =>
  * @param completionNote The completion note to create
  * @returns { data: CompletionNote, error: Error }
  */
-export const createCompletionNote = async (completionNote: CompletionNote) => {
+const createCompletionNote = async (completionNote: CompletionNote) => {
   let result = { data: null, error: null };
   try {
     result = await supabase.from('completion_notes').insert(completionNote);
@@ -201,4 +247,42 @@ export const createCompletionNote = async (completionNote: CompletionNote) => {
   } finally {
     return result;
   }
+};
+
+const fetchAllTrips = async () => {
+  log('Supabase is fetching all trips in the database');
+  try {
+    const { data } = await supabase.from('trips').select('*') as { data: Trip[] | null; };
+    return data;
+  } catch (error) {
+    errorLog(error, 'server/db/supabase.ts');
+    throw error;
+  }
+};
+
+const fetchAllUnconfirmedTrips = async () => {
+  log('Supabase is fetching all unconfirmed trips in the database');
+  try {
+    const { data } = await supabase.from('trips').select('*').eq('confirmed', false) as Trip[] | null;
+    return data;
+  } catch (error) {
+    errorLog(error, 'server/db/supabase.ts');
+    throw error;
+  }
+};
+
+export default {
+  createTrip,
+  fetchTrip,
+  updateTrip,
+  createStop,
+  fetchStop,
+  updateStop,
+  createStops,
+  fetchStops,
+  fetchAllTrips,
+  fetchAllStops,
+  createCompletionNote,
+  createCancellationNote,
+  fetchAllUnconfirmedTrips,
 };

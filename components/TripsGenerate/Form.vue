@@ -35,7 +35,7 @@ const prompt = ref('');
 
 const handleSubmit = async (e: Event) => {
   e.preventDefault();
-  const { generateTripsToValidate } = useTripsToValidateStore();
+  const { generateTripsToValidate } = useTripStore();
   errorMessage.value = '';
   generating.value = true;
   const { error } = await generateTripsToValidate(prompt.value, date.value);

@@ -74,8 +74,8 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-6 gap-6 mb-6">
-        <div class="form-control col-span-1">
+      <div class="grid grid-cols-7 gap-6 mb-6">
+        <div class="form-control col-span-2">
           <label class="label" for="drop_off_time">Drop Off Time</label>
           <input class="text-black input-group" type="text" name="drop_off_time" id="drop_off_time"
             @blur="formatDropOffTime" v-model="dropOffTime" />
@@ -87,7 +87,7 @@
       </div>
       <div class="flex flex-row items-center justify-center mb-12">
         <button type="submit" class="btn btn-primary btn-wide"
-          :class="{ 'loading': submitting, 'btn-disabled': submitted }">
+          :class="{ 'loading btn-disabled': submitting, 'btn-disabled': submitted }">
           Validate
         </button>
       </div>
@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts" setup>
-const { validateTrip } = useTripsToValidateStore();
+const { validateTrip } = useTripStore();
 const props = defineProps({
   trip: {
     type: Object as PropType<GeneratedTrip>,
@@ -153,6 +153,7 @@ const submitted = ref(false);
 
 const handleSubmit = async (e: Event) => {
   e.preventDefault();
+  submitting.value = true;
   const data = {
     date: date.value,
     pickupTime: pickupTime.value,
@@ -169,7 +170,7 @@ const handleSubmit = async (e: Event) => {
     dropOffTime: dropOffTime.value,
     notes: notes.value,
   };
-  submitting.value = true;
+
   const response = await fetch(`/api/trips/new`, {
     method: 'POST',
     headers: {

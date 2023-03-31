@@ -1,9 +1,35 @@
 import { nanoid } from 'nanoid';
+import type { Trip } from '@prisma/client';
 
-export const useTripsToValidateStore = defineStore('tripsToValidate', () => {
+export const useTripStore = defineStore('tripsToValidate', () => {
   const supabase = useSupabaseClient();
 
   const tripsToValidate: Ref<GeneratedTrip[]> = ref([]);
+  const tripsToConfirm: Ref<Trip[]> = ref([]);
+
+  // ✅ Working ✅
+  async function fetchUnconfirmedTrips() {
+    const response = await fetch('/api/trips/unconfirmed');
+    const { body } = await response.json();
+    tripsToConfirm.value = body;
+  }
+  fetchUnconfirmedTrips();
+
+  async function getUnconfirmedTrips() {
+    await fetchUnconfirmedTrips();
+    return tripsToConfirm.value;
+  }
+
+  async function confirmTrip(tripID: string) {
+    const response = await fetch('/api/trips/confirm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tripID),
+    });
+    await fetchUnconfirmedTrips();
+  }
 
   /**
    * Confirm a trip and add remove it from the tripsToValidate store.
@@ -76,5 +102,5 @@ export const useTripsToValidateStore = defineStore('tripsToValidate', () => {
   }
 
   // STORE PROVIDES...
-  return { tripsToValidate, generateTripsToValidate, validateTrip };
+  return { tripsToValidate, tripsToConfirm, getUnconfirmedTrips, confirmTrip, fetchUnconfirmedTrips, generateTripsToValidate, validateTrip };
 });

@@ -1,4 +1,4 @@
-import * as supabase from '~/server/db/supabase.ts';
+import supabase from '~/server/db/supabase.ts';
 
 export default defineEventHandler(async (event) => {
   const trip = await readBody(event);

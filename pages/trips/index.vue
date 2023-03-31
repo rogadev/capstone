@@ -10,9 +10,12 @@ useHead({
 
 <template>
   <div class="container">
-    <div class="flex flex-col justify-center items-center m-4 mb-8">
-      <ButtonLink to="/trips/new" class="btn btn-primary btn-wide">
+    <div class="flex flex-row justify-evenly items-center gap-4 m-4 mb-8">
+      <ButtonLink to="/trips/new" class="btn btn-primary w-[150px] sm:btn-wide">
         Add Trips
+      </ButtonLink>
+      <ButtonLink to="/drive" class="btn btn-primary w-[150px] sm:btn-wide">
+        Drive
       </ButtonLink>
     </div>
     <!-- Unconfirmed Trips -->

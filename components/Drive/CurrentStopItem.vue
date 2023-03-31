@@ -34,14 +34,14 @@
           </div>
           <div class="flex flex-col w-full">
             <label for="cancellationNotes" class="text-center">Cancellation Notes</label>
-            <textarea id="cancellationNotes" v-model="cancellationNotes" class="w-full" rows="3"></textarea>
+            <textarea id="cancellationNotes" v-model="cancellationNote" class="w-full" rows="3"></textarea>
           </div>
         </div>
         <div v-if="progress > 0" class="flex flex-row justify-evenly gap-10 m-4">
 
           <div class="flex flex-col w-full">
             <label for="completionNotes" class="text-center">Completion Notes</label>
-            <textarea id="completionNotes" v-model="completionNotes" class="w-full" rows="3"></textarea>
+            <textarea id="completionNotes" v-model="completionNote" class="w-full" rows="3"></textarea>
           </div>
         </div>
         <div class="flex flex-row justify-between">
@@ -52,13 +52,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { Stop } from '@prisma/client';
+import type { CancellationNote, CompletionNote, Stop } from '@prisma/client';
 
-const { incStopStatus, completeStop, cancelStop } = useStopStore();
+const stopStore = useStopStore();
 
-const completionNotes = ref("");
+const completionNote: Ref<string> = ref('');
 const cancellationReason = ref("no-show");
-const cancellationNotes = ref("");
+const cancellationNote: Ref<string> = ref('');
 const confirmCancel = ref(false);
 
 const props = defineProps({
@@ -123,8 +123,8 @@ const arrivingLate = computed(() => {
   return stopIsToday.value && timeRemaining.value === "00:00" && props.stop.status !== "completed";
 });
 
-function enroute() {
-  incStopStatus(props.stop);
+async function enroute() {
+  await stopStore.updateStopStatus(props.stop, "enroute");
   progress.value = 1;
   const addressString = `${props.stop.street} ${props.stop.city}`;
   const slugAddress = addressString.replace(/ /g, '+');
@@ -150,12 +150,12 @@ function enroute() {
 }
 
 function completed() {
-  completeStop(props.stop, completionNotes.value);
+  stopStore.completeStop(props.stop, completionNote.value);
   progress.value = 2;
 }
 
 function cancel() {
-  cancelStop(props.stop, cancellationReason.value, cancellationNotes.value);
+  stopStore.cancelStop(props.stop, cancellationReason.value, cancellationNote.value);
   progress.value = 3;
 }
 
