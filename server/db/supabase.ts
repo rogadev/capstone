@@ -18,7 +18,7 @@ const createTrip = async (trip: Trip) => {
     const { data, error } = result;
     if (error) throw error;
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
   }
   return result;
 };
@@ -30,16 +30,16 @@ const createTrip = async (trip: Trip) => {
  * @returns { data: Trip, error: Error }
  */
 const fetchTrip = async (tripID: number) => {
-  console.log('Supabase fetching trip', tripID);
+  log('Supabase fetching trip', tripID);
   try {
     const response = await supabase.from('trips').select('*').eq('id', tripID).single();
     const { data, error } = response as { data: Trip | null; error: PostgrestError | null; };
     if (error) throw error;
-    console.log('Trip found. Supabase returning trip...');
+    log('Trip found. Supabase returning trip...');
     const trip = data as Trip;
     return { data: trip, error };
   } catch (error: any) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
     return { data: null, error };
   }
 };
@@ -59,7 +59,7 @@ const fetchStop = async (stopID: number) => {
     const { error } = result;
     if (error) throw error;
   } catch (error) {
-    console.log(error);
+    errorLog(error, 'server/db/supabase.ts');
   }
   return result;
 };
@@ -76,7 +76,7 @@ const createStop = async (stop: Stop) => {
     const { data, error } = result;
     if (error) throw error;
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
   }
   return result;
 };
@@ -115,34 +115,43 @@ const fetchStops = async (tripID: number) => {
     const { error } = response;
     if (error) throw error;
   } catch (error) {
-    console.log(error);
+    errorLog(error, 'server/db/supabase.ts');
   }
   return response;
+};
+
+const fetchAllStops = async () => {
+  log('Supabase is fetching all stops');
+  try {
+    const response = await supabase.from('stops').select('*');
+    return { data: response.data as Stop[], error: null };
+  } catch (error) {
+    errorLog(error, 'server/db/supabase.ts');
+    return { data: null, error };
+  }
 };
 
 /**
  * Fetches all stops for a trip from the database that are not closed
  * @returns { data: Stop[], error: Error }
  */
-const fetchAllStops = async () => {
+const fetchAllOpenStops = async () => {
+  log('Supabase is fetching all stops (not closed)');
   try {
     const response = await supabase.from('stops').select('*').eq('closed', false);
-    console.log(response.data[5]);
     return { data: response.data as Stop[], error: null };
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
     return { data: null, error };
   }
 };
 
 /**
- * Fetches all stops for a trip from the database
- * @param trip The trip to update
- * @returns { data: Trip, error: Error }
+ * Updates a trip in the database
  */
 const updateTrip = async (trip: Trip) => {
   const tripID = trip.id;
-  console.log('Supabase is updating trip', tripID);
+  log('Supabase is updating trip', tripID);
   const updatedTrip: Trip = {
     updatedAt: new Date().toISOString(),
     date: trip.date,
@@ -166,14 +175,15 @@ const updateTrip = async (trip: Trip) => {
     duration: trip.duration,
   };
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('trips')
-      .update(updatedTrip)
-      .eq('id', tripID) as { data: Trip | null, error: PostgrestError | null; };
+      .update({ ...updatedTrip })
+      .eq('id', tripID);
     if (error) throw error;
+    const { data } = await supabase.from('trips').select('*').eq('id', tripID).single();
     return { data, error: null };
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
     return { data: null, error };
   }
 };
@@ -186,7 +196,7 @@ const updateTrip = async (trip: Trip) => {
  */
 const updateStop = async (stop: Stop) => {
   const stopID = stop.id;
-  console.log("Supabase is updating stop", stopID);
+  log("Supabase is updating stop", stopID);
   const updatedStop: Stop = {
     updatedAt: new Date().toISOString(),
     date: stop.date,
@@ -208,7 +218,7 @@ const updateStop = async (stop: Stop) => {
     if (error) throw error;
     return { data, error: null };
   } catch (error: PostgrestError | Error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
     return { data: null, error };
   }
 };
@@ -219,13 +229,14 @@ const updateStop = async (stop: Stop) => {
  * @returns { data: CancelationNote, error: Error }
  */
 const createCancellationNote = async (cancelationNote: CancelationNote) => {
+  log('Supabase is creating a new cancelation note');
   let result = { data: null, error: null };
   try {
     result = await supabase.from('cancelation_notes').insert(cancelationNote);
     const { data, error } = result;
     if (error) throw error;
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
   } finally {
     return result;
   }
@@ -237,13 +248,14 @@ const createCancellationNote = async (cancelationNote: CancelationNote) => {
  * @returns { data: CompletionNote, error: Error }
  */
 const createCompletionNote = async (completionNote: CompletionNote) => {
+  log('Supabase is creating a new completion note');
   let result = { data: null, error: null };
   try {
     result = await supabase.from('completion_notes').insert(completionNote);
     const { data, error } = result;
     if (error) throw error;
   } catch (error) {
-    console.error(error);
+    errorLog(error, 'server/db/supabase.ts');
   } finally {
     return result;
   }
@@ -282,6 +294,7 @@ export default {
   fetchStops,
   fetchAllTrips,
   fetchAllStops,
+  fetchAllOpenStops,
   createCompletionNote,
   createCancellationNote,
   fetchAllUnconfirmedTrips,

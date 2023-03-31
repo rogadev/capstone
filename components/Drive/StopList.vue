@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col justify-center">
-    <DriveCurrentStopItem v-if="currentStop" :stop="currentStop" />
+    <DriveCurrentStopItem v-if="currentStop" @deleted="refreshStops" :stop="currentStop" />
     <div v-else class="text-center">No Stops</div>
     <DriveNextStops v-if="nextStops.length > 0" v-for="stop in nextStops" :key="stop.id" :stop="stop" />
   </div>
@@ -27,6 +27,10 @@ const currentStop: ComputedRef<Stop> = computed(() => {
 const nextStops: ComputedRef<Stop[]> = computed(() => {
   return todaysStops.value.slice(1);
 });
+
+async function refreshStops() {
+  await fetchStops();
+}
 
 onBeforeMount(async () => {
   await fetchStops();

@@ -1,6 +1,8 @@
 import type { Stop, Trip, CompletionNote, CancelationNote } from '@prisma/client';
 
 export const useStopStore = defineStore('auth', () => {
+  const { log, error } = console;
+
   const stops = ref<Stop[]>([]);
   const StopStatus = ["scheduled", "enroute", "arrived", "departed", "completed", "canceled"];
 
@@ -10,9 +12,12 @@ export const useStopStore = defineStore('auth', () => {
       const response = await fetch('/api/stops');
       if (!response.ok) throw new Error(response.statusText);
       const { data } = await response.json();
-      stops.value = data;
-    } catch (error) {
-      console.error(error);
+      const openStops = data.filter((stop: Stop) => stop.closed === false);
+      // TODO remove this
+      console.log('stops.ts: openStops', openStops.map(stop => stop.closed));
+      stops.value = openStops;
+    } catch (e) {
+      error(e, 'stores/stops.ts');
     }
   };
 
@@ -46,23 +51,21 @@ export const useStopStore = defineStore('auth', () => {
    * @returns { success: boolean, error: Error }
    */
   async function cancelStop(stop: Stop, cancelationType: string, notes: string = '') {
-    console.log("stopStore attempting to cancel stop", stop.id);
+    log("stopStore attempting to cancel stop", stop.id);
     const { tripId } = stop;
-    console.log('Associated with trip', tripId);
+    log('Associated with trip', tripId);
     const tripObjectToUpdate: Trip = await fetchTrip(tripId);
     const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
     const cancelationNote: CancelationNote = { tripId, cancelationType, notes, };
     // ✅ Working ✅
 
     // Update Trip
-    console.log('Updating Trip', tripObjectToUpdate);
+    log('Updating Trip', tripObjectToUpdate);
     const updatedTrip = { ...tripObjectToUpdate, closed: true, canceled: true };
-    console.log('... to', updatedTrip);
+    log('... to', updatedTrip);
     const { data, error } = await updateTrip(updatedTrip);
     if (error) throw error;
-    console.log('Trip updated successfully', data.id);
-
-
+    log('Trip updated successfully', data.id);
     await fetchStops();
   }
 
@@ -91,7 +94,7 @@ export const useStopStore = defineStore('auth', () => {
   }
 
   async function fetchTrip(tripId: number) {
-    console.log('Stops Store fetching trip', tripId);
+    log('Stops Store fetching trip', tripId);
     const response = await fetch(`/api/trips/${tripId}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -102,7 +105,7 @@ export const useStopStore = defineStore('auth', () => {
   }
 
   async function updateTrip(trip: Trip) {
-    console.log('updating trip', trip.id);
+    log('updating trip', trip.id);
     const response = await fetch(`/api/trips/update/one`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -110,7 +113,7 @@ export const useStopStore = defineStore('auth', () => {
     });
     if (!response.ok) throw new Error(response.statusText);
     const data = await response.json();
-    console.log('updating trip received data:', data);
+    log('updating trip received data:', data);
     return { data, error: null };
   }
 

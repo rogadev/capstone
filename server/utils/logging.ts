@@ -1,5 +1,5 @@
 const { DEV } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === 'true';
+const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === 'true';
 
 export function errorLog(e: Error, filename?: string) {
   const { warn, error, info } = console;

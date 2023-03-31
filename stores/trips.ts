@@ -5,31 +5,6 @@ export const useTripStore = defineStore('tripsToValidate', () => {
   const supabase = useSupabaseClient();
 
   const tripsToValidate: Ref<GeneratedTrip[]> = ref([]);
-  const tripsToConfirm: Ref<Trip[]> = ref([]);
-
-  // ✅ Working ✅
-  async function fetchUnconfirmedTrips() {
-    const response = await fetch('/api/trips/unconfirmed');
-    const { body } = await response.json();
-    tripsToConfirm.value = body;
-  }
-  fetchUnconfirmedTrips();
-
-  async function getUnconfirmedTrips() {
-    await fetchUnconfirmedTrips();
-    return tripsToConfirm.value;
-  }
-
-  async function confirmTrip(tripID: string) {
-    const response = await fetch('/api/trips/confirm', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(tripID),
-    });
-    await fetchUnconfirmedTrips();
-  }
 
   /**
    * Confirm a trip and add remove it from the tripsToValidate store.
@@ -72,7 +47,6 @@ export const useTripStore = defineStore('tripsToValidate', () => {
       console.error(e);
       error = "Oops! Something went wrong.";
     }
-    console.log(data);
     if (!data) return { error, data: null };
 
     // FORMAT THE DATA - ADD TO THE STORE
@@ -102,5 +76,5 @@ export const useTripStore = defineStore('tripsToValidate', () => {
   }
 
   // STORE PROVIDES...
-  return { tripsToValidate, tripsToConfirm, getUnconfirmedTrips, confirmTrip, fetchUnconfirmedTrips, generateTripsToValidate, validateTrip };
+  return { tripsToValidate, generateTripsToValidate, validateTrip };
 });
