@@ -8,7 +8,6 @@ useHead({
 });
 </script>
 
-
 <template>
   <div class="container">
     <div class="flex flex-col justify-center items-center m-4 mb-8">
@@ -21,7 +20,7 @@ useHead({
       <div class="mb-4 text-center w-full container">
         <h2 class="text-2xl font-bold">Confirm Trips</h2>
       </div>
-      <UnconfirmedTrips />
+      <TripsUnconfirmedList />
     </div>
   </div>
 </template>
