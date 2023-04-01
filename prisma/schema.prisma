@@ -37,7 +37,6 @@ model Trip {
   id                   Int      @id @unique @default(autoincrement())
   createdAt            DateTime @default(now())
   updatedAt            String?
-  confirmed            Boolean  @default(false)
   date                 String
   pickupTime           String
   passengerName        String
@@ -52,7 +51,9 @@ model Trip {
   dropOffAddressCity   String
   dropOffTime          String?
   notes                String?
+  confirmed            Boolean  @default(false)
   closed               Boolean  @default(false)
+  canceled             Boolean  @default(false)
   distance             Float?
   duration             Float?
 
