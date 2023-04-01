@@ -13,8 +13,6 @@ export const useStopStore = defineStore('auth', () => {
       if (!response.ok) throw new Error(response.statusText);
       const { data } = await response.json();
       const openStops = data.filter((stop: Stop) => stop.closed === false);
-      // TODO remove this
-      console.log('stops.ts: openStops', openStops.map(stop => stop.closed));
       stops.value = openStops;
     } catch (e) {
       error(e, 'stores/stops.ts');
@@ -33,6 +31,8 @@ export const useStopStore = defineStore('auth', () => {
 
   // Moves the stop status forward
   async function updateStopStatus(stop: Stop, status: 'scheduled' | 'enroute' | 'completed' | 'canceled') {
+    const previousClosedStatus = stop.closed;
+    if (previousClosedStatus === 'canceled' || previousClosedStatus === 'completed') stop.closed = true;
     const updatedStop = { ...stop, status };
     const response = await fetch('/api/stops/update/one', {
       method: 'POST',
@@ -40,7 +40,7 @@ export const useStopStore = defineStore('auth', () => {
       body: JSON.stringify(updatedStop),
     });
     if (response.error) console.error(response.error);
-    else stops.value = response.data;
+    await fetchStops();
   };
 
   /**

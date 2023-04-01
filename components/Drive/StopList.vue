@@ -18,7 +18,22 @@ const props = defineProps({
 });
 
 const todaysStops: ComputedRef<Stop[]> = computed(() => {
-  return getStopsForDate(props.date);
+  const todaysStops = getStopsForDate(props.date);
+  const filteredStops = todaysStops.filter((stop: Stop) => {
+    return stop.status !== "completed" && stop.status !== "canceled";
+  });
+  const sortedStops = filteredStops.sort((a: Stop, b: Stop) => {
+    const aTime = a.arrivalTime;
+    const bTime = b.arrivalTime;
+    if (aTime < bTime) {
+      return -1;
+    } else if (aTime > bTime) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+  return sortedStops;
 });
 
 const currentStop: ComputedRef<Stop> = computed(() => {

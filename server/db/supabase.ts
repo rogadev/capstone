@@ -1,4 +1,4 @@
-import { PostgrestError, createClient } from '@supabase/supabase-js';
+import { type PostgrestError, createClient } from '@supabase/supabase-js';
 import type { Trip, Stop, CancelationNote, CompletionNote } from '@prisma/client';
 import { errorLog } from '../utils/logging';
 
@@ -214,12 +214,12 @@ const updateStop = async (stop: Stop) => {
     status: stop.status,
   };
   try {
-    const { data, error } = await supabase.from('stops').update(updatedStop).eq('id', stopID) as { data: Stop | null; error: PostgrestError | null; };
+    const { error } = await supabase.from('stops').update(updatedStop).eq('id', stopID) as { error: PostgrestError | null; };
     if (error) throw error;
-    return { data, error: null };
+    return { status: 200 };
   } catch (error: PostgrestError | Error) {
     errorLog(error, 'server/db/supabase.ts');
-    return { data: null, error };
+    sendError(event, 'server/db/supabase.ts');
   }
 };
 

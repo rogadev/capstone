@@ -2,7 +2,7 @@
   <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
     <div class="container mx-auto">
       <DriveLateIndicator v-if="arrivingLate" />
-      <p class="text-center">{{ stop.closed }} {{ stop.status }}</p>
+      <p class="text-center">{{ stop.closed }} {{ stop.status }} {{ stop.id }}</p>
       <div class="flex flex-col">
         <div class="flex flex-row justify-between">
           <p>{{ stopType }}</p>
@@ -15,13 +15,15 @@
         </div>
         <div v-if="!confirmCancel" class="flex flex-row justify-between mt-8 mb-3">
           <button class="btn btn-error btn-wide mx-auto" @click="() => confirmCancel = true"
-            v-if="progress !== 2">Cancel</button>
-          <button class="btn btn-info btn-wide mx-auto" @click="enroute" v-if="progress === 0">Enroute</button>
-          <button class="btn btn-success btn-wide mx-auto" @click="completed" v-if="progress === 1">Completed</button>
+            v-if="stop.status === 'scheduled'">Cancel</button>
+          <button v-if="stop.status === 'enroute'" @click="goBack">Go back</button>
+          <button class="btn btn-info btn-wide mx-auto" @click="enroute"
+            v-if="stop.status === 'scheduled'">Enroute</button>
+          <button class="btn btn-success btn-wide mx-auto" @click="completed"
+            v-if="stop.status === 'enroute'">Completed</button>
         </div>
         <DriveCancelTrip v-else :stopID="stop.id" @deleted="stopDeleted" @cancel="() => confirmCancel = false" />
-        <div v-if="progress > 0" class="flex flex-row justify-evenly gap-10 m-4">
-
+        <div v-if="stop.status === 'enroute'" class="flex flex-row justify-evenly gap-10 m-4">
           <div class="flex flex-col w-full">
             <label for="completionNotes" class="text-center">Completion Notes</label>
             <textarea id="completionNotes" v-model="completionNote" class="w-full" rows="3"></textarea>
@@ -40,6 +42,10 @@ import type { Stop } from '@prisma/client';
 const stopStore = useStopStore();
 const completionNote: Ref<string> = ref('');
 const confirmCancel = ref(false);
+const currentLocation = reactive({
+  lat: 0,
+  lon: 0,
+});
 
 const props = defineProps({
   stop: {
@@ -50,27 +56,11 @@ const props = defineProps({
 
 const emits = defineEmits(['deleted']);
 
-const progress = ref(-1);
 const currentTime = ref(new Date());
 
 const timeClock = setInterval(() => {
   currentTime.value = new Date();
 }, 1000);
-
-switch (props.stop.status) {
-  case "scheduled":
-    progress.value = 0;
-    break;
-  case "enroute":
-    progress.value = 1;
-    break;
-  case "completed":
-    progress.value = 2;
-    break;
-  default:
-    progress.value = 3;
-    break;
-}
 
 const stopType = computed(() => {
   if (props.stop.type === "pickup") {
@@ -106,42 +96,49 @@ const arrivingLate = computed(() => {
 });
 
 function stopDeleted() {
+  confirmCancel.value = false;
   emits('deleted');
 }
 
 async function enroute() {
-  await stopStore.updateStopStatus(props.stop, "enroute");
-  progress.value = 1;
-  const addressString = `${props.stop.street} ${props.stop.city}`;
+  const addressString = `${props.stop.street}, ${props.stop.city}`;
   const slugAddress = addressString.replace(/ /g, '+');
-  navigator.geolocation.getCurrentPosition(async function (position) {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-    await fetch('/api/maps/stop', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        origin: {
-          lat,
-          lon,
-        },
-        destination: slugAddress,
-        stop: props.stop,
-      })
-    });
-    window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');
+  const lat = currentLocation.lat;
+  const lon = currentLocation.lon;
+  await fetch('/api/maps/stop', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      origin: [lat, lon],
+      destination: slugAddress,
+      stop: props.stop,
+    })
   });
+  await stopStore.updateStopStatus(props.stop, "enroute");
+
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');
 }
 
-function completed() {
+async function goBack() {
+  await stopStore.updateStopStatus(props.stop, "scheduled");
+  await stopStore.fetchStops();
+}
+
+async function completed() {
   stopStore.completeStop(props.stop, completionNote.value);
-  progress.value = 2;
+  await stopStore.updateStopStatus(props.stop, "completed");
+  await stopStore.fetchStops();
 }
 
 onMounted(() => {
-  navigator.geolocation.getCurrentPosition(() => { });
+  navigator.geolocation.getCurrentPosition(async function (position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    currentLocation.lat = lat;
+    currentLocation.lon = lon;
+  });
 });
 
 onUnmounted(() => {
