@@ -4,10 +4,13 @@
       <DriveLateIndicator v-if="arrivingLate" />
       <p class="text-center">{{ stop.closed }} {{ stop.status }} {{ stop.id }}</p>
       <div class="flex flex-col">
-        <div class="flex flex-row justify-between">
-          <p>{{ stopType }}</p>
-          <p class="font-semibold" v-if="!arrivingLate">{{ stopIsToday ? timeRemaining : stop.date }}</p>
-          <p>{{ arrivalTime }}</p>
+        <div class="flex flex-row justify-between items-center font-bold">
+          <p class="text-left">{{ stopType }}</p>
+          <div class="text-center">
+            <p v-if="!arrivingLate">{{ stopIsToday ? timeRemaining : stop.date }}</p>
+            <p>{{ timeUntilArrival }}</p>
+          </div>
+          <p class="text-right">{{ arrivalTimeString }}</p>
         </div>
         <div class="flex flex-row justify-between">
           <p>{{ stop.passenger }}</p>
@@ -69,19 +72,43 @@ const stopType = computed(() => {
     return "Drop Off";
   }
 });
-const arrivalTime = computed(() => {
-  return new Date(props.stop.arrivalTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+let interval: any;
+const currentMinutes = ref(0);
+const timeRemaining = ref(true);
+
+const timeUntilArrival = computed(() => {
+  const now = new Date();
+  const slashDate = props.stop.date.replace(/-/g, '/');
+  const arrivalDate = new Date(slashDate);
+  arrivalDate.setMinutes(props.stop.arrivalTime);
+  const timeDiffMs = arrivalDate.getTime() - now.getTime();
+  const timeDiffMinutes = Math.floor(timeDiffMs / 1000 / 60);
+  if (timeDiffMinutes < 0) {
+    timeRemaining.value = false;
+    return "0h 0m";
+  }
+  const hours = Math.floor(timeDiffMinutes / 60);
+  const minutes = timeDiffMinutes % 60;
+  const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
+  const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  return `${hoursString}h ${minutesString}m`;
 });
 
-const timeRemaining = computed(() => {
-  const time = new Date(props.stop.arrivalTime).getTime() - currentTime.value.getTime();
-  if (time < 0) {
-    clearInterval(timeClock);
-    return "00:00";
-  }
-  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((time % (1000 * 60)) / 1000);
-  return `${minutes}:${seconds}`;
+onMounted(() => {
+  interval = setInterval(() => {
+    currentMinutes.value = new Date().getHours() * 60 + new Date().getMinutes();
+  }, 1000);
+  onUnmounted(() => clearInterval(interval));
+});
+
+
+const arrivalTimeString = computed(() => {
+  const hours = Math.floor(props.stop.arrivalTime / 60);
+  const minutes = props.stop.arrivalTime % 60;
+  const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
+  const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  return `${hoursString}:${minutesString}`;
 });
 
 const tripDate = computed(() => {
