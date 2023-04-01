@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts" setup>
-const { validateTrip } = useTripsToValidateStore();
+const { validateTrip } = useTripStore();
 const props = defineProps({
   trip: {
     type: Object as PropType<GeneratedTrip>,
@@ -122,11 +122,11 @@ const date = ref(props.trip.date);
 const pickupTime = ref(props.trip.pickup_time);
 const passengerName = ref(props.trip.passenger_name);
 const passengerPhone = ref(props.trip.passenger_phone);
-const pickupAddressName = ref(props.trip.pickup_name);
+const pickupAddressName = ref(props.trip.pickup_location_name);
 const pickupAddressUnit = ref(props.trip.pickup_location_unit);
 const pickupAddressStreet = ref(props.trip.pickup_location_street);
 const pickupAddressCity = ref(props.trip.pickup_location_city);
-const dropOffAddressName = ref(props.trip.drop_off_name);
+const dropOffAddressName = ref(props.trip.drop_off_location_name);
 const dropOffAddressUnit = ref(props.trip.drop_off_location_unit);
 const dropOffAddressStreet = ref(props.trip.drop_off_location_street);
 const dropOffAddressCity = ref(props.trip.drop_off_location_city);
