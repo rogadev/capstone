@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <DriveCurrentStopItem v-if="currentStop" :stop="currentStop" />
-    <div v-else>No Stops</div>
+  <div class="flex flex-col justify-center">
+    <DriveCurrentStopItem v-if="currentStop" @deleted="refreshStops" :stop="currentStop" />
+    <div v-else class="text-center">No Stops</div>
     <DriveNextStops v-if="nextStops.length > 0" v-for="stop in nextStops" :key="stop.id" :stop="stop" />
   </div>
 </template>
@@ -18,7 +18,22 @@ const props = defineProps({
 });
 
 const todaysStops: ComputedRef<Stop[]> = computed(() => {
-  return getStopsForDate(props.date);
+  const todaysStops = getStopsForDate(props.date);
+  const filteredStops = todaysStops.filter((stop: Stop) => {
+    return stop.status !== "completed" && stop.status !== "canceled";
+  });
+  const sortedStops = filteredStops.sort((a: Stop, b: Stop) => {
+    const aTime = a.arrivalTime;
+    const bTime = b.arrivalTime;
+    if (aTime < bTime) {
+      return -1;
+    } else if (aTime > bTime) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+  return sortedStops;
 });
 
 const currentStop: ComputedRef<Stop> = computed(() => {
@@ -28,8 +43,12 @@ const nextStops: ComputedRef<Stop[]> = computed(() => {
   return todaysStops.value.slice(1);
 });
 
-onBeforeMount(() => {
-  fetchStops();
+async function refreshStops() {
+  await fetchStops();
+}
+
+onBeforeMount(async () => {
+  await fetchStops();
 });
 </script>
 

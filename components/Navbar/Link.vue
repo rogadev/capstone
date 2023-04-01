@@ -1,13 +1,13 @@
 <template>
   <li v-if="showIf" class="nav-item">
-    <nuxt-link :to="to" class="btn btn-outline md:btn-ghost">
+    <NuxtLink :to="to" class="btn btn-outline md:btn-ghost">
       <span class="block md:hidden lg:block">
         <Icon :title="text" :name="icon" />
       </span>
       <span class="ml-0 lg:ml-4 hidden md:block">
         {{ text }}
       </span>
-    </nuxt-link>
+    </NuxtLink>
   </li>
 </template>
 

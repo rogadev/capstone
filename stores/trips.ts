@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
+import type { Trip } from '@prisma/client';
 
-export const useTripsToValidateStore = defineStore('tripsToValidate', () => {
+export const useTripStore = defineStore('tripsToValidate', () => {
   const supabase = useSupabaseClient();
 
   const tripsToValidate: Ref<GeneratedTrip[]> = ref([]);
@@ -46,7 +47,6 @@ export const useTripsToValidateStore = defineStore('tripsToValidate', () => {
       console.error(e);
       error = "Oops! Something went wrong.";
     }
-    console.log(data);
     if (!data) return { error, data: null };
 
     // FORMAT THE DATA - ADD TO THE STORE

@@ -2,9 +2,10 @@ import { Configuration, OpenAIApi } from "openai";
 import type { Trip } from '@prisma/client';
 
 const { DEV, OPENAI_API_KEY } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === "true" ? true : false;
+const DEBUG_IN_DEV = DEV.toLowerCase() === "true";
 let startTime: number;
 const model = "gpt-3.5-turbo";
+const { log } = console;
 
 type GenerateTripsBody = {
   prompt: string;
@@ -13,7 +14,6 @@ type GenerateTripsBody = {
 
 export default defineEventHandler(async (event) => {
   logInitiate();
-
   const { prompt, date } = await readBody(event) as GenerateTripsBody;
 
   const configuration = new Configuration({
@@ -55,12 +55,12 @@ function logRequestDuration(startTime: number, data: Trip[]) {
   const seconds = ((requestDuration % 60000) / 1000).toFixed(0);
   const milliseconds = requestDuration % 1000;
   const requestDurationString = `${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s ${milliseconds.toString().padStart(3, '0')}ms`;
-  console.log(`'/api/trips/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${requestDurationString}`);
+  log(`'/api/trips/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${requestDurationString}`);
 }
 
 function logInitiate() {
   startTime = Date.now();
-  console.log("'/api/trips/generate'\tGenerating Trips...");
+  log("Generating Trips...");
 }
 
 function checkForMissingData(data) {
@@ -89,7 +89,7 @@ function checkForMissingData(data) {
 }
 
 async function attemptToFixMissingData(data, prompt, event) {
-  console.log('First response had missing fields. Sending back to ChatGPT to fill in the missing fields.');
+  log('First ChatGPT response had missing fields. Sending back to ChatGPT to fill in the missing fields.');
   const messages: ChatConversation = [{
     role: "system", content: `The following trips were generated using regular text describing one or more trips, but they are missing some required fields. Please fill in the missing fields and return the trips as a JSON array of objects.
       For context, the text might contain a location with only a name and no address. In this instance, you'll need to extract the address from one of the following provided addresses:
@@ -127,7 +127,6 @@ async function attemptToFixMissingData(data, prompt, event) {
   if (!content) return createError(event, "No content returned from OpenAI 🤷", DEBUG_IN_DEV);
 
   const newData = await extractJsonData(content);
-  console.log(newData);
   return newData;
 }
 

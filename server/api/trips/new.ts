@@ -1,5 +1,7 @@
-import * as supabase from '~/server/db/supabase.ts';
+import supabase from '~/server/db/supabase.ts';
+import { errorLog } from '~~/server/utils/logging';
 
+const { log } = console;
 export default defineEventHandler(async (event) => {
   const trip = await readBody(event);
   if (!trip) {
@@ -8,11 +10,10 @@ export default defineEventHandler(async (event) => {
   try {
     const { error, data } = await supabase.createTrip(trip);
     if (error) throw error;
-    console.log("Message from '/api/trips/new': Trip added to database.");
+    log("Message from '/api/trips/new': Trip added to database.");
     return { status: 200, body: data };
   } catch (e) {
-    console.log("Message from '/api/trips/new': There was an error adding trip to database.", e.message);
+    errorLog(e, 'Error in /api/trips/new.ts');
     return { status: 500, body: e.message };
   }
-  return {};
 });

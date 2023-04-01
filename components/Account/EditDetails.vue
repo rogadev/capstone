@@ -50,21 +50,9 @@ defineProps({
     required: true,
   },
 });
-
-const updateAccount = async () => {
-  // const supabase = useSupabaseClient();
-  // TODO Update user data.
-  // const { data, error } = await supabase
-  //   .from('profiles')
-  //   .update({ name, website, picture })
-  //   .match({ id: user.id });
-  // if (error) {
-  //   console.error(error);
-  // }
-  // if (data) {
-  //   console.log(data);
-  // }
-};
+async function updateAccount() {
+  // TODO 
+}
 </script>
 
 <style scoped>

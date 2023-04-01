@@ -28,9 +28,10 @@
   </div>
 
   <div class="flex flex-row gap-6 justify-evenly items-center my-4">
-    <button class="btn w-[100px] btn-error">Cancel</button>
-    <button class="btn w-[100px] btn-info">Edit</button>
-    <button @click="() => confirmTrip(trip.id)" class="btn w-[100px] btn-success">Confirm</button>
+    <button :class="{ 'loading btn-disabled': loading }" class="btn w-[100px] btn-error">Cancel</button>
+    <button :class="{ 'loading btn-disabled': loading }" class="btn w-[100px] btn-info">Edit</button>
+    <button :class="{ 'loading btn-disabled': loading }" @click="() => confirmTrip(trip.id)"
+      class="btn w-[100px] btn-success">Confirm</button>
   </div>
 </template>
 
@@ -42,18 +43,22 @@ defineProps({
     required: true,
   },
 });
+const loading = ref(false);
 const emit = defineEmits(['confirm']);
 
 const confirmTrip = async (id: number) => {
+  loading.value = true;
   const tripId = id;
   const response = await fetch('/api/trips/confirm', {
     method: 'POST',
     body: JSON.stringify(tripId),
   });
-  const { error, success } = await response.json();
-  if (!error && success) {
+  if (!response.ok) {
+    console.error('Error confirming trip');
+  } else {
     emit('confirm', id);
   }
+  loading.value = false;
 };
 
 const dateFormat = (date: Date | string) => {
@@ -94,22 +99,4 @@ const formatDropOffMapLink = (fromStreet: string, fromCity: string, toStreet: st
   return `https://www.google.com/maps/dir/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
 };
 
-
-// [
-//   {
-//     "raw": "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there."
-//     "passenger_name": "Glen K"
-//     "passenger_phone": ""
-//     "pickup_location_name": "Nanaimo Dialysis"
-//     "pickup_location_unit": ""
-//     "pickup_location_street": "1351 Estevan Rd"
-//     "pickup_location_city": "Nanaimo"
-//     "drop_off_location_name": "Home"
-//     "drop_off_location_unit": ""
-//     "drop_off_location_street": "555 Aurora Street"
-//     "drop_off_location_city": "Parksville"
-//     "drop_off_time": ""
-//     "notes": "Please call the unit and get his actual time so you know exactly what time to be there."
-//   }
-// ]
 </script>

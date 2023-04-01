@@ -1,3 +1,4 @@
+import { NuxtLink } from '../../.nuxt/components';
 <template>
   <div class="container m-4">
     <Auth v-if="!user" />
@@ -5,6 +6,11 @@
       <TripsGenerateForm />
       <div v-if="trips.length > 0">
         <TripsValidateItem v-for="(trip, index) in trips" :trip="trip" :key="index" />
+      </div>
+      <div class="flex flex-col items-center">
+        <NuxtLink to="/trips">
+          <button class="btn btn-primary btn-wide">Validate Trips</button>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -20,6 +26,6 @@ useHead({
 });
 
 const user = useSupabaseUser();
-const { tripsToValidate } = useTripsToValidateStore();
+const { tripsToValidate } = useTripStore();
 const trips = computed(() => tripsToValidate);
 </script>

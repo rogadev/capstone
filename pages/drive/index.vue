@@ -3,9 +3,9 @@ import { fetchAllStops } from '../../server/db/supabase';
   <div>
     <div>
       <div class="flex flex-row justify-evenly items-center my-4">
-        <button class="btn btn-outline" @click="dateBack">Back</button>
-        <div class="border py-2 px-3 rounded-lg">{{ date }}</div>
-        <button class="btn btn-outline" @click="dateForward">Forward</button>
+        <button class="btn btn-outline w-[150px]" @click="dateBack">Back</button>
+        <div class="py-4 text-xl font-semibold">{{ date }}</div>
+        <button class="btn btn-outline w-[150px]" @click="dateForward">Forward</button>
       </div>
       <DriveStopList :date="date" />
     </div>

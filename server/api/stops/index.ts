@@ -1,8 +1,10 @@
-import { fetchAllStops } from '~/server/db/supabase';
+import supabase from '~/server/db/supabase';
 
 // ✅ Working ✅
 export default defineEventHandler(async (event) => {
-  const response = await fetchAllStops();
+  const response = await supabase.fetchAllStops();
   if (response.error) console.error(response.error);
-  return response;
+  const { data } = response;
+  const stops = data.filter((stop) => stop.closed === false);
+  return { data: stops, error: null };
 });

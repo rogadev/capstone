@@ -1,6 +1,9 @@
 import type { Stop, Trip, CompletionNote, CancelationNote } from '@prisma/client';
 
 export const useStopStore = defineStore('auth', () => {
+
+  const { log, error } = console;
+
   const stops = ref<Stop[]>([]);
   const StopStatus = ["scheduled", "enroute", "arrived", "departed", "completed", "canceled"];
 
@@ -8,14 +11,18 @@ export const useStopStore = defineStore('auth', () => {
   const fetchStops = async () => {
     try {
       const response = await fetch('/api/stops');
+      if (!response.ok) throw new Error(response.statusText);
       const { data } = await response.json();
-      stops.value = data;
-    } catch (error) {
-      console.error(error);
+      const openStops = data.filter((stop: Stop) => stop.closed === false);
+      stops.value = openStops;
+    } catch (e) {
+      error(e, 'stores/stops.ts');
     }
   };
 
+  // ✅ Working ✅
   const getStopsForDate = (date: string) => {
+    if (!stops.value) return [];
     const relevantStops: Stop[] = [];
     for (const stop of stops.value) {
       if (stop.date === date) relevantStops.push(stop);
@@ -24,10 +31,18 @@ export const useStopStore = defineStore('auth', () => {
   };
 
   // Moves the stop status forward
-  const incStopStatus = async (stop: Stop) => { };
-
-  // Moves the stop status backward
-  const decStopStatus = async (stop: Stop) => { };
+  async function updateStopStatus(stop: Stop, status: 'scheduled' | 'enroute' | 'completed' | 'canceled') {
+    const previousClosedStatus = stop.closed;
+    if (previousClosedStatus === 'canceled' || previousClosedStatus === 'completed') stop.closed = true;
+    const updatedStop = { ...stop, status };
+    const response = await fetch('/api/stops/update/one', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedStop),
+    });
+    if (response.error) console.error(response.error);
+    await fetchStops();
+  };
 
   /**
    * Cancels a stop and updates the associated trip and any additional related stops
@@ -36,106 +51,81 @@ export const useStopStore = defineStore('auth', () => {
    * @param notes Any notes related to the cancelation
    * @returns { success: boolean, error: Error }
    */
-  const cancelStop = async (stop: Stop, cancelationType: string, notes: string = '') => {
-    // Cancel Stop Validation
-    if (!trip) throw new Error('useStopStore() - cancelStop() - Could not find trip with tripId:' + stop.tripId);
-    if (!cancelationType) throw new Error('useStopStore() - cancelStop() - cancelationType is required');
-    // Vars
-    const errors = [];
-    const tripId = stop.tripId;
-    let trip: Trip;
-    let stopsToUpdate: Stop[];
-    let response: { data: Trip | Stop | CancelationNote | CompletionNote, error: Error; };
-    // Fetch the trip associated to this stop
-    try {
-      response = await supabase.fetchTrip(tripId);
-      if (response.error) throw response.error;
-      trip = response.data;
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-    // Fetch all stops associated to this trip
-    try {
-      response = await supabase.fetchStops(tripId);
-      if (response.error) throw response.error;
-      stopsToUpdate = response.data;
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-    // Create the cancelation note
-    const cancelationNote: CancelationNote = {
-      tripId: trip.id,
-      cancelationType,
-      notes,
-    };
-    // Update the trip, stops, and create the cancelation note
-    try {
-      response = await supabase.updateTrip({ ...trip, closed: true, canceled: true });
-      if (response.error) errors.push(response.error);
+  async function cancelStop(stop: Stop, cancelationType: string, notes: string = '') {
+    log("stopStore attempting to cancel stop", stop.id);
+    const { tripId } = stop;
+    log('Associated with trip', tripId);
+    const tripObjectToUpdate: Trip = await fetchTrip(tripId);
+    const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
+    const cancelationNote: CancelationNote = { tripId, cancelationType, notes, };
+    // ✅ Working ✅
 
-      for (const stop of stopsToUpdate) {
-        if (stop.status !== 'cancelled') {
-          response = await supabase.updateStop({ ...stop, status: 'cancelled' });
-          if (response.error) errors.push(response.error);
-          else stops.value = response.data;
-        }
-      }
+    // Update Trip
+    log('Updating Trip', tripObjectToUpdate);
+    const updatedTrip = { ...tripObjectToUpdate, closed: true, canceled: true };
+    log('... to', updatedTrip);
+    const { data, error } = await updateTrip(updatedTrip);
+    if (error) throw error;
+    log('Trip updated successfully', data.id);
+    await fetchStops();
+  }
 
-      response = await supabase.createCancelationNote(cancelationNote);
-      if (response.error) errors.push(response.error);
+  // WIP - requires testing
+  async function completeStop(stop: stop, notes: string) {
+    const { tripId } = stop;
+    const tripToUpdate: Trip = await fetchTrip(tripId);
+    const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
+    const updatedTrip = { ...tripToUpdate, closed: true, completed: true };
+    const tripUpdateResult = await updateTrip(updatedTrip);
+    // create completion note
+    const completionNote: CompletionNote = { tripId, notes };
+    // update stops
+    const updatedStops = stopsToUpdate.map(async (stop) => {
+      stop.status = 'completed';
+      const response = await fetch('/api/stops/update/one', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(stop),
+      });
+      if (!response.ok) throw new Error(response.statusText);
+      return stop;
+    });
+    // Fetch all stops again with updated stop data.
+    await fetchStops();
+  }
 
-      if (errors.length > 0) throw new Error(errors.join(', '));
-      else return { success: true, error: null };
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    } finally {
-      response = await supabase.fetchStops(tripId);
-      if (response.error) console.error(response.error);
-      else stops.value = response.data;
-    }
-  };
+  async function fetchTrip(tripId: number) {
+    log('Stops Store fetching trip', tripId);
+    const response = await fetch(`/api/trips/${tripId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const { data, error } = await response.json() as { data: Trip | null; error: Error | null; };
+    if (error) throw error;
+    return data;
+  }
 
-  const completeStop = async (stop: Stop, notes: string = '') => {
-    let response: { data: Trip | Stop | CompletionNote, error: Error; };
-    const tripId = stop.tripId;
-    response = await supabase.fetchTrip(tripId);
-    if (response.error) throw response.error;
-    const trip = response.data as Trip;
-    const completionNote: CompletionNote = {
-      tripId,
-      notes,
-    };
-    try {
-      response = await supabase.updateTrip({ ...trip, closed: true });
-      if (response.error) throw response.error;
-      response = await supabase.updateStop({ ...stop, status: 'completed', closed: false });
-      if (response.error) throw response.error;
-      response = await supabase.createCompletionNote(completionNote);
-      if (response.error) throw response.error;
-      stops.value = response.data;
-      return { success: true, error: null };
-    } catch (error) {
-      console.error(error);
-      return { success: false, error };
-    }
-  };
-
-  // TODO - Should add a stop to the database
-  const addStop = async (stop: Stop) => { };
+  async function updateTrip(trip: Trip) {
+    log('updating trip', trip.id);
+    const response = await fetch(`/api/trips/update/one`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(trip),
+    });
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    log('updating trip received data:', data);
+    return { data, error: null };
+  }
 
   return {
     stops,
     StopStatus,
-    addStop,
     fetchStops,
     cancelStop,
     completeStop,
-    incStopStatus,
-    decStopStatus,
     getStopsForDate,
+    updateStopStatus,
   };
 });
 
