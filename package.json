@@ -15,7 +15,7 @@
     "@nuxt/test-utils": "^3.3.2",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/supabase": "^0.3.1",
-    "@nuxtjs/tailwindcss": "^6.6.4",
+    "@nuxtjs/tailwindcss": "^6.6.5",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
     "chalk": "^5.2.0",
