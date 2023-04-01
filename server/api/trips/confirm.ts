@@ -1,6 +1,8 @@
 import { Trip, Stop } from '@prisma/client';
-import supabase from '~/server/db/supabase.ts';
+
+import * as supabase from '../../db/supabase';
 import { getDistanceAndDuration } from "~/server/maps";
+
 const { DEV } = useRuntimeConfig();
 const DEBUG_IN_DEV = DEV.toLowerCase() === "true" || DEV === true;
 
@@ -16,8 +18,8 @@ export default defineEventHandler(async (event) => {
   console.log("Fetching trip data from database...");
   let trip: Trip;
   try {
-    const { data, error } = await supabase.from('trips').select().eq('id', tripId).single().limit(1);
-    trip = data;
+    const { data, error } = await supabase.fetchTrip(tripId);
+    trip = data[0];
     if (error) throw error;
   } catch (e) {
     console.log('An error occurred fetching the trip data from the database', e.message);
@@ -83,7 +85,7 @@ export default defineEventHandler(async (event) => {
   // Insert the stops into the database.
   console.log("Inserting stops into the database...");
   try {
-    const { data, error } = await supabase.from('stops').insert([origin, destination]);
+    const { data, error } = await supabase.createStops([origin, destination]);
     if (error) throw error;
   } catch (e) {
     console.log('An error occurred inserting the stops into the database', e.message);
@@ -94,7 +96,7 @@ export default defineEventHandler(async (event) => {
   console.log("Updating the trip data...");
   trip.confirmed = true;
   try {
-    const { data, error } = await supabase.from('trips').update(trip).match({ id: trip.id });
+    const { data, error } = await supabase.updateTrip(trip);
     if (error) throw error;
   } catch (e) {
     console.log('An error occurred updating the trip', e.message);

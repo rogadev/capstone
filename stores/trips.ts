@@ -39,7 +39,7 @@ export const useTripsToValidateStore = defineStore('tripsToValidate', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, date }),
       });
       data = await result.json();
     } catch (e) {
