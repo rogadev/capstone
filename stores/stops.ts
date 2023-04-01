@@ -7,6 +7,8 @@ export const useStopStore = defineStore('stops', () => {
   const stops = ref<Stop[]>([]);
   const StopStatus = ["scheduled", "enroute", "arrived", "departed", "completed", "canceled"];
 
+  // TODO - extract all this store logic and put it in the component. Something is not working right and I feel like we're doing extra work for nothing.
+
   // ✅ Working ✅
   const fetchStops = async () => {
     try {
