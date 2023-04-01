@@ -98,4 +98,5 @@ const formatDropOffMapLink = (fromStreet: string, fromCity: string, toStreet: st
     .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
   return `https://www.google.com/maps/dir/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
 };
+
 </script>

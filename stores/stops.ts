@@ -1,6 +1,7 @@
 import type { Stop, Trip, CompletionNote, CancelationNote } from '@prisma/client';
 
 export const useStopStore = defineStore('auth', () => {
+
   const { log, error } = console;
 
   const stops = ref<Stop[]>([]);

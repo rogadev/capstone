@@ -72,6 +72,7 @@ const stopType = computed(() => {
 const arrivalTime = computed(() => {
   return new Date(props.stop.arrivalTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 });
+
 const timeRemaining = computed(() => {
   const time = new Date(props.stop.arrivalTime).getTime() - currentTime.value.getTime();
   if (time < 0) {
@@ -82,6 +83,7 @@ const timeRemaining = computed(() => {
   const seconds = Math.floor((time % (1000 * 60)) / 1000);
   return `${minutes}:${seconds}`;
 });
+
 const tripDate = computed(() => {
   const date = new Date(props.stop.date.split('-').join('/')).toDateString();
   return date;

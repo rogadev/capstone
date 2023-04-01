@@ -14,7 +14,6 @@ type GenerateTripsBody = {
 
 export default defineEventHandler(async (event) => {
   logInitiate();
-
   const { prompt, date } = await readBody(event) as GenerateTripsBody;
 
   const configuration = new Configuration({
