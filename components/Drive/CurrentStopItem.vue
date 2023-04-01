@@ -2,13 +2,12 @@
   <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
     <div class="container mx-auto">
       <DriveLateIndicator v-if="arrivingLate" />
-      <p class="text-center">{{ stop.closed }} {{ stop.status }} {{ stop.id }}</p>
       <div class="flex flex-col">
         <div class="flex flex-row justify-between items-center font-bold">
           <p class="text-left">{{ stopType }}</p>
           <div class="text-center">
-            <p v-if="!arrivingLate">{{ stopIsToday ? timeRemaining : stop.date }}</p>
-            <p>{{ timeUntilArrival }}</p>
+            <p>Arrive In</p>
+            <p v-if="!arrivingLate">{{ stopIsToday ? timeUntilArrival : stop.date }}</p>
           </div>
           <p class="text-right">{{ arrivalTimeString }}</p>
         </div>
@@ -16,7 +15,7 @@
           <p>{{ stop.passenger }}</p>
           <p><span v-if="stop.unit !== ''">{{ stop.unit }} - </span>{{ stop.street }}, {{ stop.city }}</p>
         </div>
-        <div v-if="!confirmCancel" class="flex flex-row justify-between mt-8 mb-3">
+        <div v-if="!confirmCancel" class="flex flex-col gap-4 md:flex-row justify-between mt-8 mb-3">
           <button class="btn btn-error btn-wide mx-auto" @click="() => confirmCancel = true"
             v-if="stop.status === 'scheduled'">Cancel</button>
           <button v-if="stop.status === 'enroute'" @click="goBack">Go back</button>
@@ -121,7 +120,7 @@ const stopIsToday = computed(() => {
 });
 const arrivingLate = computed(() => {
   if (!stopIsToday.value) return false;
-  return stopIsToday.value && timeRemaining.value === "00:00" && props.stop.status !== "completed";
+  return stopIsToday.value && arrivalTimeString.value === "00:00" && props.stop.status !== "completed";
 });
 
 function stopDeleted() {
