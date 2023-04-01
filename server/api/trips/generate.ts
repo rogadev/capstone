@@ -2,7 +2,7 @@ import { Configuration, OpenAIApi } from "openai";
 import type { Trip } from '@prisma/client';
 
 const { DEV, OPENAI_API_KEY } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === "true";
+const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === "true";
 let startTime: number;
 const model = "gpt-3.5-turbo";
 const { log } = console;
@@ -12,15 +12,14 @@ type GenerateTripsBody = {
   date: string;
 };
 
+const configuration = new Configuration({
+  apiKey: OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
 export default defineEventHandler(async (event) => {
   logInitiate();
   const { prompt, date } = await readBody(event) as GenerateTripsBody;
-
-  const configuration = new Configuration({
-    apiKey: OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
-
   const messages = generateMessage(prompt, date);
 
   const content = await openai.createChatCompletion({ model, messages }).then((completion) => completion.data.choices[0].message?.content);

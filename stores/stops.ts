@@ -1,6 +1,6 @@
 import type { Stop, Trip, CompletionNote, CancelationNote } from '@prisma/client';
 
-export const useStopStore = defineStore('auth', () => {
+export const useStopStore = defineStore('stops', () => {
 
   const { log, error } = console;
 
@@ -100,9 +100,8 @@ export const useStopStore = defineStore('auth', () => {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
-    const { data, error } = await response.json() as { data: Trip | null; error: Error | null; };
-    if (error) throw error;
-    return data;
+    if (!response.ok) throw new Error(response.statusText);
+    await fetchStops();
   }
 
   async function updateTrip(trip: Trip) {
@@ -113,9 +112,7 @@ export const useStopStore = defineStore('auth', () => {
       body: JSON.stringify(trip),
     });
     if (!response.ok) throw new Error(response.statusText);
-    const data = await response.json();
-    log('updating trip received data:', data);
-    return { data, error: null };
+    await fetchStops();
   }
 
   return {
@@ -127,60 +124,5 @@ export const useStopStore = defineStore('auth', () => {
     getStopsForDate,
     updateStopStatus,
   };
+
 });
-
-
-
-
-// async function incrementStop(stop: Stop) {
-//   switch (stop.status) {
-//     case StopStatus[0]:
-//       stop.status = StopStatus[1];
-//       break;
-//     case StopStatus[1]:
-//       stop.status = StopStatus[2];
-//       break;
-//     case StopStatus[2]:
-//       stop.status = StopStatus[3];
-//       break;
-//     case StopStatus[3]:
-//       stop.status = StopStatus[4];
-//       break;
-//     default:
-//       break;
-//   }
-//   // Send data to update the database
-//   // Render the change on the screen by modifying the stops ref
-// }
-// async function decrementStop(stop: Stop) {
-//   switch (stop.status) {
-//     case StopStatus[1]:
-//       stop.status = StopStatus[0];
-//       break;
-//     case StopStatus[2]:
-//       stop.status = StopStatus[1];
-//       break;
-//     case StopStatus[3]:
-//       stop.status = StopStatus[2];
-//       break;
-//     case StopStatus[4]:
-//       stop.status = StopStatus[3];
-//       break;
-//     default:
-//       break;
-//   }
-//   // Send data to update the database
-//   // Render the change on the screen by modifying the stops ref
-// }
-// async function toggleCancel(stop: Stop) {
-//   if (stop.status === StopStatus[5]) {
-//     stop.status = StopStatus[0];
-//     // Send data to update the database
-//     // Render the change on the screen by modifying the stops ref
-//     return;
-//   } else {
-//     stop.status = StopStatus[5];
-//     // Send data to update the database
-//     // Render the change on the screen by modifying the stops ref
-//   }
-// }

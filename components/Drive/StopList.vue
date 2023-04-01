@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
-const { fetchStops, getStopsForDate } = useStopStore();
 
 const props = defineProps({
   date: {
@@ -17,37 +16,32 @@ const props = defineProps({
   }
 });
 
-const todaysStops: ComputedRef<Stop[]> = computed(() => {
-  const todaysStops = getStopsForDate(props.date);
-  const filteredStops = todaysStops.filter((stop: Stop) => {
-    return stop.status !== "completed" && stop.status !== "canceled";
-  });
-  const sortedStops = filteredStops.sort((a: Stop, b: Stop) => {
-    const aTime = a.arrivalTime;
-    const bTime = b.arrivalTime;
-    if (aTime < bTime) {
-      return -1;
-    } else if (aTime > bTime) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-  return sortedStops;
+const stopStore = useStopStore();
+const { fetchStops, getStopsForDate } = stopStore;
+
+function todaysStops() {
+  const stopsToday = getStopsForDate(props.date);
+  const filteredStops = stopsToday.filter(stop => stop.status !== "completed" && stop.status !== "canceled");
+  const sortedStops = filteredStops.sort((a, b) => a.arrivalTime - b.arrivalTime);
+  return sortedStops as Stop[];
+}
+
+const currentStop: ComputedRef<Stop | null> = computed(() => {
+  const stopsToday = todaysStops();
+  if (stopsToday.length < 1) return null;
+  return stopsToday[0];
 });
 
-const currentStop: ComputedRef<Stop> = computed(() => {
-  return todaysStops.value[0];
-});
 const nextStops: ComputedRef<Stop[]> = computed(() => {
-  return todaysStops.value.slice(1);
+  const stopsToday = todaysStops();
+  return stopsToday.slice(1);
 });
 
 async function refreshStops() {
   await fetchStops();
 }
 
-onBeforeMount(async () => {
+onMounted(async () => {
   await fetchStops();
 });
 </script>

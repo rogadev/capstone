@@ -9,7 +9,7 @@ import { NuxtLink } from '../../.nuxt/components';
       </div>
       <div class="flex flex-col items-center">
         <NuxtLink to="/trips">
-          <button class="btn btn-primary btn-wide">Validate Trips</button>
+          <button class="btn btn-primary btn-wide">Confirm Added Trips</button>
         </NuxtLink>
       </div>
     </div>

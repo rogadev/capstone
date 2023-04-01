@@ -5,7 +5,7 @@ import { errorLog, info, log } from "~/server/utils/logging";
 import { getDistanceAndDuration } from "~/server/maps";
 
 const { DEV } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV.toLowerCase() === "true";
+const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === "true";
 
 export default defineEventHandler(async (event) => {
   const tripId = await readBody(event);
@@ -80,10 +80,6 @@ function calcTimeAsMinutes(time: string) {
   const [hours, minutes] = time.split(':');
   return Number(hours) * 60 + Number(minutes);
 }
-
-
-
-
 
 /**
  * Not all trips have an appointment and therefore might not have a dropoff time. If the dropoff time is an empty string or null, we need to use Google Maps Distance Matrix API to calculate the time it will take to get from the pickup location to the dropoff location. This function will return the time it will take to get from the pickup location to the dropoff location.

@@ -125,13 +125,13 @@ async function enroute() {
 
 async function goBack() {
   await stopStore.updateStopStatus(props.stop, "scheduled");
-  await stopStore.fetchStops();
+  // await stopStore.fetchStops();
 }
 
 async function completed() {
   stopStore.completeStop(props.stop, completionNote.value);
   await stopStore.updateStopStatus(props.stop, "completed");
-  await stopStore.fetchStops();
+  // await stopStore.fetchStops();
 }
 
 onMounted(() => {

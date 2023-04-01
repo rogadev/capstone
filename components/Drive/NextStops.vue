@@ -3,7 +3,7 @@
     <div class="container mx-auto">
       <p>{{ stop.passenger }}</p>
       <p>{{ arrivalTime }}</p>
-
+      <p>{{ stop.status }}</p>
     </div>
   </div>
 </template>

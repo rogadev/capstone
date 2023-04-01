@@ -89,7 +89,7 @@ const createStops = async (stops: Stop[]) => {
   if (!stops || stops.length < 1) throw new Error('supabase.createStops() expects an array of stops. None provided.');
   log('Supabase is creating', stops.length, 'stops');
   try {
-    await supabase.from('stops').insert([...stops]);
+    await supabase.from('stops').insert(stops);
   } catch (error: any) {
     errorLog(error, 'server/db/supabase.ts');
     throw error;
