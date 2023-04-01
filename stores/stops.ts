@@ -7,6 +7,21 @@ export const useStopStore = defineStore('stops', () => {
   const stops = ref<Stop[]>([]);
   const StopStatus = ["scheduled", "enroute", "arrived", "departed", "completed", "canceled"];
 
+  const sortedStops = computed(() => {
+    if (!stops.value.length) return null;
+    const sorted = stops.value.sort((a, b) => {
+      return a.arrivalTime > b.arrivalTime ? 1 : -1;
+    });
+    return sorted;
+  });
+
+  const nextStop = computed(() => {
+    if (!sortedStops.value.length) return null;
+    const nextStop = sortedStops.value.find((stop) => stop.status !== "completed" && stop.status !== "canceled");
+    console.log("nextStop", nextStop);
+    return nextStop;
+  });
+
   // TODO - extract all this store logic and put it in the component. Something is not working right and I feel like we're doing extra work for nothing.
 
   // ✅ Working ✅
@@ -72,7 +87,11 @@ export const useStopStore = defineStore('stops', () => {
     await fetchStops();
   }
 
-  // WIP - requires testing
+  // TODO
+  // WIP - requires testing - It seems that the full trip is completing for some reason
+  // Only one stop at a time should be completing.
+  // I feel like I may have somehow accidentally made duplicate trips with duped ID's
+  // But this definitely needs to be tested.
   async function completeStop(stop: stop, notes: string) {
     const { tripId } = stop;
     const tripToUpdate: Trip = await fetchTrip(tripId);

@@ -35,3 +35,17 @@ export async function getDistanceAndDuration(origin: string, destination: string
     duration: durationMinutes,
   };
 }
+
+/**
+ * Get the lat/lon from a destination string.
+ * @param destination Destination string like '123 Main St, Anytown, USA'
+ * @returns { lat: number, lon: number; }
+ */
+export async function getDestinationAsLonLat(destination: string): Promise<{ lat: number, lon: number; }> {
+  const response = await client.geocode({ params: { address: destination, key: GOOGLE_MAPS_API_KEY } });
+  // if (!response.ok) sendError(event, 'Error getting destination as lon/lat');
+  const { data } = response;
+  if (data?.status !== 'OK') sendError(event, 'Error getting destination as lon/lat');
+  const { lat, lng } = data.results[0].geometry.location;
+  return { lat, lon: lng };
+}
