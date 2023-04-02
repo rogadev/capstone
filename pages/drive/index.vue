@@ -13,6 +13,13 @@ import { fetchAllStops } from '../../server/db/supabase';
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+  layout: 'driver',
+  middleware: 'auth'
+});
+useHead({
+  title: 'Drive',
+});
 const date = ref(new Date().toISOString().substr(0, 10));
 /**
  * Change the date either forward or backward by one day.
