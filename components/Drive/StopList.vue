@@ -1,8 +1,10 @@
 <template>
   <div class="flex flex-col justify-center">
-    <DriveCurrentStopItem v-if="currentStop" @deleted="refreshStops" :stop="currentStop" />
+    <!-- <DriveCurrentStopItem v-if="currentStop" @deleted="refreshStops" :stop="currentStop" /> -->
+    <DriveStopItem v-if="currentStop" @refresh="fetchStops" :stop="currentStop" stopIsNext />
     <div v-else class="text-center">No Stops</div>
-    <DriveNextStops v-if="nextStops.length > 0" v-for="stop in nextStops" :key="stop.id" :stop="stop" />
+    <DriveStopItem v-if="nextStops.length > 0" v-for="stop in nextStops" @refresh="fetchStops" :key="stop.id" :stop="stop"
+      :stop-is-next="false" />
   </div>
 </template>
 

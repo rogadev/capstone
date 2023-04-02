@@ -1,15 +1,22 @@
 <template>
   <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
     <div class="container mx-auto">
+      <div v-if="!stopIsNext" class="flex flex-row-reverse">
+        <button class="btn btn-outline" @click="() => peakControls = !peakControls">
+          <Icon
+            :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
+            class="w-6 h-6" />
+        </button>
+      </div>
       <div id="info" class="flex flex-col">
         <DriveLateIndicator v-if="arrivingLate" />
         <DriveStopDetails :stop="stop" />
       </div>
-      <div class="flex flex-col">
-        <DriveMap :origin="currentLocation" :destination="destinationString" />
+      <div v-if="stopIsNext" class="flex flex-col justify-center items-center">
+        <DriveMap :key="stop.id" :origin="currentLocation" :destination="destinationString" />
       </div>
-      <div id="actions" class="flex flex-col">
-        <DriveStopControls v-if="showControls" :stop="stop" />
+      <div v-if="showControls || peakControls" id="actions" class="flex flex-col">
+        <DriveStopControls :stop="stop" @refresh="() => $emit('refresh')" />
       </div>
     </div>
   </div>
@@ -17,7 +24,7 @@
 
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
-
+defineEmits(['refresh']);
 const props = defineProps({
   stop: {
     type: Object as PropType<Stop>,

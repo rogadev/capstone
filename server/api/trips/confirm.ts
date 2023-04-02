@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
   if (!tripId) return { status: 400, body: "Request to '/api/trips/confirm' was missing parameter tripId" };
   log("API request to update trip with id", tripId, 'to "confirmed"');
   // Fetch our trip data.
-  // info("API is fetching trip data from database...");
   let trip: Trip;
   try {
     const { data, error } = await supabase.fetchTrip(tripId) as { data: Trip; error: Error | PostgrestError | null; };
@@ -49,7 +48,12 @@ export default defineEventHandler(async (event) => {
     notes: trip.notes,
   };
   const hasFixedDropoffTime = trip.dropOffTime && trip.dropOffTime !== '';
-  const destinationArrivalTime = hasFixedDropoffTime ? calcTimeAsMinutes(trip.dropOffTime) : originDepartureTime + duration;
+  const calculateArrivalTime = () => {
+    const expectedDestinationArrivalTime = originDepartureTime + Math.round(duration * 1.1);
+    if (hasFixedDropoffTime && expectedDestinationArrivalTime > calcTimeAsMinutes(trip.dropOffTime)) sendError(500, 'The expected destination arrival time is greater than the required dropoff time. Please adjust the arrival time to accommodate for a trip duration of ' + duration + ' minutes.');
+    return expectedDestinationArrivalTime;
+  };
+  const destinationArrivalTime = calculateArrivalTime();
   const destinationDepartureTime = destinationArrivalTime + 5;
   const destination: Stop = {
     tripId: trip.id,
@@ -66,20 +70,14 @@ export default defineEventHandler(async (event) => {
   };
 
   // Insert the stops into the database.
-  // info("Inserting local stop objects into the database...");
-  await supabase.createStops([origin, destination]);
+  await supabase.createStop(origin);
+  await supabase.createStop(destination);
 
   // Update the trip data.
-  // info("Updating the trip data...");
   trip.confirmed = true;
   await supabase.updateTrip(trip);
   return { status: 200, body: "Trip confirmed" };
 });
-
-function calcTimeAsMinutes(time: string) {
-  const [hours, minutes] = time.split(':');
-  return Number(hours) * 60 + Number(minutes);
-}
 
 /**
  * Not all trips have an appointment and therefore might not have a dropoff time. If the dropoff time is an empty string or null, we need to use Google Maps Distance Matrix API to calculate the time it will take to get from the pickup location to the dropoff location. This function will return the time it will take to get from the pickup location to the dropoff location.
@@ -130,4 +128,9 @@ function calculateDestinationArrivalTime(originDepartureTime: string, duration: 
   const newMinutes = newTotalMinutes % 60;
   const newTime = `${newHours}:${newMinutes}`;
   return newTime;
+}
+
+function calcTimeAsMinutes(time: string) {
+  const [hours, minutes] = time.split(':');
+  return Number(hours) * 60 + Number(minutes);
 }

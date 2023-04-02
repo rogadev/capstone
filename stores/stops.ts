@@ -48,7 +48,7 @@ export const useStopStore = defineStore('stops', () => {
   };
 
   // Moves the stop status forward
-  async function updateStopStatus(stop: Stop, status: 'scheduled' | 'enroute' | 'completed' | 'canceled') {
+  async function updateStopStatus(stop: Stop, status: 'scheduled' | 'enroute' | 'arrived' | 'completed' | 'canceled') {
     const previousClosedStatus = stop.closed;
     if (previousClosedStatus === 'canceled' || previousClosedStatus === 'completed') stop.closed = true;
     const updatedStop = { ...stop, status };
@@ -92,25 +92,33 @@ export const useStopStore = defineStore('stops', () => {
   // Only one stop at a time should be completing.
   // I feel like I may have somehow accidentally made duplicate trips with duped ID's
   // But this definitely needs to be tested.
-  async function completeStop(stop: stop, notes: string) {
+  async function completeStop(stop: Stop, notes: string) {
+    // update stop
+    stop.status = 'completed';
+    const stopResponse = await fetch('/api/stops/update/one', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(stop),
+    });
+    if (!stopResponse.ok) throw new Error(stopResponse.statusText);
+    // Evaluate if trip is fully complete.
     const { tripId } = stop;
-    const tripToUpdate: Trip = await fetchTrip(tripId);
-    const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
-    const updatedTrip = { ...tripToUpdate, closed: true, completed: true };
-    const tripUpdateResult = await updateTrip(updatedTrip);
+    const relatedStops = stops.value.filter((s) => s.tripId === tripId);
+    const bothStopsClosed = relatedStops.every((s) => s.closed === true);
+    // if both stops are closed, update the trip to closed:
+    if (bothStopsClosed) {
+      const tripToUpdate: Trip = await fetchTrip(tripId);
+      const updatedTrip = { ...tripToUpdate, closed: true, completed: true, notes };
+      const tripUpdateResult = await updateTrip(updatedTrip);
+    }
     // create completion note
     const completionNote: CompletionNote = { tripId, notes };
-    // update stops
-    const updatedStops = stopsToUpdate.map(async (stop) => {
-      stop.status = 'completed';
-      const response = await fetch('/api/stops/update/one', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(stop),
-      });
-      if (!response.ok) throw new Error(response.statusText);
-      return stop;
+    const noteResponse = await fetch('/api/notes/completion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(completionNote),
     });
+    if (!noteResponse.ok) throw new Error(noteResponse.statusText);
     // Fetch all stops again with updated stop data.
     await fetchStops();
   }
