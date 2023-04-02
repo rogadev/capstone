@@ -17,5 +17,4 @@ const user = useSupabaseUser();
 <template>
   <Dashboard v-if="user" :user="user" />
   <Auth v-else />
-  <NuxtLink to="/sandbox">Sandbox</NuxtLink>
 </template>
