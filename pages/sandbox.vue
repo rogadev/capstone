@@ -6,6 +6,13 @@
 
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
+definePageMeta({
+  layout: 'driver',
+  middleware: 'auth'
+});
+useHead({
+  title: 'Sandbox',
+});
 
 const stop: Stop = reactive({
   id: 1,
