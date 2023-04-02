@@ -10,3 +10,13 @@
     </div>
   </div>
 </template>
+
+<script lang="ts" setup>
+definePageMeta({
+  layout: 'driver',
+  middleware: 'auth'
+});
+useHead({
+  title: 'Account',
+});
+</script>
