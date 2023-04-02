@@ -27,11 +27,34 @@
 </template>
 
 <script lang="ts" setup>
-const date = ref(new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+const date = ref(getTomorrowDateString());
 const generated = ref(false);
 const generating = ref(false);
 const errorMessage = ref('');
 const prompt = ref('');
+
+const estimatedGenerationDuration = computed(() => {
+  const timePattern: RegExp = /\d{1,2}:\d{2}\s+(?:am|pm)/gi;
+  const matches: RegExpMatchArray | null = prompt.value.match(timePattern);
+  const numberOfTrips = matches ? matches.length : 0;
+  return numberOfTrips * 10;
+});
+
+function getTomorrowDateString(): string {
+  const today: Date = new Date();
+  const tomorrow: Date = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const year: number = tomorrow.getFullYear();
+  const month: number = tomorrow.getMonth() + 1; // Months are 0-based, so we add 1
+  const day: number = tomorrow.getDate();
+
+  const yearString: string = year.toString();
+  const monthString: string = month < 10 ? `0${month}` : month.toString();
+  const dayString: string = day < 10 ? `0${day}` : day.toString();
+
+  return `${yearString}-${monthString}-${dayString}`;
+}
 
 const handleSubmit = async (e: Event) => {
   e.preventDefault();
