@@ -1,33 +1,35 @@
-import { Configuration, OpenAIApi } from "openai";
 import type { Trip } from '@prisma/client';
+import { Configuration, OpenAIApi } from "openai";
+import { extractJsonData } from '~~/server/utils/extractJson';
+const { OPENAI_API_KEY } = useRuntimeConfig();
 
-const { DEV, OPENAI_API_KEY } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === "true";
 let startTime: number;
 const model = "gpt-3.5-turbo";
 const { log } = console;
 
-type GenerateTripsBody = {
-  prompt: string;
-  date: string;
-};
-
 const configuration = new Configuration({
   apiKey: OPENAI_API_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
 
 export default defineEventHandler(async (event) => {
-  logInitiate();
+  startTime = Date.now();
+  log("Generating Trips...");
   const { prompt, date } = await readBody(event) as GenerateTripsBody;
   const messages = generateMessage(prompt, date);
 
   const content = await openai.createChatCompletion({ model, messages }).then((completion) => completion.data.choices[0].message?.content);
-  if (!content) return createError(event, "No content returned from OpenAI 🤷", DEBUG_IN_DEV);
-
+  if (!content) return createError(event, "No content returned from OpenAI 🤷");
+  console.log(content);
   // ✅ We have content ✅
 
-  let data: Trip[] = await extractJsonData(content);
+  let data: Trip[];
+  try {
+    data = extractJsonData(content);
+  } catch (e: Error) {
+    sendError(event, e);
+  }
 
   // ✅ We Have Data ✅ 
 
@@ -40,14 +42,6 @@ export default defineEventHandler(async (event) => {
   return data;
 });
 
-function extractJsonData(content: string) {
-  const start = content.indexOf("[");
-  const end = content.lastIndexOf("]");
-  const json = content.substring(start, end + 1);
-  const data: Trip[] = JSON.parse(json);
-  return data;
-}
-
 function logRequestDuration(startTime: number, data: Trip[]) {
   const requestDuration = Date.now() - startTime;
   const minutes = Math.floor(requestDuration / 60000);
@@ -57,11 +51,6 @@ function logRequestDuration(startTime: number, data: Trip[]) {
   log(`'/api/trips/generate'\tGenerated ${data.length} trip${data.length > 1 ? 's' : ''} in ${requestDurationString}`);
 }
 
-function logInitiate() {
-  startTime = Date.now();
-  log("Generating Trips...");
-}
-
 function checkForMissingData(data) {
   let missingFields = false;
   const requiredFields = [
@@ -69,10 +58,10 @@ function checkForMissingData(data) {
     "date",
     "pickup_time",
     "passenger_name",
-    "pickup_location_street",
     "pickup_location_city",
-    "drop_off_location_street",
+    "pickup_location_street",
     "drop_off_location_city",
+    "drop_off_location_street",
   ];
 
   // Check for missing fields
@@ -103,8 +92,6 @@ async function attemptToFixMissingData(data, prompt, event) {
         location address: 1351 Estevan Rd
         location city: Nanaimo
       
-      If an address name mentions a city name like "Victoria", "Courtenay", "Cumberland", etc., you can leave the address blank if you don't know it, but try to find an address for it if you know it, and always make sure you remember to include the city.
-      
       The user will now provide you with the original text input and the returned JSON data that is missing required fields. Format your response in JSON format and make sure that all data is inside of an array, even if there is only one object.`
   },
   {
@@ -123,7 +110,7 @@ async function attemptToFixMissingData(data, prompt, event) {
   });
 
   const content = completion.data.choices[0].message?.content;
-  if (!content) return createError(event, "No content returned from OpenAI 🤷", DEBUG_IN_DEV);
+  if (!content) return createError(event, "No content returned from OpenAI 🤷");
 
   const newData = await extractJsonData(content);
   return newData;
@@ -131,67 +118,131 @@ async function attemptToFixMissingData(data, prompt, event) {
 
 function generateMessage(prompt: string, date: string) {
   return [{
-    role: "system", content: `You are an AI language model that converts text input to JSON data output. Each user provided input will be a text describing one or more trips. Your task is to parse the trips and return them as a formatted JSON array of objects. Even if there's only one trip you must always return an array of the JSON object(s). All time values need to be converted from am/pm into the 24-hour format HH:MM (examples: "8:15 pm" becomes "20:15" and "6:00 am" becomes "06:00"). Ensure that each trip object has the following properties, formatted accordingly:
-
-      raw: (Required) A string containing the raw tex representing this trip.
-      date: ${date} (Required) A string representing the date of the trip in the format "${date}". It is always the same date for all trips.
-      pickup_time: (Required) A string representing the time to arrive at the pickup location in 24-hour format "HH:MM".
-      passenger_name: (Required) A string containing the passenger's name.
-      passenger_phone: A string containing the passenger's phone number in the format "###-###-####".
-      pickup_location_name: (Required) A string for the pickup location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
-      pickup_location_unit: A string for the unit number of the pickup location address or an empty string if there is no unit number.
-      pickup_location_street: (Required) A string for the street name of the pickup location address.
-      pickup_location_city: (Required) A string for the city of the pickup location address.
-      drop_off_location_name: (Required) A string for the drop-off location name. Use "Home" for home addresses, the facility name for medical facilities, and the business name for businesses.
-      drop_off_location_unit: A string for the unit number of the drop-off location address or an empty string if there is no unit number.
-      drop_off_location_street: (Required) A string for the street name of the drop-off location address.
-      drop_off_location_city: (Required) A string for the city of the drop-off location address.
-      drop_off_time: A string for the start time of the passenger's appointment in 24-hour format "HH:MM" or an empty string if there is no appointment start time.
-      notes: A string for any additional notes about the trip or an empty string if there are no additional notes. Notes may include information about the passenger's mobility aids, directions to find locations, or other helpful details for the driver.
-
-    ## Common Pickup and Drop Off Locations Mentioned Only By Name
-
-    - NRGH
-      This location may be referred to (ignoring case) as nrgh, nanaimo general, nanaimo general hospital, or similar names. The data for this location is as follows:
-      name: "NRGH"
-      unit: ""
-      address: "1200 Dufferin Crescent"
-      city: "Nanaimo"
-
-    - Nanaimo Dialysis
-      This location may be referred to (ignoring case) as nanaimo dialysis, community dialysis, or similar names. The data for this location is as follows:
-        name: "Nanaimo Dialysis"
-        unit: ""
-        address: "1351 Estevan Rd"
-        city: "Nanaimo"
-      
-    ## Here is one example:
-
-    ### Input:
-    "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville.  Please call the unit and get his actual time so you know exactly what time to be there."
+    role: "system", content: `You are an AI that converts text to JSON output, parsing trips into an array of JSON objects. Convert time to 24-hour format (e.g. "8:15 pm" to "20:15"). Each trip object should have:
+    - raw: (Required) Raw text of the trip.
+    - date: ${date} (Required) Date should always be "${date}". It is always the same for all trips.
+    - pickup_time: (Required) 24-hour format time to arrive at the pickup location.
+    - passenger_name: (Required) Passenger's name.
+    - passenger_phone: Passenger's phone number in "###-###-####" format or empty.
+    - pickup_location_name: (Required) Name of the pickup location.
+    - pickup_location_unit: Unit number of the pickup location or empty.
+    - pickup_location_street: (Required) Street name of the pickup location.
+    - pickup_location_city: (Required) City of the pickup location.
+    - drop_off_location_name: (Required) Name of the drop-off location.
+    - drop_off_location_unit: Unit number of the drop-off location or empty.
+    - drop_off_location_street: (Required) Street name of the drop-off location.
+    - drop_off_location_city: (Required) City of the drop-off location.
+    - drop_off_time: Appointment start time in 24-hour format or empty.
+    - notes: Additional notes about the trip or empty.
     
-    ### Expected Response:
+    # Common Locations (ignore case)
+    - NRGH: NRGH, nanaimo general, nanaimo general hospital
+      - name: "NRGH"
+      - unit: ""
+      - address: "1200 Dufferin Crescent"
+      - city: "Nanaimo"
+    - Nanaimo Dialysis: nanaimo dialysis, community dialysis
+      - name: "Nanaimo Dialysis"
+      - unit: ""
+      - address: "1351 Estevan Rd"
+      - city: "Nanaimo"
+
+    # Examples:
+
+    ## Input:
+    "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there."
+    
+    ## Expected Response:
     [
-      {
-        "raw": "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there."
-        "date": "${date}"
-        "passenger_name": "Glen K"
-        "passenger_phone": ""
-        "pickup_time": "17:45"
-        "pickup_location_name": "Nanaimo Dialysis"
-        "pickup_location_unit": ""
-        "pickup_location_street": "1351 Estevan Rd"
-        "pickup_location_city": "Nanaimo"
-        "drop_off_location_name": "Home"
-        "drop_off_location_unit": ""
-        "drop_off_location_street": "555 Aurora Street"
-        "drop_off_location_city": "Parksville"
-        "drop_off_time": ""
-        "notes": "Please call the unit and get his actual time so you know exactly what time to be there."
-      }
+    {
+    "raw": "5:45 pm Glen K home from Community dialysis to 555 Aurora Street in Parksville. Please call the unit and get his actual time so you know exactly what time to be there.",
+    "date": "${date}",
+    "passenger_name": "Glen K",
+    "passenger_phone": "",
+    "pickup_time": "17:45",
+    "pickup_location_name": "Nanaimo Dialysis",
+    "pickup_location_unit": "",
+    "pickup_location_street": "1351 Estevan Rd",
+    "pickup_location_city": "Nanaimo",
+    "drop_off_location_name": "Home",
+    "drop_off_location_unit": "",
+    "drop_off_location_street": "555 Aurora Street",
+    "drop_off_location_city": "Parksville",
+    "drop_off_time": "",
+    "notes": "Please call the unit and get his actual time so you know exactly what time to be there."
+    }
     ]
+
+    ## Input:
+    "7:00 am John Doe home from NRGH to 85-847 Prideaux Street Nanaimo. Call John when you arrive."
     
-    The user will now provide you with the original text input and the returned JSON data that is missing required fields. Remember to format your response into JSON and make sure that all the data is inside of an array of objects, even if there is only one object.`
+    ## Expected Response:
+    [
+    {
+    "raw": "7:00 am John Doe home from NRGH to 85-847 Prideaux Street Nanaimo. Call John when you arrive.",
+    "date": "${date}",
+    "passenger_name": "John Doe",
+    "passenger_phone": "",
+    "pickup_time": "07:00",
+    "pickup_location_name": "NRGH",
+    "pickup_location_unit": "",
+    "pickup_location_street": "1200 Dufferin Crescent",
+    "pickup_location_city": "Nanaimo",
+    "drop_off_location_name": "Home",
+    "drop_off_location_unit": "85",
+    "drop_off_location_street": "847 Prideaux Street",
+    "drop_off_location_city": "Nanaimo",
+    "drop_off_time": "",
+    "notes": "Call John when you arrive."
+    }
+    ]
+
+    ## Input:
+    "2:30 pm Mark Johnson home from #45-1234 Somename Drive Nanaimo to NRGH.
+    
+    Call Mark when close. 3:45 pm Emily Adams home from NRGH to 5678 Oceanview Lane Nanaimo."
+
+    ## Expected Response:
+    [
+    {
+    "raw": "2:30 pm Mark Johnson home from #45-1234 Somename Drive Nanaimo to NRGH. Call Mark when close.",
+    "date": "${date}",
+    "passenger_name": "Mark Johnson",
+    "passenger_phone": "",
+    "pickup_time": "14:30",
+    "pickup_location_name": "Home",
+    "pickup_location_unit": "45",
+    "pickup_location_street": "1234 Somename Drive",
+    "pickup_location_city": "Nanaimo",
+    "drop_off_location_name": "NRGH",
+    "drop_off_location_unit": "",
+    "drop_off_location_street": "1200 Dufferin Crescent",
+    "drop_off_location_city": "Nanaimo",
+    "drop_off_time": "",
+    "notes": "Call Mark when close."
+    },
+    {
+    "raw": "3:45 pm Emily Adams home from NRGH to 5678 Oceanview Lane Nanaimo.",
+    "date": "${date}",
+    "passenger_name": "Emily Adams",
+    "passenger_phone": "",
+    "pickup_time": "15:45",
+    "pickup_location_name": "NRGH",
+    "pickup_location_unit": "",
+    "pickup_location_street": "1200 Dufferin Crescent",
+    "pickup_location_city": "Nanaimo",
+    "drop_off_location_name": "Home",
+    "drop_off_location_unit": "",
+    "drop_off_location_street": "5678 Oceanview Lane",
+    "drop_off_location_city": "Nanaimo",
+    "drop_off_time": "",
+    "notes": ""
+    }
+    ]
+
+    If you are missing an address but the location has a name like "Nanaimo Seniors Village", and it is not one of our common locations like "NRGH", do your best to find the address. If you can't find it, use "Nanaimo Seniors Village" as the street name.
+    
+    Format response as JSON array of objects even if there's only one object.`
   },
   { role: "user", content: prompt }
   ];

@@ -1,11 +1,7 @@
-import { Trip, Stop } from '@prisma/client';
-
+import type { Trip, Stop } from '@prisma/client';
 import supabase from '~~/server/db/supabase';
-import { errorLog, info, log } from "~/server/utils/logging";
 import { getDistanceAndDuration } from "~/server/maps";
-
-const { DEV } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === "true";
+import { errorLog, info, log } from "~/server/utils/logging";
 
 export default defineEventHandler(async (event) => {
   const tripId = await readBody(event);
@@ -19,7 +15,7 @@ export default defineEventHandler(async (event) => {
     trip = data;
   } catch (e) {
     errorLog(e, __filename);
-    sendError(event, e.message, DEBUG_IN_DEV);
+    sendError(event, e.message);
   }
 
   // Get our trip distance and duration. Add it to our trip object. We will save the trip object later.
@@ -91,13 +87,13 @@ async function calcDistanceAndDuration(time: string | null) {
       const { distance, duration } = await getDistanceAndDuration();
       if (!distance || !duration) {
         console.error("An unknown error occurred getting distance and duration. While getDistanceAndDuration() didn't throw an error, it returned an empty string for distance or duration.");
-        return sendError(500, 'An unknown error occurred getting distance and duration', DEBUG_IN_DEV);
+        return sendError(500, 'An unknown error occurred getting distance and duration');
       }
       dist = distance;
       dur = duration;
       return { distance: dist, duration: dur };
     } catch (e) {
-      console.error('An error occurred getting distance and duration', e, DEBUG_IN_DEV);
+      console.error('An error occurred getting distance and duration', e);
       return sendError(500, e.message);
     }
   }

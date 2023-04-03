@@ -1,10 +1,20 @@
-import supabase from "~/server/db/supabase";
+import supabase from "~/server/db";
+import { errorLog } from "~~/server/utils/logging";
 
-// ✅ Working ✅
 export default defineEventHandler(async (event) => {
-  const trips = await supabase.fetchAllTrips();
-  return {
-    statusCode: 200,
-    body: JSON.stringify(trips),
-  };
+  try {
+    const { data } = await supabase.from('trips').select('*') as { data: Trip[] | null; };
+    return {
+      statusCode: 200,
+      data: trips,
+      error: null
+    };
+  } catch (error) {
+    errorLog(error, 'server/db/supabase.ts');
+    return {
+      statusCode: 500,
+      data: null,
+      error: error
+    };
+  }
 });

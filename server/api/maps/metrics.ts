@@ -1,6 +1,4 @@
 import { getDistanceAndDuration } from "~/server/maps";
-const { DEV } = useRuntimeConfig();
-const IN_DEV = DEV && DEV.toLowerCase() === 'true';
 
 export default defineEventHandler(async (event) => {
   const { origin, destination } = await readBody(event);
@@ -11,9 +9,7 @@ export default defineEventHandler(async (event) => {
     const { distance, duration } = await getDistanceAndDuration(origin, destination);
     return { distance, duration };
   } catch (e: any) {
-    return sendError(event, IN_DEV ?
-      `An error occurred getting distance and duration. ('/api/maps/metrics')\n\n${e.message ?? e})` :
-      'Error getting distance and duration');
+    return sendError(event, `An error occurred getting distance and duration. ('/api/maps/metrics')\n\n${e.message ?? e})`);
   }
 })
 

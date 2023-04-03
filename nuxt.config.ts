@@ -21,11 +21,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     DEV: process.env.DEV,
-    DATABASE_URL: process.env.DATABASE_URL,
     BASE_URL: process.env.BASE_URL,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    DATABASE_URL: process.env.DATABASE_URL,
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_KEY: process.env.SUPABASE_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     public: {
       MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
