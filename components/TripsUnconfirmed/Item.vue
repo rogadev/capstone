@@ -1,50 +1,59 @@
 <template>
-  <div class="flex flex-col justify-center sm:flex-row sm:justify-between text-center font-semibold">
-    <div>{{ trip.pickupTime }} </div>
-    <div>{{ dateFormat(trip.date) }}</div>
-    <div class="text-center">{{ trip.passengerName }} <a class="link hover:link-hover link-secondary"
-        :href="'tel:' + trip.passengerPhone">{{
-          trip.passengerPhone }}</a></div>
-  </div>
-  <div class="flex flex-col items-center justify-center sm:flex-row sm:justify-evenly">
-    <div class="text-center sm:text-left">
-      <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
-        :href="formatPickupMapLink(trip.pickupAddressStreet + ', ' + trip.pickupAddressCity)">
-        {{ trip.pickupAddressStreet }}, {{ trip.pickupAddressCity }}
-      </a>
+  <div>
+    <div class="flex flex-col justify-center sm:flex-row sm:justify-between text-center font-semibold">
+      <div>{{ trip.pickupTime }} </div>
+      <div>{{ dateFormat(trip.date) }}</div>
+      <div class="text-center">{{ trip.passengerName }} <a class="link hover:link-hover link-secondary"
+          :href="'tel:' + trip.passengerPhone">{{
+            trip.passengerPhone }}</a></div>
     </div>
 
-    <Icon name="circum:route" class="w-6 h-6" />
+    <div class="flex flex-col items-center justify-center sm:flex-row sm:justify-evenly">
+      <div class="text-center sm:text-left">
+        <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
+          :href="formatPickupMapLink(originLocationString)">
+          {{ trip.pickupAddressStreet }}, {{ trip.pickupAddressCity }}
+        </a>
+      </div>
 
-    <div class="text-center sm:text-right">
-      <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
-        :href="formatDropOffMapLink(trip.pickupAddressStreet, trip.pickupAddressCity, trip.dropOffAddressStreet, trip.dropOffAddressCity)">
-        {{ trip.dropOffAddressStreet }}, {{ trip.dropOffAddressCity }}
-      </a>
+      <span>to</span>
+
+      <div class="text-center sm:text-right">
+        <a class="link hover:link-hover link-secondary" target="_blank" rel="noopener noreferrer"
+          :href="formatDropOffMapLink(trip.pickupAddressStreet, trip.pickupAddressCity, trip.dropOffAddressStreet, trip.dropOffAddressCity)">
+          {{ trip.dropOffAddressStreet }}, {{ trip.dropOffAddressCity }}
+        </a>
+      </div>
     </div>
-  </div>
-  <div class="text-center sm:text-right text-accent font-semibold" v-if="trip.dropOffTime && trip.dropOffTime !== ''">
-    Appointment Time: {{ trip.dropOffTime }}
-  </div>
+    <div class="text-center sm:text-right text-accent font-semibold" v-if="trip.dropOffTime && trip.dropOffTime !== ''">
+      Appointment Time: {{ trip.dropOffTime }}
+    </div>
 
-  <div class="flex flex-row gap-6 justify-evenly items-center my-4">
-    <button :class="{ 'loading btn-disabled': loading }" class="btn w-[100px] btn-error">Cancel</button>
-    <button :class="{ 'loading btn-disabled': loading }" class="btn w-[100px] btn-info">Edit</button>
-    <button :class="{ 'loading btn-disabled': loading }" @click="() => confirmTrip(trip.id)"
-      class="btn w-[100px] btn-success">Confirm</button>
+    <div class="flex flex-row gap-6 justify-evenly items-center my-4">
+      <NuxtLink :to="`/trips/edit/${trip.id}`" :class="{ 'loading btn-disabled': loading }"
+        class="btn w-[100px] btn-info">
+        Edit
+      </NuxtLink>
+      <button :class="{ 'loading btn-disabled': loading }" @click="() => confirmTrip(trip.id)"
+        class="btn w-[100px] btn-success">Confirm</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Trip } from '@prisma/client';
-defineProps({
+const props = defineProps({
   trip: {
     type: Object as PropType<Trip>,
     required: true,
   },
 });
 const loading = ref(false);
-const emit = defineEmits(['confirm']);
+const emits = defineEmits(['confirm', 'toggleModal']);
+
+const originLocationString = computed(() => {
+  return props.trip.pickupAddressStreet + ', ' + props.trip.pickupAddressCity;
+});
 
 const confirmTrip = async (id: number) => {
   loading.value = true;
@@ -56,7 +65,7 @@ const confirmTrip = async (id: number) => {
   if (!response.ok) {
     console.error('Error confirming trip');
   } else {
-    emit('confirm', id);
+    emits('confirm', id);
   }
   loading.value = false;
 };
@@ -99,4 +108,7 @@ const formatDropOffMapLink = (fromStreet: string, fromCity: string, toStreet: st
   return `https://www.google.com/maps/dir/${encodeURIComponent(from)}/${encodeURIComponent(to)}`;
 };
 
+onMounted(() => {
+
+});
 </script>

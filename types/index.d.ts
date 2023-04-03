@@ -37,4 +37,9 @@ declare global {
   };
 
   type ChatConversation = ChatMessage[];
+
+  type GenerateTripsBody = {
+    prompt: string;
+    date: string;
+  };
 }

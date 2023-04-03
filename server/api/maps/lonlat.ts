@@ -1,6 +1,4 @@
 import { getDestinationAsLonLat } from "~/server/maps";
-const { DEV } = useRuntimeConfig();
-const IN_DEV = DEV && DEV.toLowerCase() === 'true';
 
 export default defineEventHandler(async (event) => {
   const { destination } = await readBody(event);

@@ -1,11 +1,15 @@
 <template>
-  <div class="flex flex-col border border-gray-400 p-4 rounded-md">
+  <div class="flex flex-col">
     <div v-if="errorMessage !== ''">
       <h3>There was an error fetching unconfirmed trips from the database.</h3>
       <p>{{ errorMessage }}</p>
       <button class="btn btn-success" @click="() => fetchTrips()">Try Reloading</button>
     </div>
-    <TripsUnconfirmedItem v-for="trip in unconfirmedTrips" :key="trip.id" :trip="trip" @confirm="visuallyConfirmTrip" />
+    <Loading v-if="loading" />
+    <div v-else>
+      <TripsUnconfirmedFirstItem v-if="firstTrip" :trip="firstTrip" @confirm="tripConfirmed" />
+      <TripsUnconfirmedItem v-for="trip in unconfirmedTrips" :key="trip.id" :trip="trip" @confirm="tripConfirmed" />
+    </div>
   </div>
 </template>
 
@@ -15,6 +19,13 @@ import type { Trip } from '@prisma/client';
 const supabase = useSupabaseClient();
 const unconfirmedTrips: Ref<Trip[]> = ref([]);
 const errorMessage = ref('');
+const loading = ref(true);
+
+const firstTrip = computed(() => unconfirmedTrips.value[0]);
+
+async function tripConfirmed() {
+  await fetchTrips();
+}
 
 /**
  * Fetches all unconfirmed trips from the database.
@@ -23,6 +34,7 @@ const errorMessage = ref('');
  * If there is an error, it sets the errorMessage value to the error message.
  */
 async function fetchTrips() {
+  loading.value = true;
   errorMessage.value = '';
   try {
     const { data, error } = await supabase
@@ -36,13 +48,7 @@ async function fetchTrips() {
     errorMessage.value = e.message;
     console.error(e);
   }
-}
-
-/**
- * Removes the trip from the list of unconfirmed trips to be displayed
- */
-function visuallyConfirmTrip(tripId: number) {
-  unconfirmedTrips.value = unconfirmedTrips.value.filter(trip => trip.id !== tripId);
+  loading.value = false;
 }
 
 /**
@@ -60,5 +66,8 @@ function sortTripsByTime(trips: Trip[]): Trip[] {
   });
 }
 
-onMounted(fetchTrips);
+onMounted(async () => {
+  await fetchTrips();
+  loading.value = false;
+});
 </script>

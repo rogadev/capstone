@@ -1,17 +1,13 @@
-const { DEV } = useRuntimeConfig();
-const DEBUG_IN_DEV = DEV && DEV.toLowerCase() === 'true';
-
 export function errorLog(e: Error, filename?: string) {
-  const { warn, error, info } = console;
-  warn('Error in server/api/maps/stop.ts');
-  if (IN_DEV && filename) info(filename);
-  error(e);
+  console.warn('Error in server/api/maps/stop.ts');
+  if (filename) console.info(filename);
+  console.error(e);
 }
 
-export function info(message: any) {
-  if (DEBUG_IN_DEV) console.info(message);
+export function info(message: string) {
+  console.info(message);
 };
 
-export function log(message: any) {
-  if (DEBUG_IN_DEV) console.log(message);
+export function log(message: string) {
+  console.log(message);
 };
