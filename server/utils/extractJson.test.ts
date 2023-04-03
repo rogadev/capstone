@@ -1,6 +1,6 @@
 import { extractJsonData } from "./extractJson";
 import { describe, test, expect } from 'vitest';
-import { setup, $fetch } from '@nuxt/test-utils';
+// import { setup, $fetch } from '@nuxt/test-utils';
 
 describe('extractJsonData', () => {
   test('should extract JSON data from the string', () => {
