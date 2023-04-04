@@ -6,30 +6,46 @@
         Dashboard
       </h1>
 
-      <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:justify-evenly">
-        <ButtonLink to="/trips/new" classes="btn-primary w-[180px] lg:btn-wide">
-          <span class="flex items-center gap-4">
-            <Icon name="material-symbols:add-circle-outline-rounded" classes="h-5 mr-2" />
-            Enter Trips
-          </span>
-        </ButtonLink>
-        <ButtonLink to="/trips" classes="btn-primary w-[180px] lg:btn-wide">
-          <span class="flex items-center gap-4">
-            <Icon name="bx:trip" classes="h-5 mr-2" />
-            Confirm Trips
-          </span>
-        </ButtonLink>
-        <ButtonLink to="/drive" classes="btn-primary w-[180px] lg:btn-wide">
-          <span class="flex items-center gap-4">
-            <Icon name="bx:car" classes="h-5 mr-2" />
-            Drive
-          </span>
-        </ButtonLink>
+      <div class="flex flex-col md:flex-row justify-center md:justify-evenly items-center md:items-start gap-4 ">
+        <div class="flex flex-col justify-center">
+          <ButtonLink to="/trips/new" classes="btn-primary w-[180px] lg:btn-wide">
+            <span class="flex items-center gap-4">
+              <Icon name="material-symbols:add-circle-outline-rounded" classes="h-5 mr-2" />
+              Enter Trips
+            </span>
+          </ButtonLink>
+          <div class="text-center mt-2 mb-4">
+            Total trips created: <span class="font-bold text-lg pl-1">{{ numberOfTrips }}</span>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center">
+          <ButtonLink to="/trips" classes="btn-primary w-[180px] lg:btn-wide">
+            <span class="flex items-center gap-4">
+              <Icon name="bx:trip" classes="h-5 mr-2" />
+              Confirm Trips
+            </span>
+          </ButtonLink>
+          <div class="text-center mt-2 mb-4">
+            Trips to confirm: <span class="font-bold text-lg pl-1">{{ numberOfUnconfirmedTrips }}</span>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center">
+          <ButtonLink to="/drive" classes="btn-primary w-[180px] lg:btn-wide">
+            <span class="flex items-center gap-4">
+              <Icon name="bx:car" classes="h-5 mr-2" />
+              Drive
+            </span>
+          </ButtonLink>
+          <div class="text-center mt-2 mb-4">
+            Trips today: <span class="font-bold text-lg pl-1">{{ numberOfTripsToday }}</span>
+          </div>
+        </div>
       </div>
-
-      <div>
-        <p>Number of trips: {{ numberOfTrips }}</p>
-        <p>Number of trips today: {{ numberOfTripsToday }}</p>
+    </div>
+    <div class="m-6">
+      <h2 class="text-3xl font-bold text-center mb-4">Upcoming Trips</h2>
+      <div class="flex flex-col gap-4">
+        <UpcomingTripTable :trips="trips" />
       </div>
     </div>
   </div>
@@ -50,6 +66,7 @@ const user = useSupabaseUser();
 const trips: Ref<Trip[]> = ref([]);
 const numberOfTrips = computed(() => trips.value.length);
 const numberOfTripsToday = computed(() => trips.value.filter(trip => trip.date === new Date().toISOString().split('T')[0]).length);
+const numberOfUnconfirmedTrips = computed(() => trips.value.filter(trip => trip.confirmed === false).length);
 
 async function fetchTrips() {
   try {

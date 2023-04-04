@@ -36,13 +36,16 @@ export default defineEventHandler(async (event) => {
   const originAddressString: string = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
   const destinationAddressString: string = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
   try {
-    const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString);
+    const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString) as { distance: number; duration: number; };
     if (!distance || !duration) throw new Error('Distance or duration is null. Distance:', distance, 'Duration:', duration);
     console.info("Distance:", distance, "Duration:", duration);
     trip.estimatedDistance = distance;
     trip.estimatedDuration = duration;
   } catch (e: Error) {
     console.error('/api/trips/confirm', 'Error getting trip distance and duration');
+    console.log(e);
+    console.log(e);
+    console.log(e);
     sendError(event, e.message);
   }
 
@@ -65,8 +68,8 @@ export default defineEventHandler(async (event) => {
   };
   const hasAppointmentTime = trip.dropOffTime && trip.dropOffTime !== '';
   const calculateArrivalTime = () => {
-    const expectedDestinationArrivalTime = originDepartureTime + Math.round(duration * 1.1);
-    if (hasAppointmentTime && expectedDestinationArrivalTime > calcTimeAsMinutes(trip.dropOffTime)) sendError(500, 'The expected destination arrival time is greater than the required dropoff time. Please adjust the arrival time to accommodate for a trip duration of ' + duration + ' minutes.');
+    const expectedDestinationArrivalTime = originDepartureTime + Math.round(trip.estimatedDuration * 1.1);
+    if (hasAppointmentTime && expectedDestinationArrivalTime > calcTimeAsMinutes(trip.dropOffTime)) sendError(500, 'The expected destination arrival time is greater than the required dropoff time. Please adjust the arrival time to accommodate for a trip duration of ' + trip.estimatedDuration + ' minutes.');
     return expectedDestinationArrivalTime;
   };
   const destinationArrivalTime = calculateArrivalTime();
@@ -112,29 +115,6 @@ export default defineEventHandler(async (event) => {
   console.info("Sending success response...");
   return {};
 });
-/**
- * Not all trips have an appointment and therefore might not have a dropoff time. If the dropoff time is an empty string or null, we need to use Google Maps Distance Matrix API to calculate the time it will take to get from the pickup location to the dropoff location. This function will return the time it will take to get from the pickup location to the dropoff location.
- * @param time A string in the format of HH:MM
- * @returns String in the format of HH:MM
- */
-async function calcDistanceAndDuration(time: string | null) {
-  if (!time || time === '') {
-    let dist: string, dur: string;
-    try {
-      const { distance, duration } = await getDistanceAndDuration();
-      if (!distance || !duration) {
-        console.error("An unknown error occurred getting distance and duration. While getDistanceAndDuration() didn't throw an error, it returned an empty string for distance or duration.");
-        return sendError(500, 'An unknown error occurred getting distance and duration');
-      }
-      dist = distance;
-      dur = duration;
-      return { distance: dist, duration: dur };
-    } catch (e) {
-      console.error('An error occurred getting distance and duration', e);
-      return sendError(500, e.message);
-    }
-  }
-}
 
 /**
  * Arrival time at a given pickup or dropoff should always be 5 minutes ahead of the intended time. Therefore, this function takes a time in the format of HH:MM and returns a time 5 minutes before that time.

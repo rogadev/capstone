@@ -2,9 +2,12 @@ import { fetchAllStops } from '../../server/db/supabase';
 <template>
   <div>
     <div>
+      <div class="text-center py-4 text-xl font-semibold block md:hidden">
+        {{ dateString }}
+      </div>
       <div class="flex flex-row justify-evenly items-center my-4">
         <button class="btn btn-outline w-[150px]" @click="dateBack">Back</button>
-        <div class="py-4 text-xl font-semibold">{{ dateString }}</div>
+        <div class="hidden md:block py-4 text-xl font-semibold">{{ dateString }}</div>
         <button class="btn btn-outline w-[150px]" @click="dateForward">Forward</button>
       </div>
       <DriveStopList :date="dateString" />
@@ -22,7 +25,7 @@ useHead({
 });
 const date: Ref<Date> = ref(new Date());
 const dateString = computed(() =>
-  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(date.value).replace(/\//g, '-')
+  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(date.value).replace(/\//g, '-')
 );
 /**
  * Change the date either forward or backward by one day.

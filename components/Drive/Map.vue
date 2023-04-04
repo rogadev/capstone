@@ -1,12 +1,11 @@
 import mapboxgl from 'mapbox-gl';
 <template>
-  <div ref="mapEl" class="h-96 w-full rounded-md mt-2"></div>
+  <div ref="mapEl" class="h-96 w-full rounded-md mt-2" style="pointer-events: none;"></div>
 </template>
 
 <script lang="ts" setup>
 const { $mapboxgl } = useNuxtApp();
-const { darkMode } = useThemeStore();
-const mapStyle = computed(() => darkMode ? 'mapbox://styles/ryanroga/cl91jfcnw001215l2vt71oibq' : 'mapbox://styles/ryanroga/cla4jnruj000s15ruek5x1j0q');
+
 useHead({
   link: [
     {
@@ -26,10 +25,9 @@ const props = defineProps({
     required: true,
   },
 });
+
 const mapEl = ref<HTMLElement>();
 
-let map: any;
-let marker: any;
 onMounted(async () => {
   try {
     // Responds with { lon, lat } if successful
@@ -44,28 +42,26 @@ onMounted(async () => {
     });
 
     const { lat, lon } = await response.json() as { lat: number; lon: number; };
-    // TODO remove after testing
-    console.log(lat, lon);
 
-    map = new $mapboxgl.Map({
+    const map = new $mapboxgl.Map({
       container: mapEl.value,
-      style: mapStyle.value,
+      style: 'mapbox://styles/ryanroga/cla4jnruj000s15ruek5x1j0q',
       center: [lon, lat],
       zoom: 14
     });
 
-    marker = new $mapboxgl.Marker()
+    new $mapboxgl.Marker()
       .setLngLat([lon, lat])
       .addTo(map);
 
+    onUnmounted(() => {
+      if (map) {
+        map.remove();
+      }
+    });
   } catch (error) {
     console.error(error);
   }
 
-});
-onUnmounted(() => {
-  if (map) {
-    map.remove();
-  }
 });
 </script>

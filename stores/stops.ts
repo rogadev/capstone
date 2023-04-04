@@ -37,12 +37,12 @@ export const useStopStore = defineStore('stops', () => {
     }
   };
 
-  // ✅ Working ✅
-  const getStopsForDate = (date: string) => {
-    if (!stops.value) return [];
+  const getStopsForDate = (date: Date | string) => {
+    if (!stops.value) return [] as Stop[];
+    const dateString = new Date(date).toISOString().split('T')[0];
     const relevantStops: Stop[] = [];
     for (const stop of stops.value) {
-      if (stop.date === date) relevantStops.push(stop);
+      if (stop.date === dateString) relevantStops.push(stop);
     }
     return relevantStops;
   };

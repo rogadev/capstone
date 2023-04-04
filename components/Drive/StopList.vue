@@ -1,8 +1,14 @@
 <template>
   <div class="flex flex-col justify-center">
-    <!-- <DriveCurrentStopItem v-if="currentStop" @deleted="refreshStops" :stop="currentStop" /> -->
-    <DriveStopItem v-if="currentStop" @refresh="() => refreshStops()" :stop="currentStop" stopIsNext />
-    <div v-else class="text-center">No Stops</div>
+    <DriveStopItem v-if="currentStop !== null" @refresh="() => refreshStops()" :stop="currentStop" :stop-is-next="true" />
+
+    <!-- TODO Add a "send invoice" button -->
+    <div v-else-if="stopsThisDay.length > 0" class="text-center mt-8">
+      Good Work - All Stops Completed!
+    </div>
+    <div v-else class="text-center mt-8">
+      No Stops This Day
+    </div>
     <DriveStopItem v-if="nextStops.length > 0" v-for="stop in nextStops" @refresh="() => refreshStops()" :key="stop.id"
       :stop="stop" :stop-is-next="false" />
   </div>
@@ -20,9 +26,15 @@ const props = defineProps({
 
 const stopStore = useStopStore();
 const { fetchStops, getStopsForDate } = stopStore;
+const stopsThisDay = ref<Stop[]>([]);
+
+watchEffect(() => {
+  stopsThisDay.value = getStopsForDate(props.date);
+});
 
 function todaysStops() {
   const stopsToday = getStopsForDate(props.date);
+  stopsThisDay.value = stopsToday;
   const filteredStops = stopsToday.filter(stop => stop.status !== "completed" && stop.status !== "canceled");
   const sortedStops = filteredStops.sort((a, b) => a.arrivalTime - b.arrivalTime);
   return sortedStops as Stop[];
