@@ -14,5 +14,6 @@ export default defineEventHandler(async (event) => {
     console.error('Error fetching all stops:', e);
     response.error = e;
   }
+  response.data = response.data.filter((stop) => stop.closed === false);
   return response;
 });

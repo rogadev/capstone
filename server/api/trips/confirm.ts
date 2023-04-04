@@ -1,20 +1,22 @@
 import type { Trip, Stop } from '@prisma/client';
-import supabase from '~~/server/db/supabase';
+import * as supabase from '~~/server/db/supabase';
 import { getDistanceAndDuration } from "~/server/maps";
-import { errorLog, info, log } from "~/server/utils/logging";
 
 export default defineEventHandler(async (event) => {
-  const tripId = await readBody(event);
-  if (!tripId) return { status: 400, body: "Request to '/api/trips/confirm' was missing parameter tripId" };
-  log("API request to update trip with id", tripId, 'to "confirmed"');
+  const tripIdString = await readBody(event) as string;
+  if (!tripIdString) return setResponseStatus(400, "Request to '/api/trips/confirm' was missing parameter tripId");
+
+  const tripId = parseInt(tripIdString);
+
   // Fetch our trip data.
+  console.info("Fetching trip data...");
   let trip: Trip;
   try {
-    const { data, error } = await supabase.fetchTrip(tripId) as { data: Trip; error: Error | PostgrestError | null; };
-    if (error) throw error;
+    const { data, error } = await supabase.fetchTrip(tripId) as Trip | null;
+    if (!data) return setResponseStatus(404, "Trip not found");
     trip = data;
   } catch (e) {
-    errorLog(e, __filename);
+    errorLog(e, '/api/trips/confirm', 'Error fetching trip data');
     sendError(event, e.message);
   }
 
@@ -23,8 +25,10 @@ export default defineEventHandler(async (event) => {
   const originAddressString: string = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
   const destinationAddressString: string = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
   const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString);
-  trip.distance = distance;
-  trip.duration = duration;
+  if (!distance || !duration) return console.error('Distance or duration is null. Distance:', distance, 'Duration:', duration);
+  console.log('Distance:', distance, 'Duration:', duration);
+  trip.estimatedDistance = distance;
+  trip.estimatedDuration = duration;
 
   // Create our stop objects.
   // info("Creating local stop objects...");

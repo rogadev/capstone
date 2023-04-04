@@ -7,7 +7,7 @@ export const useTripStore = defineStore('tripsToValidate', () => {
   const tripsToValidate: Ref<GeneratedTrip[]> = ref([]);
 
   /**
-   * Confirm a trip and add remove it from the tripsToValidate store.
+   * Validate a trip and add remove it from the tripsToValidate store.
    */
   function validateTrip(tripID: string) {
     tripsToValidate.value = tripsToValidate.value.filter((trip) => trip.id !== tripID);

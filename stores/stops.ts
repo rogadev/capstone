@@ -30,6 +30,7 @@ export const useStopStore = defineStore('stops', () => {
       const response = await fetch('/api/stops');
       if (!response.ok) throw new Error(response.statusText);
       const { data } = await response.json();
+      console.log(data);
       const openStops = data.filter((stop: Stop) => stop.closed === false);
       stops.value = openStops;
     } catch (e) {
@@ -72,7 +73,7 @@ export const useStopStore = defineStore('stops', () => {
     log("stopStore attempting to cancel stop", stop.id);
     const { tripId } = stop;
     log('Associated with trip', tripId);
-    const tripObjectToUpdate: Trip = await fetchTrip(tripId);
+    const tripObjectToUpdate: Trip | null = await fetchTrip(tripId);
     const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
     const cancelationNote: CancelationNote = { tripId, cancelationType, notes, };
     // ✅ Working ✅

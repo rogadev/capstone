@@ -4,9 +4,10 @@ import { errorLog } from "~~/server/utils/logging";
 export default defineEventHandler(async (event) => {
   try {
     const { data } = await supabase.from('trips').select('*') as { data: Trip[] | null; };
+    console.log(data.length);
     return {
       statusCode: 200,
-      data: trips,
+      data: data,
       error: null
     };
   } catch (error) {

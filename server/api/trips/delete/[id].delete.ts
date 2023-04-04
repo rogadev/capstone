@@ -1,10 +1,19 @@
+import { PostgrestError } from "@supabase/supabase-js";
 import supabase from "~~/server/db";
 
 export default defineEventHandler(async (event) => {
-  const tripID = event.context.params.id;
-  console.log('deleting trip number', tripID);
-  const { error } = await supabase.from("trips").delete().eq("id", tripID);
-  console.log(error);
-  if (error) return sendError(event, error.message);
-  return { status: 200, body: "OK" };
+  const tripIdString = event.context.params.id;
+  if (!tripIdString) return setResponseStatus(400, "Request was missing trip id parameter");
+  const tripID = parseInt(tripIdString);
+
+  console.info(`Deleting trip with id ${tripID}...`);
+  try {
+    const { error } = await supabase.from("trips").delete().eq("id", tripID) as { error: PostgrestError | null; };
+    if (error) throw error;
+    console.info(`Trip with id ${tripID} deleted successfully.`);
+    return setResponseStatus(200);
+  } catch (e: PostgrestError | Error) {
+    console.error(`Error deleting trip with id ${tripID}:`, e);
+    sendError(event, "Error deleting trip. This was not expected.");
+  }
 });

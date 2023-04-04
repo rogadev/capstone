@@ -10,15 +10,25 @@
       </div>
     </div>
     <div v-else>
-      <form class="p-4 border border-slate-400 rounded-md" @submit.prevent="updateTrip">
-        <h3>Passenger Details</h3>
+      <form class="p-4 border border-neutral rounded-md" @submit.prevent="() => updateTrip()">
+        <div class="flex flex-row items-center gap-4 font-bold text-lg">
+          <Icon name="mdi:account-details" class="text-2xl p-1 h-10 w-10" />
+          <h3>
+            Passenger Details
+          </h3>
+        </div>
         <div id="input-fields" class="flex flex-wrap gap-4">
           <EditTripInput name="passengerName" :required="true" label="Passenger Name" size="300"
             :value="trip.passengerName" v-model="trip.passengerName" />
           <EditTripInput name="passengerPhone" type="phone" :required="false" label="Passenger Phone" size="3"
             :value="trip.passengerPhone" v-model="trip.passengerPhone" />
         </div>
-        <h3>Pickup Details</h3>
+        <div class="flex flex-row items-center gap-4 font-bold text-lg mt-8">
+          <Icon name="material-symbols:person-pin-circle" class="text-2xl p-1 h-10 w-10" />
+          <h3>
+            Pickup
+          </h3>
+        </div>
         <div id="input-fields" class="flex flex-wrap gap-4">
           <EditTripInput name="pickupTime" :required="true" label="Pickup Time" size="1" :value="trip.pickupTime"
             @focusout="(e) => formatTime(e)" />
@@ -33,7 +43,12 @@
           <EditTripInput name="pickupAddressCity" :required="true" label="City" size="2"
             :value="trip.pickupAddressCity" />
         </div>
-        <h3>Destination Details</h3>
+        <div class="flex flex-row items-center gap-4 font-bold text-lg mt-8">
+          <Icon name="material-symbols:home-pin" class="text-2xl p-1 h-10 w-10" />
+          <h3>
+            Destination
+          </h3>
+        </div>
         <div id="input-fields" class="flex flex-wrap gap-4">
           <EditTripInput name="dropOffTime" :required="false" label="Drop Off Time" size="1"
             :value="trip.dropOffTime ?? ''" @focusout="(e) => formatTime(e)" />
@@ -82,9 +97,10 @@ const props = defineProps({
     required: true,
   },
 });
+const trip = ref(props.trip);
+
 const emits = defineEmits(['confirm']);
 
-const trip = ref(props.trip);
 const updating = ref(false);
 const success = ref(false);
 const feedbackMessage = ref('');
@@ -111,12 +127,13 @@ async function deleteCurrentTrip() {
 async function updateTrip() {
   updating.value = true;
   feedbackMessage.value = '';
-  const response = await fetch('/api/trips/update/one', {
+  const response = await fetch('/api/trips/confirm', {
     method: 'POST',
-    body: JSON.stringify(trip.value),
+    body: JSON.stringify(trip.value.id),
   });
+  const { error } = await response.json();
   if (!response.ok) {
-    console.error('Error updating trip');
+    console.error('Error updating trip', error);
     feedbackMessage.value = 'There was an error updating this trip.';
     success.value = false;
   } else {
@@ -158,11 +175,3 @@ onMounted(async () => {
   loading.value = false;
 });
 </script>
-
-<style scoped>
-h3 {
-  margin-top: 1rem;
-  padding-left: .5rem;
-  @apply font-bold text-lg;
-}
-</style>
