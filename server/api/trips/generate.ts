@@ -270,6 +270,54 @@ function generateMessage(prompt: string, date: string) {
     }
     ]
 
+    ## Input:
+    "10:15 am Jane Davis from 159-37 Adams Rd. in Campbell River ph 250-923-9452 to NRGH dialysis for 12:15 pm start"
+
+    ## Expected Response:
+    [
+    {
+    "raw": "10:15 am Jane Davis from 159-37 Adams Rd. in Campbell River ph 250-923-9452 to NRGH dialysis for 12:15 pm start",
+    "date": "${date}",
+    "passenger_name": "Jane Davis",
+    "passenger_phone": "250-923-9452",
+    "pickup_time": "10:15",
+    "pickup_location_name": "Home",
+    "pickup_location_unit": "159",
+    "pickup_location_street": "37 Adams Rd.",
+    "pickup_location_city": "Campbell River",
+    "drop_off_location_name": "NRGH",
+    "drop_off_location_unit": "",
+    "drop_off_location_street": "1200 Dufferin Crescent",
+    "drop_off_location_city": "Nanaimo",
+    "drop_off_time": "12:15",
+    "notes": ""
+    }
+    ]
+
+    ## Input:
+    "7:45 pm Lisa Martin home from Cumberland dialysis to 104-538 Dogwood Street in Campbell River"
+
+    ## Expected Response:
+    [
+    {
+    "raw": "7:45 pm Lisa Martin home from Cumberland dialysis to 104-538 Dogwood Street in Campbell River",
+    "date": "${date}",
+    "passenger_name": "Lisa Martin",
+    "passenger_phone": "",
+    "pickup_time": "19:45",
+    "pickup_location_name": "Cumberland Dialysis",
+    "pickup_location_unit": "";
+    "pickup_location_street": "2696 Windermere Ave",
+    "pickup_location_city": "Cumberland",
+    "drop_off_location_name": "Home",
+    "drop_off_location_unit": "104",
+    "drop_off_location_street": "538 Dogwood Street",
+    "drop_off_location_city": "Campbell River",
+    "drop_off_time": "",
+    "notes": ""
+    }
+    ]
+
     If you are missing an address but the location has a name like "Nanaimo Seniors Village", and it is not one of our common locations like "NRGH", do your best to find the address. If you can't find it, use "Nanaimo Seniors Village" as the street name.
     
     Format response as JSON array of objects even if there's only one object.`
