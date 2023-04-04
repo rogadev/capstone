@@ -1,13 +1,14 @@
 <template>
   <div>
-    <div class="flex flex-row justify-between items-center">
+    <div class="flex flex-row justify-between items-center gap-8">
       <Icon :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
-        class="text-4xl" />
-      <p class="text-xl font-semibold"><span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>{{ stop.street }}, {{
-        stop.city }}
+        class="text-5xl" />
+      <p class="text-xl font-semibold text-right">
+        <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>
+      <p>{{ stop.street }}<br>{{ stop.city }}</p>
       </p>
       <div v-if="!stopIsNext" class="flex flex-row-reverse">
-        <button class="btn btn-outline btn-circle mt-2 mr-1 flex items-center justify-center"
+        <button class="btn btn-outline btn-circle mr-1 flex items-center justify-center"
           @click="() => $emit('togglePeakControls')">
           <Icon
             :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
@@ -16,10 +17,9 @@
       </div>
     </div>
     <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
-      <p class="font-bold text-2xl">{{ stop.passenger }}</p>
     </div>
     <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
-      <p class="text-right font-bold text-xl">{{ arrivalTimeString }}</p>
+      <p class="font-bold text-2xl">{{ arrivalTimeString }} {{ stop.passenger }}</p>
       <div class="text-center font-bold text-xl">
         <p v-if="!arrivingLate">{{ stopIsToday ? timeUntilArrival : stopDateString }}</p>
       </div>

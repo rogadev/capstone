@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
+  <div class="mx-8 my-1 p-2 border rounded-md">
     <div class="container mx-auto">
       <div id="info" class="flex flex-col">
         <DriveLateIndicator v-if="arrivingLate" />
