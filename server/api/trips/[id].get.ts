@@ -1,12 +1,25 @@
-import { Trip, Stop } from '@prisma/client';
-import supabase from '~~/server/db/supabase';
+import { Trip } from '@prisma/client';
+import * as supabase from '~~/server/db/supabase';
 
-const { log } = console;
-// ✅ Working ✅
 export default defineEventHandler(async (event) => {
-  const tripID = Number.parseInt(event.context.params.id);
-  if (!tripID) return { status: 400, body: 'Request to \'/api/trips/[id]\' was missing parameter id' };
-  log('API request to fetch trip with id', tripID);
-  const { data, error } = await supabase.fetchTrip(tripID); // Will handle errors internally
-  return { data, error };
+  const stripIdString = event.context.params.id;
+  if (!stripIdString) sendError(event, 'Request to \'/api/trips/[id]\' was somehow missing parameter id');
+  const tripID = parseInt(stripIdString);
+
+  try {
+    const { data, error } = await supabase.fetchTrip(tripID) as { data: Trip | null; error: PostgrestError | null; };
+
+    if (error) throw error;
+    if (!data)
+      return {
+        status: 404,
+        statusText: `Trip with id ${tripID} not found`
+      };
+
+    console.info(`API fetched trip with id ${tripID} successfully. Responding with trip...`);
+    return data;
+  } catch (e: PostgrestError | Error) {
+    console.error(`Error fetching trip with id ${tripID}:`, e);
+    sendError(event, 'Error fetching trip. This was not expected.');
+  }
 });

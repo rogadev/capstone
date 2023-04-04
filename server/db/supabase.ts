@@ -1,301 +1,300 @@
 import { type PostgrestError, createClient } from '@supabase/supabase-js';
 import type { Trip, Stop, CancelationNote, CompletionNote } from '@prisma/client';
-import { errorLog } from '../utils/logging';
 
 const { SUPABASE_URL, SUPABASE_KEY } = useRuntimeConfig();
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const { log, info } = console;
 
 /**
- * Creates a new trip in the database
- * @param trip The trip to create
- * @returns { data: Trip, error: Error }
+ * Creates a trip in the database
+ * @param trip The trip to create in the database
+ * @throws Error if trip is not provided
+ * @returns true if trip is created, false if not
  */
-const createTrip = async (trip: Trip) => {
-  let result = { data: null, error: null };
+export const createTrip = async (trip: Trip) => {
+  console.log("'server/db/supabase.ts' createTrip()");
+  if (!trip) throw new Error('supabase.createTrip() expects a trip. None provided.');
   try {
-    result = await supabase.from('trips').insert(trip);
-    const { data, error } = result;
+    const { error } = await supabase.from('trips').insert(trip) as { error: PostgrestError | null; };
     if (error) throw error;
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
+    console.info('Trip created - createTrip() returning true...');
+    return true;
+  } catch (error: PostgrestError | Error) {
+    console.error('Trip not created - createTrip() returning false...', error);
+    return false;
   }
-  return result;
 };
 
-// ✅ Working ✅
 /**
  * Fetches a single trip from the database by id
- * @param tripID The id of the trip to fetch
- * @returns { data: Trip, error: Error }
+ * @param id The id of the trip to fetch
+ * @throws Error if id is not provided
  */
-const fetchTrip = async (tripID: number) => {
-  log('Supabase fetching trip', tripID);
+export const fetchTrip = async (id: number) => {
+  console.log("'server/db/supabase.ts' fetchTrip()");
+  if (!id) throw new Error('supabase.fetchTrip() expects an id. None provided.');
+  const response:
+    { data: Trip | null; error: PostgrestError | null; } =
+    { data: null, error: null };
   try {
-    const response = await supabase.from('trips').select('*').eq('id', tripID).single();
-    const { data, error } = response as { data: Trip | null; error: PostgrestError | null; };
+    const { data, error } = await supabase.from('trips').select('*').eq('id', id).single();
     if (error) throw error;
-    log('Trip found. Supabase returning trip...');
-    const trip = data as Trip;
-    return { data: trip, error };
-  } catch (error: any) {
-    errorLog(error, 'server/db/supabase.ts');
-    return { data: null, error };
+    console.info('Trip fetched - fetchTrip() returning data...');
+    response.data = data;
+  } catch (error: PostgrestError | Error) {
+    console.error('Trip not fetched - fetchTrip() returning error...', error);
+    response.error = error;
   }
+  return response;
 };
 
 /**
  * Fetches one stop from the database by id
- * @param stopID The id of the stop to fetch
- * @returns { data: Stop, error: Error }
+ * @param id The id of the stop to fetch
+ * @throws Error if id is not provided
  */
-const fetchStop = async (stopID: number) => {
-  let result: {
-    data: Stop | null;
-    error: Error | null;
-  } = { data: null, error: null };
+export const fetchStop = async (id: number) => {
+  console.log("'server/db/supabase.ts' fetchStop()");
+  if (!id) throw new Error('supabase.fetchStop() expects an id. None provided.');
+  const response:
+    { data: Stop | null; error: PostgrestError | null; } =
+    { data: null, error: null };
   try {
-    result = supabase.from('stops').select('*').eq('id', stopID).single();
-    const { error } = result;
+    const { data, error } = supabase.from('stops').select('*').eq('id', id).single() as { data: Stop | null; error: PostgrestError | null; };
     if (error) throw error;
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
+    console.info('Stop fetched - fetchStop() returning data...');
+    response.data = data;
+  } catch (error: PostgrestError | Error) {
+    console.error('Stop not fetched - fetchStop() returning error...', error);
+    response.error = error;
   }
-  return result;
+  return response;
 };
 
 /**
  * Creates a stop in the database
  * @param stop The stop to create
- * @returns { data: Stop, error: Error }
+ * @throws Error if stop is not provided
  */
-const createStop = async (stop: Stop) => {
-  let result = { data: null, error: null };
+export const createStop = async (stop: Stop) => {
+  console.log("'server/db/supabase.ts' createStop()");
+  if (!stop) throw new Error('supabase.createStop() expects a stop. None provided.');
   try {
-    result = await supabase.from('stops').insert(stop);
-    const { data, error } = result;
+    const { error } = await supabase.from('stops').insert(stop) as { error: PostgrestError | null; };
     if (error) throw error;
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
+    console.info('Stop created - createStop() returning true...');
+    return true;
+  } catch (error: PostgrestError | Error) {
+    console.error('Stop not created - createStop() returning false...', error);
+    return false;
   }
-  return result;
 };
 
 /**
  * Creates multiple stops in the database
  * @param stops The stops to create
+ * @throws Error if stops is not provided
  */
-const createStops = async (stops: Stop[]) => {
+export const createStops = async (stops: Stop[]) => {
+  console.log("'server/db/supabase.ts' createStops()");
   if (!stops || stops.length < 1) throw new Error('supabase.createStops() expects an array of stops. None provided.');
-  log('Supabase is creating', stops.length, 'stops');
   try {
-    await supabase.from('stops').insert(stops);
+    const { error } = await supabase.from('stops').insert(stops) as { error: PostgrestError | null; };
+    if (error) throw error;
+    console.info('Stops created - createStops() returning true...');
+    return true;
   } catch (error: any) {
-    errorLog(error, 'server/db/supabase.ts');
-    throw error;
+    console.error('Stops not created - createStops() returning false...', error);
+    return null;
   }
 };
 
 
 /**
  * Fetches all stops for a trip from the database
- * @param tripID The id of the trip to fetch stops for
- * @returns { data: Stop[], error: Error }
+ * @throws Error if tripID is not provided
+ * @param tripId The id of the trip to fetch stops for
  */
-const fetchStops = async (tripID: number) => {
-  let response: {
-    data: Stop[] | null;
-    error: Error | null;
-  } = { data: null, error: null };
+export const fetchStops = async (tripId: number) => {
+  console.log("'server/db/supabase.ts' fetchStops()");
+  if (!tripId) throw new Error('supabase.fetchStops() expects a tripID. None provided.');
+  const response:
+    { data: Stop[] | null; error: PostgrestError | null; } =
+    { data: null, error: null };
   try {
-    response = await supabase
+    const { data, error } = await supabase
       .from('stops')
       .select('*')
-      .eq('tripId', tripID);
-    const { error } = response;
+      .eq('tripId', tripId) as { data: Stop[] | null; error: PostgrestError | null; };
     if (error) throw error;
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
+    console.info('Stops fetched - fetchStops() returning data...');
+    response.data = data;
+    return response;
+  } catch (error: PostgrestError | Error) {
+    console.error('Stops not fetched - fetchStops() returning error...', error);
+    response.error = error;
+    return response;
+  }
+};
+
+/**
+ * Fetches all stops for a trip from the database
+ */
+export const fetchAllStops = async () => {
+  console.log("'server/db/supabase.ts' fetchAllStops()");
+  const response = { data: null, error: null } as { data: Stop[] | null; error: PostgrestError | null; };
+  try {
+    const { data, error } = await supabase.from('stops').select('*') as { data: Stop[] | null; error: PostgrestError | null; };
+    if (error) throw error;
+    console.log('Stops fetched - fetchAllStops() returning data...');
+    response.data = data;
+  } catch (error: PostgrestError | Error) {
+    console.error('Stops not fetched - fetchAllStops() returning error...', error);
+    response.error = error;
   }
   return response;
 };
 
-const fetchAllStops = async () => {
-  log('Supabase is fetching all stops');
-  try {
-    const response = await supabase.from('stops').select('*');
-    return { data: response.data as Stop[], error: null };
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    return { data: null, error };
-  }
-};
-
 /**
  * Fetches all stops for a trip from the database that are not closed
- * @returns { data: Stop[], error: Error }
  */
-const fetchAllOpenStops = async () => {
-  log('Supabase is fetching all stops (not closed)');
+export const fetchAllOpenStops = async () => {
+  console.log("'server/db/supabase.ts' fetchAllOpenStops()");
+  const response = { data: null, error: null } as { data: Stop[] | null; error: PostgrestError | null; };
   try {
-    const response = await supabase.from('stops').select('*').eq('closed', false);
-    return { data: response.data as Stop[], error: null };
+    const { data, error } = await supabase.from('stops').select('*').eq('closed', false);
+    if (error) throw error;
+    console.info('Stops fetched - fetchAllOpenStops() returning data...');
+    response.data = data;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    return { data: null, error };
+    console.error('Stops not fetched - fetchAllOpenStops() returning error...', error);
+    response.error = error;
   }
+  return response;
 };
 
 /**
  * Updates a trip in the database
+ * @throws Error if trip is not provided
  */
-const updateTrip = async (trip: Trip) => {
-  const tripID = trip.id;
-  log('Supabase is updating trip', tripID);
-  const updatedTrip: Trip = {
+export const updateTrip = async (trip: Trip) => {
+  console.log("'server/db/supabase.ts' updateTrip()");
+  if (!trip) throw new Error('supabase.updateTrip() expects a trip. None provided.');
+  trip = {
+    ...trip,
     updatedAt: new Date().toISOString(),
-    date: trip.date,
-    pickupTime: trip.pickupTime,
-    passengerName: trip.passengerName,
-    passengerPhone: trip.passengerPhone,
-    pickupAddressName: trip.pickupAddressName,
-    pickupAddressUnit: trip.pickupAddressUnit,
-    pickupAddressStreet: trip.pickupAddressStreet,
-    pickupAddressCity: trip.pickupAddressCity,
-    dropOffAddressName: trip.dropOffAddressName,
-    dropOffAddressUnit: trip.dropOffAddressUnit,
-    dropOffAddressStreet: trip.dropOffAddressStreet,
-    dropOffAddressCity: trip.dropOffAddressCity,
-    dropOffTime: trip.dropOffTime,
-    notes: trip.notes,
-    confirmed: trip.confirmed,
-    closed: trip.closed,
-    canceled: trip.canceled,
-    distance: trip.distance,
-    duration: trip.duration,
   };
   try {
     const { error } = await supabase
       .from('trips')
-      .update({ ...updatedTrip })
-      .eq('id', tripID);
+      .update(trip)
+      .eq('id', trip.id);
     if (error) throw error;
-    const { data } = await supabase.from('trips').select('*').eq('id', tripID).single();
-    return { data, error: null };
+    console.info('Trip updated - updateTrip() returning true...');
+    return true;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    return { data: null, error };
+    console.error('Trip not updated - updateTrip() returning false...', error);
+    return false;
   }
 };
 
-// ✅ I believe this is working ✅
 /**
- * Fetches all stops for a trip from the database
+ * Updates a stop in the database
  * @param updatedStop The stop to update
- * @returns { data: Stop, error: Error }
+ * @throws Error if stop is not provided
  */
-const updateStop = async (stop: Stop) => {
-  const stopID = stop.id;
-  log("Supabase is updating stop", stopID);
-  const updatedStop: Stop = {
-    updatedAt: new Date().toISOString(),
-    date: stop.date,
-    passenger: stop.passenger,
-    street: stop.street,
-    city: stop.city,
-    arrivalTime: stop.arrivalTime,
-    departureTime: stop.departureTime,
-    distance: stop.distance,
-    name: stop.name,
-    unit: stop.unit,
-    notes: stop.notes,
-    type: stop.type,
-    closed: stop.closed,
-    status: stop.status,
+export const updateStop = async (stop: Stop) => {
+  if (!stop) throw new Error('supabase.updateStop() expects a stop. None provided.');
+  console.log("'server/db/supabase.ts' updateStop()");
+  stop = {
+    ...stop,
+    updatedAt: new Date().toISOString()
   };
   try {
     const { error } = await supabase.from('stops').update(updatedStop).eq('id', stopID) as { error: PostgrestError | null; };
     if (error) throw error;
-    return { status: 200 };
+    console.info('Stop updated - updateStop() returning true...');
+    return true;
   } catch (error: PostgrestError | Error) {
-    errorLog(error, 'server/db/supabase.ts');
-    sendError(event, 'server/db/supabase.ts');
+    console.error('Stop not updated.', error);
+    return false;
   }
 };
 
 /**
  * Creates a new cancelation note
  * @param cancelationNote The cancelation note to create
- * @returns { data: CancelationNote, error: Error }
+ * @throws Error if cancelationNote is not provided
  */
-const createCancellationNote = async (cancelationNote: CancelationNote) => {
-  log('Supabase is creating a new cancelation note');
-  let result = { data: null, error: null };
+export const createCancellationNote = async (cancelationNote: CancelationNote) => {
+  console.log("'server/db/supabase.ts' createCancellationNote()");
+  if (!cancelationNote) throw new Error('supabase.createCancellationNote() expects a cancelationNote. None provided.');
   try {
-    result = await supabase.from('cancelation_notes').insert(cancelationNote);
-    const { data, error } = result;
+    const { error } = await supabase.from('cancelation_notes').insert(cancelationNote);
     if (error) throw error;
+    console.info('Cancelation note created - createCancellationNote() returning true...');
+    return true;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-  } finally {
-    return result;
+    console.error('Cancelation note not created.', error);
+    return false;
   }
 };
 
 /**
  * Creates a new completion note
  * @param completionNote The completion note to create
- * @returns { data: CompletionNote, error: Error }
+ * 
  */
-const createCompletionNote = async (completionNote: CompletionNote) => {
-  log('Supabase is creating a new completion note');
-  let result = { data: null, error: null };
+export const createCompletionNote = async (completionNote: CompletionNote) => {
+  console.log("'server/db/supabase.ts' createCompletionNote()");
   try {
-    result = await supabase.from('completion_notes').insert(completionNote);
-    const { data, error } = result;
+    const { error } = await supabase.from('completion_notes').insert(completionNote);
     if (error) throw error;
+    console.info('Completion note created - createCompletionNote() returning true...');
+    return true;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-  } finally {
-    return result;
+    console.error('Completion note not created.', error);
+    return false;
   }
 };
 
-const fetchAllTrips = async () => {
-  log('Supabase is fetching all trips in the database');
+/**
+ * Fetches all trips from the database
+ * @returns All trips in the database
+ */
+export const fetchAllTrips = async () => {
+  console.log("'server/db/supabase.ts' fetchAllTrips()");
+  const response:
+    { data: Trip[] | null; error: PostgrestError | null; } =
+    { data: null, error: null };
   try {
-    const { data } = await supabase.from('trips').select('*') as { data: Trip[] | null; };
-    return data;
+    const { data, error } = await supabase.from('trips').select('*') as { data: Trip[] | null; error: PostgrestError | null; };
+    if (error) throw error;
+    console.info('Trips fetched - fetchAllTrips() returning data...');
+    response.data = data;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    throw error;
+    console.error('Trips not fetched.', error);
+    response.error = error;
   }
+  return response;
 };
 
-const fetchAllUnconfirmedTrips = async () => {
-  log('Supabase is fetching all unconfirmed trips in the database');
+/**
+ * Fetches all unconfirmed trips from the database
+ * @returns All unconfirmed trips in the database
+ */
+export const fetchAllUnconfirmedTrips = async () => {
+  console.log("'server/db/supabase.ts' fetchAllUnconfirmedTrips()");
+  const response:
+    { data: Trip[] | null; error: PostgrestError | null; } =
+    { data: null, error: null };
   try {
-    const { data } = await supabase.from('trips').select('*').eq('confirmed', false) as Trip[] | null;
-    return data;
+    const { data, error } = await supabase.from('trips').select('*').eq('confirmed', false) as Trip[] | null;
+    if (error) throw error;
+    console.info('Trips fetched - fetchAllUnconfirmedTrips() returning data...');
+    response.data = data;
   } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    throw error;
+    console.error('Unconfirmed trips not fetched.', error);
+    response.error = error;
   }
-};
-
-export default {
-  createTrip,
-  fetchTrip,
-  updateTrip,
-  createStop,
-  fetchStop,
-  updateStop,
-  createStops,
-  fetchStops,
-  fetchAllTrips,
-  fetchAllStops,
-  fetchAllOpenStops,
-  createCompletionNote,
-  createCancellationNote,
-  fetchAllUnconfirmedTrips,
+  return response;
 };

@@ -1,18 +1,12 @@
 <template>
   <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
     <div class="container mx-auto">
-      <div v-if="!stopIsNext" class="flex flex-row-reverse">
-        <button class="btn btn-outline" @click="() => peakControls = !peakControls">
-          <Icon
-            :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
-            class="w-6 h-6" />
-        </button>
-      </div>
       <div id="info" class="flex flex-col">
         <DriveLateIndicator v-if="arrivingLate" />
-        <DriveStopDetails :stop="stop" />
+        <DriveStopDetails :stop="stop" :stopIsNext="stopIsNext" :peakControls="peakControls"
+          @togglePeakControls="togglePeakControls" />
       </div>
-      <div v-if="stopIsNext" class="flex flex-col justify-center items-center">
+      <div v-if="stopIsNext || peakControls" class="flex flex-col justify-center items-center">
         <DriveMap :key="stop.id" :origin="currentLocation" :destination="destinationString" />
       </div>
       <div v-if="showControls || peakControls" id="actions" class="flex flex-col">
@@ -78,6 +72,10 @@ function updateCurrentLocation() {
     currentLocation.lat = position.coords.latitude;
     currentLocation.lon = position.coords.longitude;
   });
+}
+
+function togglePeakControls() {
+  peakControls.value = !peakControls.value;
 }
 
 onMounted(() => {
