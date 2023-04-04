@@ -2,13 +2,19 @@ import { fetchAllStops } from '../../server/db/supabase';
 <template>
   <div>
     <div>
-      <div class="text-center py-4 text-xl font-semibold block md:hidden">
+      <div class="text-center mt-2 text-xl font-semibold block md:hidden">
         {{ dateString }}
       </div>
-      <div class="flex flex-row justify-evenly items-center my-4">
-        <button class="btn btn-outline w-[150px]" @click="dateBack">Back</button>
+      <div class="flex flex-row justify-evenly items-center my-2 ">
+        <button class="btn btn-outline w-[180px] gap-2" @click="dateBack">
+          <Icon name="fa6-solid:arrow-left" />
+          Back
+        </button>
         <div class="hidden md:block py-4 text-xl font-semibold">{{ dateString }}</div>
-        <button class="btn btn-outline w-[150px]" @click="dateForward">Forward</button>
+        <button class="btn btn-outline w-[180px] gap-2" @click="dateForward">
+          Forward
+          <Icon name="fa6-solid:arrow-right" />
+        </button>
       </div>
       <DriveStopList :date="dateString" />
     </div>
