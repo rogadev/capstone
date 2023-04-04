@@ -44,7 +44,7 @@
     </div>
     <div class="m-6">
       <h2 class="text-3xl font-bold text-center mb-4">Upcoming Trips</h2>
-      <div class="flex flex-col gap-4">
+      <div class="w-full">
         <UpcomingTripTable :trips="trips" />
       </div>
     </div>
