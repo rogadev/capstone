@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center my-4">
     <DriveStartStop v-if="stop.status === 'scheduled' && !confirmCancel" :stop="stop" @cancel="() => confirmCancel = true"
-      @enroute="enroute" :stopType="stop.type" />
+      @enroute="enroute" :stopType="stop.type" :stop-date="stop.date" />
     <DriveEnrouteToStop v-if="stop.status === 'enroute'" :stop="stop" @arrived="arrived"
       @back="() => stop.status = 'scheduled'" />
     <DriveArrivedAtStop v-if="stop.status === 'arrived' && !confirmCancel" :stop="stop"

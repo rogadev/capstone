@@ -28,7 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { Stop } from '@prisma/client';
+import type { Stop, Trip } from '@prisma/client';
+
 const props = defineProps({
   stop: {
     type: Object as PropType<Stop>,
@@ -41,6 +42,7 @@ const loading = ref(false);
 const phoneNumber = ref('');
 
 async function fetchPhoneNumber() {
+  // TODO - Create route for just the phone number for a given trip.
   const response = await fetch(`/api/trips/${props.stop.tripId}`, {
     method: 'GET',
     headers: {
@@ -48,8 +50,8 @@ async function fetchPhoneNumber() {
     }
   });
   if (!response.ok) throw new Error(response.statusText);
-  const { data } = await response.json();
-  phoneNumber.value = data.passengerPhone;
+  const trip = await response.json() as Trip;
+  phoneNumber.value = trip.passengerPhone;
 }
 
 function completed() {
