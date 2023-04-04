@@ -2,7 +2,13 @@ import * as supabase from '~/server/db/supabase';
 
 export default defineEventHandler(async (event) => {
   const stopIdString = event.context.params.id;
-  if (!stopIdString) return setResponseStatus(400, 'Request was missing stop id parameter');
+
+  if (!stopIdString)
+    return {
+      status: 400,
+      statusText: 'Request must include stop id in the path. Expected path: /api/stops/{id}'
+    };
+
   const stopId = parseInt(stopIdString);
   console.info('Fetching stop', stopId);
   try {

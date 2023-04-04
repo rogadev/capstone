@@ -21,12 +21,14 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // NOTE - Our store is checking if the other stop(s) is/are closed and updating the trip status if so.
+
   console.info("Updating stop", stopId);
   try {
     const { error } = await supabase.from("stops").update({ notes: note, status: 'completed', closed: true }).eq("id", id) as { error: PostgrestError | null; };
     if (error) throw error;
     console.info("Stop", stopId, "updated successfully");
-    return setResponseStatus(200);
+    return {};
   } catch (e: PostgrestError | Error) {
     console.error(`Error updating stop ${stopId}:`, e);
     sendError(event, "Error updating stop. This was not expected.");

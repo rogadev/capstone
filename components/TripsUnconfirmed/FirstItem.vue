@@ -127,13 +127,13 @@ async function deleteCurrentTrip() {
 async function updateTrip() {
   updating.value = true;
   feedbackMessage.value = '';
+  // Responds with 200 if the trip was confirmed successfully.
   const response = await fetch('/api/trips/confirm', {
     method: 'POST',
     body: JSON.stringify(trip.value.id),
   });
-  const { error } = await response.json();
   if (!response.ok) {
-    console.error('Error updating trip', error);
+    console.error('components/TripsUnconfirmed/FirstItem.vue - updateTrip() - There was an error updating the trip as confirmed.');
     feedbackMessage.value = 'There was an error updating this trip.';
     success.value = false;
   } else {

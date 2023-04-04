@@ -53,6 +53,7 @@ const numberOfTripsToday = computed(() => trips.value.filter(trip => trip.date =
 
 async function fetchTrips() {
   try {
+    // Responds with all trips.
     const response = await fetch('/api/trips', {
       method: 'GET',
       headers: {
@@ -60,8 +61,9 @@ async function fetchTrips() {
       }
     });
     if (!response.ok) throw new Error(response.statusText);
-    const { body } = await response.json();
-    trips.value = body;
+    const allTrips = await response.json();
+    // ✅ Working - April 3 - Post Backend Refactoring ✅
+    trips.value = allTrips;
   } catch (error) {
     alert(error);
   }

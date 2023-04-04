@@ -4,7 +4,10 @@ export default defineEventHandler(async (event) => {
   const { destination } = await readBody(event) as { destination: string; };
 
   if (!destination)
-    return setResponseStatus(400, 'Request was missing destination');
+    return {
+      status: 400,
+      statusText: 'Request must include destination string in the body. Expected body: { destination: string }'
+    };
 
   try {
     const { lat, lon } = await getDestinationAsLonLat(destination);

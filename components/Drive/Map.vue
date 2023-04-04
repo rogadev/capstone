@@ -32,7 +32,7 @@ let map: any;
 let marker: any;
 onMounted(async () => {
   try {
-
+    // Responds with { lon, lat } if successful
     const response = await fetch('/api/maps/lonlat', {
       method: 'POST',
       headers: {
@@ -42,8 +42,11 @@ onMounted(async () => {
         destination: props.destination,
       })
     });
-    const { body } = await response.json();
-    const { lon, lat } = body;
+
+    const { lat, lon } = await response.json() as { lat: number; lon: number; };
+    // TODO remove after testing
+    console.log(lat, lon);
+
     map = new $mapboxgl.Map({
       container: mapEl.value,
       style: mapStyle.value,

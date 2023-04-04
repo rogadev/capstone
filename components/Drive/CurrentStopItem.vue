@@ -133,6 +133,9 @@ async function enroute() {
   const slugAddress = addressString.replace(/ /g, '+');
   const lat = currentLocation.lat;
   const lon = currentLocation.lon;
+
+  // Returns `true` if successful in updating the stop with distance and duration.
+  // ✅ Updated April 3rd - Backend Refactoring ✅
   await fetch('/api/maps/stop', {
     method: 'POST',
     headers: {
@@ -144,6 +147,7 @@ async function enroute() {
       stop: props.stop,
     })
   });
+
   await stopStore.updateStopStatus(props.stop, "enroute");
 
   window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');

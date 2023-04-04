@@ -8,8 +8,14 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { data, error } = await supabase.fetchTrip(tripID) as { data: Trip | null; error: PostgrestError | null; };
+
     if (error) throw error;
-    if (!data) return setResponseStatus(404, `Trip with id ${tripID} not found`);
+    if (!data)
+      return {
+        status: 404,
+        statusText: `Trip with id ${tripID} not found`
+      };
+
     console.info(`API fetched trip with id ${tripID} successfully. Responding with trip...`);
     return data;
   } catch (e: PostgrestError | Error) {

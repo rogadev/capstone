@@ -1,16 +1,22 @@
 import type { Stop } from "@prisma/client";
 import type { PostgrestError } from "@supabase/supabase-js";
-import * as supabase from "~~/server/db/supabase";
-import { getDistanceAndDuration } from "~~/server/maps";
+import * as supabase from "~/server/db/supabase";
+import { getDistanceAndDuration } from "~/server/maps";
 
 export default defineEventHandler(async (event) => {
   const { origin, destination, stop } = await readBody(event) as { origin: string, destination: string, stop: Stop; };
 
   if (!origin || !destination || !stop)
-    return setResponseStatus(400, 'Request was missing origin, destination, or stop');
+    return {
+      status: 400,
+      statusText: 'Request must include origin, destination, and stop in the body. Expected body: { origin: string, destination: string, stop: Stop }'
+    };
 
   if (!origin.length === 2 || !destination || !stop)
-    return setResponseStatus(400, 'Request was missing origin, destination, or stop');
+    return {
+      status: 400,
+      statusText: 'Request must include origin, destination, and stop in the body. Expected body: { origin: string, destination: string, stop: Stop }'
+    };
 
   try {
     const { distance, duration } = await getDistanceAndDuration(origin, destination) as { distance: number, duration: number; };
@@ -32,23 +38,19 @@ export default defineEventHandler(async (event) => {
 });
 
 async function updateStop(stop: Stop) {
-  console.info("'/api/maps/stop' updating stop:", stop.id);
-
-  if (!stop) sendError(event, 'Error updating stop (no stop provided to updateStop() method)');
-
-  let success: boolean;
-  stop = {
-    ...stop,
-    updatedAt: new Date().toISOString(),
-  };
+  if (!stop) {
+    console.error("'/api/maps/stop' updateStop() encountered an error updating stop (no stop provided to updateStop() method - server/api/maps/stop.ts)");
+    sendError(event, 'Error updating stop');
+  }
+  console.info("Updating stop", stop.id);
 
   try {
-    const { error } = await supabase.from('stops').update(updatedStop).eq('id', stop.id) as { error: PostgrestError | null; };
-    if (error) throw error;
-    success = true;
+    const success = await supabase.updateStop({ ...stop, updatedAt: new Date().toISOString() });
+    if (!success) throw new Error('Supabase encountered an error updating stop', stop.id);
+    console.info("'/api/maps/stop' updateStop() successfully updated stop:", stop.id);
+    return true;
   } catch (error: PostgrestError | Error) {
     console.error("'/api/maps/stop' updateStop() encountered an error updating stop:", error);
-    success = false;
+    return false;
   }
-  return success;
 };

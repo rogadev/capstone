@@ -6,7 +6,11 @@ export default defineEventHandler(async (event) => {
   const idString = event.context.params.id as string;
   const stopId = parseInt(idString);
 
-  if (!stopId) return setResponseStatus(400, 'Request was missing stop id parameter');
+  if (!stopId)
+    return {
+      status: 400,
+      statusText: 'Request must include stop id in the path. Expected path: /api/stops/{id}'
+    };
 
   console.log(`Canceling stop ${stopId}...`);
 
@@ -97,5 +101,5 @@ export default defineEventHandler(async (event) => {
     }
   }
   console.info('Stops updated successfully');
-  return setResponseStatus(200, 'Trip canceled successfully');
+  return {};
 });

@@ -75,6 +75,9 @@
           <input class="text-black input-group" type="text" name="notes" id="notes" v-model="notes" />
         </div>
       </div>
+      <div v-if="feedbackMessage !== ''" class="text-center">
+        <p>{{ feedbackMessage }}</p>
+      </div>
       <div class="flex flex-row items-center justify-center mb-12">
         <button type="submit" class="btn btn-primary btn-wide"
           :class="{ 'loading btn-disabled': submitting, 'btn-disabled': submitted }">
@@ -102,6 +105,8 @@
 </template>
 
 <script lang="ts" setup>
+import { Trip } from '.prisma/client';
+
 const { validateTrip } = useTripStore();
 const props = defineProps({
   trip: {
@@ -126,6 +131,7 @@ const dropOffAddressCity = ref(props.trip.drop_off_location_city);
 const dropOffTime = ref(props.trip.drop_off_time);
 const notes = ref(props.trip.notes);
 const showTrip = ref(true);
+const feedbackMessage = ref('');
 
 const toLocation = computed(() => {
   if (dropOffAddressName.value === '')
@@ -144,7 +150,7 @@ const submitted = ref(false);
 const handleSubmit = async (e: Event) => {
   e.preventDefault();
   submitting.value = true;
-  const data = {
+  const data: Trip = {
     date: date.value,
     pickupTime: pickupTime.value,
     passengerName: passengerName.value,
@@ -161,14 +167,16 @@ const handleSubmit = async (e: Event) => {
     notes: notes.value,
   };
 
-  const response = await fetch(`/api/trips/new`, {
+  // Expects a Trip object. Responds with 200 if successful.
+  const response = await fetch('/api/trips/new', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   });
-  if (response.status === 200) {
+  console.log('response: ', response);
+  if (response.ok) {
     console.info('Trip submitted successfully!');
     showTrip.value = false;
     submitted.value = true;

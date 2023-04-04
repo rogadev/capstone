@@ -4,7 +4,11 @@ import { getDistanceAndDuration } from "~/server/maps";
 
 export default defineEventHandler(async (event) => {
   const tripIdString = await readBody(event) as string;
-  if (!tripIdString) return setResponseStatus(400, "Request to '/api/trips/confirm' was missing parameter tripId");
+  if (!tripIdString)
+    return {
+      status: 400,
+      statusText: 'Request must include tripId string in the body. Expected body: { tripId: string }'
+    };
 
   const tripId = parseInt(tripIdString);
 
@@ -12,26 +16,38 @@ export default defineEventHandler(async (event) => {
   console.info("Fetching trip data...");
   let trip: Trip;
   try {
-    const { data, error } = await supabase.fetchTrip(tripId) as Trip | null;
-    if (!data) return setResponseStatus(404, "Trip not found");
+    const { data, error } = await supabase.fetchTrip(tripId) as { data: Trip | null; error: PostgrestError | null; };
+    if (error) throw error;
+    if (!data)
+      return {
+        status: 404,
+        statusText: 'Trip not found'
+      };
+
+    console.info("API fetched trip data successfully. Updating trip...");
     trip = data;
-  } catch (e) {
-    errorLog(e, '/api/trips/confirm', 'Error fetching trip data');
+  } catch (e: PostgrestError | Error) {
+    console.error('/api/trips/confirm', 'Error fetching trip data');
     sendError(event, e.message);
   }
 
   // Get our trip distance and duration. Add it to our trip object. We will save the trip object later.
-  // info("Getting trip distance and duration, and updating local trip object...");
+  console.info("Getting trip distance and duration...");
   const originAddressString: string = `${trip.pickupAddressStreet}, ${trip.pickupAddressCity}`;
   const destinationAddressString: string = `${trip.dropOffAddressStreet}, ${trip.dropOffAddressCity}`;
-  const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString);
-  if (!distance || !duration) return console.error('Distance or duration is null. Distance:', distance, 'Duration:', duration);
-  console.log('Distance:', distance, 'Duration:', duration);
-  trip.estimatedDistance = distance;
-  trip.estimatedDuration = duration;
+  try {
+    const { distance, duration } = await getDistanceAndDuration(originAddressString, destinationAddressString);
+    if (!distance || !duration) throw new Error('Distance or duration is null. Distance:', distance, 'Duration:', duration);
+    console.info("Distance:", distance, "Duration:", duration);
+    trip.estimatedDistance = distance;
+    trip.estimatedDuration = duration;
+  } catch (e: Error) {
+    console.error('/api/trips/confirm', 'Error getting trip distance and duration');
+    sendError(event, e.message);
+  }
 
   // Create our stop objects.
-  // info("Creating local stop objects...");
+  console.info("Creating stop objects...");
   const originDepartureTime = calcTimeAsMinutes(trip.pickupTime);
   const originArrivalTime = originDepartureTime - 5;
   const origin: Stop = {
@@ -47,10 +63,10 @@ export default defineEventHandler(async (event) => {
     departureTime: originDepartureTime,
     notes: trip.notes,
   };
-  const hasFixedDropoffTime = trip.dropOffTime && trip.dropOffTime !== '';
+  const hasAppointmentTime = trip.dropOffTime && trip.dropOffTime !== '';
   const calculateArrivalTime = () => {
     const expectedDestinationArrivalTime = originDepartureTime + Math.round(duration * 1.1);
-    if (hasFixedDropoffTime && expectedDestinationArrivalTime > calcTimeAsMinutes(trip.dropOffTime)) sendError(500, 'The expected destination arrival time is greater than the required dropoff time. Please adjust the arrival time to accommodate for a trip duration of ' + duration + ' minutes.');
+    if (hasAppointmentTime && expectedDestinationArrivalTime > calcTimeAsMinutes(trip.dropOffTime)) sendError(500, 'The expected destination arrival time is greater than the required dropoff time. Please adjust the arrival time to accommodate for a trip duration of ' + duration + ' minutes.');
     return expectedDestinationArrivalTime;
   };
   const destinationArrivalTime = calculateArrivalTime();
@@ -70,15 +86,32 @@ export default defineEventHandler(async (event) => {
   };
 
   // Insert the stops into the database.
-  await supabase.createStop(origin);
-  await supabase.createStop(destination);
+  console.info("Inserting stops into the database...");
+  try {
+    await supabase.createStop(origin);
+    await supabase.createStop(destination);
+  } catch (e: Error) {
+    console.error('/api/trips/confirm', 'Error inserting stops into the database');
+    sendError(event, e.message);
+  }
 
   // Update the trip data.
-  trip.confirmed = true;
-  await supabase.updateTrip(trip);
-  return { status: 200, body: "Trip confirmed" };
-});
+  console.info("Updating trip confirmation status...");
+  try {
+    const successful = await supabase.updateTrip({
+      ...trip,
+      confirmed: true,
+    });
+    if (!successful) throw new Error('Trip update was unsuccessful');
+  } catch (e: Error) {
+    console.error('/api/trips/confirm', 'Error updating trip data');
+    sendError(event, e.message);
+  }
 
+  // Send a success response.
+  console.info("Sending success response...");
+  return {};
+});
 /**
  * Not all trips have an appointment and therefore might not have a dropoff time. If the dropoff time is an empty string or null, we need to use Google Maps Distance Matrix API to calculate the time it will take to get from the pickup location to the dropoff location. This function will return the time it will take to get from the pickup location to the dropoff location.
  * @param time A string in the format of HH:MM

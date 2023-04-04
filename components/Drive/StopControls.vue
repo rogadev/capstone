@@ -32,7 +32,9 @@ async function enroute() {
   const slugAddress = addressString.replace(/ /g, '+');
   const lat = currentLocation.lat;
   const lon = currentLocation.lon;
-  await fetch('/api/maps/stop', {
+
+  // Responds with { distance, duration } if successful after also updating the stop with these values.
+  const metricsResponse = await fetch('/api/maps/stop', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -43,6 +45,9 @@ async function enroute() {
       stop: props.stop,
     })
   });
+  const { distance, duration } = await metricsResponse.json() as { distance: number; duration: number; };
+  console.info(`Distance: ${distance} km, Duration: ${duration} minutes`);
+
   await stopStore.updateStopStatus(props.stop, "enroute");
   window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');
 }

@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   try {
     const success = await supabase.updateStop(stop);
     if (!success) throw new Error('Update failed');
+    return {};
   } catch (e: Error) {
     console.error(`Error updating stop ${stop.id}:`, e);
     sendError(event, 'Error updating stop');
