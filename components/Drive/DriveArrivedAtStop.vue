@@ -11,17 +11,18 @@
     v-model="completionNote" />
 
   <div class="flex flex-col gap-4 md:flex-row justify-between mt-8 mb-3">
-    <button class="btn btn-error btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
-      @click="() => $emit('cancel')">
+    <button class="btn btn-success btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
+      @click="completed">
+      {{ stop.type === 'pickup' ? 'Picked Up' : 'Dropped Off' }}
+      <Icon name="fa6-solid:check" class="ml-2" />
+    </button>
+    <button v-if="stop.type === 'pickup'" class="btn btn-error btn-wide mx-auto"
+      :class="{ 'loading btn-disabled': loading }" :disabled="loading" @click="() => $emit('cancel')">
       Cancel On Arrival
     </button>
     <button class="btn btn-warning btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
       @click="() => $emit('back')">
       Back Step
-    </button>
-    <button class="btn btn-success btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
-      @click="completed">
-      Complete
     </button>
   </div>
 </template>

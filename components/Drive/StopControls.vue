@@ -1,12 +1,11 @@
 <template>
   <div class="flex flex-col items-center justify-center my-4">
     <DriveStartStop v-if="stop.status === 'scheduled' && !confirmCancel" :stop="stop" @cancel="() => confirmCancel = true"
-      @enroute="enroute" />
+      @enroute="enroute" :stopType="stop.type" />
     <DriveEnrouteToStop v-if="stop.status === 'enroute'" :stop="stop" @arrived="arrived"
       @back="() => stop.status = 'scheduled'" />
     <DriveArrivedAtStop v-if="stop.status === 'arrived' && !confirmCancel" :stop="stop"
       @cancel="() => confirmCancel = true" @completed="completed" @back="() => stop.status = 'enroute'" />
-    <DriveCompleteStop v-if="stop.status === 'completed'" :stop="stop" @completed="completed" />
     <DriveCancelStop v-if="confirmCancel" :stopID="stop.id" @deleted="() => emits('refresh')"
       @cancel="() => confirmCancel = false" />
   </div>
@@ -25,7 +24,6 @@ const emits = defineEmits(['refresh']);
 
 const confirmCancel = ref(false);
 const currentLocation = reactive({ lat: 0, lon: 0 });
-const stopStatus = ref(props.stop.status);
 
 async function enroute() {
   const addressString = `${props.stop.street}, ${props.stop.city}`;

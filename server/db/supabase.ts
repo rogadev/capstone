@@ -199,7 +199,7 @@ export const updateTrip = async (trip: Trip) => {
 
 /**
  * Updates a stop in the database
- * @param updatedStop The stop to update
+ * @param stop The stop to update
  * @throws Error if stop is not provided
  */
 export const updateStop = async (stop: Stop) => {
@@ -210,7 +210,7 @@ export const updateStop = async (stop: Stop) => {
     updatedAt: new Date().toISOString()
   };
   try {
-    const { error } = await supabase.from('stops').update(updatedStop).eq('id', stopID) as { error: PostgrestError | null; };
+    const { error } = await supabase.from('stops').update(stop).eq('id', stop.id) as { error: PostgrestError | null; };
     if (error) throw error;
     console.info('Stop updated - updateStop() returning true...');
     return true;

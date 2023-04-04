@@ -1,3 +1,4 @@
+import Trip from '@prisma/client';
 <template>
   <div class="mt-6 w-full">
     <h3 class="text-2xl font-bold text-center">Cancel This Trip</h3>
@@ -10,11 +11,15 @@
     </div>
     <div class="flex flex-col items-center gap-4 md:flex-row md:justify-evenly mt-8 mb-3">
       <button :class="{ 'btn-disabled loading': loading }" class="btn btn-error btn-wide" @click="cancel"
-        :disabled="loading">Wait, Go
-        Back</button>
+        :disabled="loading">
+        <Icon name="fa6-solid:arrow-left" class="mr-2" />
+        No, Go Back
+      </button>
       <button :class="{ 'btn-disabled loading': loading }" class="btn btn-success btn-wide" @click="confirm"
-        :disabled="loading">Yes,
-        Cancel</button>
+        :disabled="loading">
+        Yes, Cancel Trip
+        <Icon name="fa6-solid:arrow-right" class="ml-2" />
+      </button>
     </div>
     <div class="flex flex-col w-full">
       <label for="cancellationNotes" class="text-center">Cancellation Notes</label>
