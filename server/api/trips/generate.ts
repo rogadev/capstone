@@ -1,44 +1,74 @@
 import type { Trip } from '@prisma/client';
 import { Configuration, OpenAIApi } from "openai";
 import { extractJsonData } from '~~/server/utils/extractJson';
+
 const { OPENAI_API_KEY } = useRuntimeConfig();
-
-let startTime: number;
-const model = "gpt-3.5-turbo";
-const { log } = console;
-
 const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY,
+  apiKey: OPENAI_API_KEY
 });
+
+const model = "gpt-3.5-turbo";
 
 const openai = new OpenAIApi(configuration);
 
 export default defineEventHandler(async (event) => {
-  startTime = Date.now();
-  log("Generating Trips...");
+  let startTime = Date.now();
   const { prompt, date } = await readBody(event) as GenerateTripsBody;
+
+  if (!prompt)
+    return {
+      status: 400,
+      statusText: "Request must include prompt string in the body. Expected body: { prompt: string }",
+    };
+  if (!date)
+    return {
+      status: 400,
+      statusText: "Request must include date string in the body. Expected body: { date: string }",
+    };
+
+  console.log("Generating trips...");
   const messages = generateMessage(prompt, date);
 
-  const content = await openai.createChatCompletion({ model, messages }).then((completion) => completion.data.choices[0].message?.content);
-  if (!content) return createError(event, "No content returned from OpenAI 🤷");
-  console.log(content);
-  // ✅ We have content ✅
+  console.info("Sending request to OpenAI...");
+  let chatContent: string;
+  try {
+    const content = await openai.createChatCompletion({ model, messages }).then((completion) => completion.data.choices[0].message?.content);
+    if (!content) throw new Error("No content returned from OpenAI");
+    console.info("OpenAI response received successfully.");
+    chatContent = content;
+  } catch (e: Error) {
+    console.error("Error generating trips:", e);
+    sendError(event, "Error generating trips. This was not expected.");
+  }
 
+  console.info("Extracting JSON data from OpenAI response...");
   let data: Trip[];
   try {
-    data = extractJsonData(content);
+    const extractedData = extractJsonData(chatContent);
+    if (!extractedData) throw new Error("No JSON data found in OpenAI response");
+    console.info("JSON data extracted successfully.");
+    data = extractedData;
   } catch (e: Error) {
+    console.error("Error extracting JSON data from OpenAI response:", e);
     sendError(event, e);
   }
 
-  // ✅ We Have Data ✅ 
-
-  const missingRequiredData = checkForMissingData(data);
-  if (missingRequiredData) data = await attemptToFixMissingData(data, prompt, event);
-  // ✅ Working ✅
+  console.info("Checking for missing data...");
+  const missingRequiredFields = checkForMissingData(data);
+  if (missingRequiredFields) {
+    try {
+      const fixedData = await attemptToFixMissingData(data, prompt, event);
+      if (!fixedData) throw new Error("Failed to fix missing data");
+      console.info("Missing data fixed successfully.");
+      data = fixedData;
+    } catch (e: Error) {
+      console.error("Error fixing missing data:", e);
+      sendError(event, e);
+    }
+  }
 
   logRequestDuration(startTime, data);
-  // ✅ working ✅
+  console.info("Trips generated successfully. Responding with trips...");
   return data;
 });
 

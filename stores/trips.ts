@@ -7,7 +7,7 @@ export const useTripStore = defineStore('tripsToValidate', () => {
   const tripsToValidate: Ref<GeneratedTrip[]> = ref([]);
 
   /**
-   * Confirm a trip and add remove it from the tripsToValidate store.
+   * Validate a trip and add remove it from the tripsToValidate store.
    */
   function validateTrip(tripID: string) {
     tripsToValidate.value = tripsToValidate.value.filter((trip) => trip.id !== tripID);
@@ -35,14 +35,15 @@ export const useTripStore = defineStore('tripsToValidate', () => {
     }
     // GENERATE TRIPS
     try {
-      const result = await fetch('/api/trips/generate', {
+      // Expects { prompt, date } object. Responds with array of trips if successful. Nothing saved to DB, yet.
+      const response = await fetch('/api/trips/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt, date }),
       });
-      data = await result.json();
+      data = await response.json();
     } catch (e) {
       console.error(e);
       error = "Oops! Something went wrong.";
