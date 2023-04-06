@@ -25,15 +25,16 @@ export default defineEventHandler(async (event) => {
       console.error(`Stop ${stopId} not found. Responding with 404...`);
       return sendNoContent(event, 404);
     }
+    console.info('Stop data fetched successfully', stop);
 
-    console.info('Stop data fetched successfully');
-    stop = data;
+    stop = data[0];
   } catch (e: PostgrestError | Error) {
     console.error(`Error fetching stop data for stop ${stopId}:`, e);
     sendError(event, 'Error fetching stop data');
   }
 
   const tripID = stop.tripId;
+
   console.info('Fetching trip data for trip', tripID);
 
   // Fetch the trip data for this trip id
@@ -55,7 +56,7 @@ export default defineEventHandler(async (event) => {
   // Update trip to canceled status
   console.info('Updating trip', tripID, 'to canceled status');
   try {
-    const successful = await supabase.updateTrip({ ...trip, status: 'canceled', closed: true, canceled: true });
+    const successful = await supabase.updateTrip({ ...trip, closed: true, canceled: true });
     if (!successful) throw new Error('Update failed');
   } catch (e: Error) {
     console.error(`Error updating trip ${tripID} to canceled status:`, e);
@@ -75,21 +76,9 @@ export default defineEventHandler(async (event) => {
     sendError(event, 'Error fetching stops for trip. This was not expected.');
   }
 
-  // Update the trip
-  console.info('Updating trip', tripID);
-  try {
-    const updatedTrip: Trip = { ...tripData, status: 'canceled', closed: true, canceled: true };
-    const successful = await supabase.updateTrip(updatedTrip);
-    if (!successful) throw new Error('Update failed');
-    console.info('Trip updated successfully');
-  } catch (e: Error) {
-    console.error(`Error updating trip ${tripID}:`, e);
-    sendError(event, 'Error updating trip. This was not expected.');
-  }
-
   // Update the stops
   console.info('Updating stops for trip', tripID);
-  for (const stop of stopsData) {
+  for (const stop of stops) {
     try {
       stop.status = 'canceled';
       stop.closed = true;

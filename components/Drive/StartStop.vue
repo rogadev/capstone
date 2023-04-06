@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4 md:flex-row justify-between mt-8 mb-3">
+  <div class="flex flex-col gap-4 justify-between mt-8 mb-3">
     <button v-if="stopIsToday" class="btn btn-success btn-wide mx-auto" @click="() => $emit('enroute')">
       Enroute
       <Icon name="fa6-solid:route" class="ml-2" />

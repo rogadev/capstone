@@ -6,7 +6,7 @@
       @back="() => stop.status = 'scheduled'" />
     <DriveArrivedAtStop v-if="stop.status === 'arrived' && !confirmCancel" :stop="stop"
       @cancel="() => confirmCancel = true" @completed="completed" @back="() => stop.status = 'enroute'" />
-    <DriveCancelStop v-if="confirmCancel" :stopID="stop.id" @deleted="() => emits('refresh')"
+    <DriveCancelStop v-if="confirmCancel" :stopID="stop.id" @deleted="cancelConfirmed"
       @cancel="() => confirmCancel = false" />
   </div>
 </template>
@@ -24,6 +24,11 @@ const emits = defineEmits(['refresh']);
 
 const confirmCancel = ref(false);
 const currentLocation = reactive({ lat: 0, lon: 0 });
+
+function cancelConfirmed() {
+  confirmCancel.value = false;
+  emits('refresh');
+}
 
 async function enroute() {
   const addressString = `${props.stop.street}, ${props.stop.city}`;

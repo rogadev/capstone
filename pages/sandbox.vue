@@ -1,36 +1,30 @@
 <template>
-  <div>
-    <DriveStopItem :stop="stop" :stopIsNext="true" />
+  <div class="min-h-screen bg-gray-100">
+    <!-- drag and drop view goes here -->
   </div>
 </template>
 
+
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
+const loading = ref(false);
+const stops = ref<Stop[]>([]);
+
+// fetch our stops
+async function fetchStops() {
+  loading.value = true;
+  const response = await fetch('/api/stops/today');
+  stops.value = await response.json();
+  loading.value = false;
+}
+
+// ABANDONED: This will be a super stretch goal
+
 definePageMeta({
   layout: 'driver',
   middleware: 'auth'
 });
 useHead({
   title: 'Sandbox',
-});
-
-const stop: Stop = reactive({
-  id: 1,
-  tripId: 123,
-  createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday's date
-  updatedAt: null,
-  date: '2023-04-01',
-  passenger: 'John Doe',
-  street: '805 Wentworth Street',
-  city: 'Nanaimo',
-  arrivalTime: 960, // 4:00 pm in minutes from midnight
-  departureTime: 965, // 5 minutes after arrivalTime
-  distance: null,
-  name: null,
-  unit: null,
-  notes: null,
-  type: 'pickup',
-  closed: false,
-  status: 'scheduled',
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-center">
+  <div class="flex flex-col justify-center max-w-lg mx-auto">
     <DriveStopItem v-if="currentStop !== null" @refresh="() => refreshStops()" :stop="currentStop" :stop-is-next="true" />
 
     <!-- TODO Add a "send invoice" button -->

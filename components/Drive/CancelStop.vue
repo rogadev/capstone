@@ -2,14 +2,14 @@ import Trip from '@prisma/client';
 <template>
   <div class="mt-6 w-full">
     <h3 class="text-2xl font-bold text-center">Cancel This Trip</h3>
-    <div class="flex flex-col md:flex-row justify-center items-center gap-2 my-4">
+    <div class="flex flex-col justify-center items-center gap-2 my-4">
       <label for="cancellationReason" class="label font-semibold">Cancellation Reason:</label>
       <select id="cancellationReason" :class="{ 'disabled select-disabled': loading }" class="select select-warning"
         v-model="cancellationReason" :disabled="loading">
         <option v-for="reason in REASONS" :value="reason">{{ reason }}</option>
       </select>
     </div>
-    <div class="flex flex-col items-center gap-4 md:flex-row md:justify-evenly mt-8 mb-3">
+    <div class="flex flex-col items-center gap-4 mt-8 mb-3">
       <button :class="{ 'btn-disabled loading': loading }" class="btn btn-error btn-wide" @click="cancel"
         :disabled="loading">
         <Icon name="fa6-solid:arrow-left" class="mr-2" />
@@ -59,6 +59,7 @@ const cancel = () => {
 
 const confirm = async () => {
   loading.value = true;
+  console.log('cancelling trip', props.stopID);
   const response = await fetch(`/api/stops/cancel/${props.stopID}`, {
     method: 'POST',
     headers: {
