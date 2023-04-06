@@ -6,9 +6,18 @@
       <button class="btn btn-success" @click="() => fetchTrips()">Try Reloading</button>
     </div>
     <Loading v-if="loading" />
-    <div v-else>
+    <div v-else-if="!allTripsConfirmed">
       <TripsUnconfirmedFirstItem v-if="firstTrip" :trip="firstTrip" @confirm="tripConfirmed" />
-      <TripsUnconfirmedItem v-for="trip in unconfirmedTrips" :key="trip.id" :trip="trip" @confirm="tripConfirmed" />
+      <TripsUnconfirmedItem v-if="remainingTrips.length > 0" v-for="trip in remainingTrips" :key="trip.id" :trip="trip"
+        @confirm="tripConfirmed" />
+    </div>
+    <div v-else>
+      <h3 class="text-center">All trips have been confirmed!</h3>
+      <div class="flex justify-center mt-8">
+        <router-link to="/drive">
+          <button class="btn btn-success btn-wide">Let's Drive!</button>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -17,11 +26,14 @@
 import type { Trip } from '@prisma/client';
 
 const supabase = useSupabaseClient();
-const unconfirmedTrips: Ref<Trip[]> = ref([]);
-const errorMessage = ref('');
+
 const loading = ref(true);
+const errorMessage = ref('');
+const unconfirmedTrips: Ref<Trip[]> = ref([]);
 
 const firstTrip = computed(() => unconfirmedTrips.value[0]);
+const remainingTrips = computed(() => unconfirmedTrips.value.slice(1));
+const allTripsConfirmed = computed(() => unconfirmedTrips.value.length < 1);
 
 async function tripConfirmed() {
   await fetchTrips();

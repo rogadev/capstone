@@ -27,22 +27,22 @@ export const useStopStore = defineStore('stops', () => {
   // ✅ Working ✅
   const fetchStops = async () => {
     try {
-      const response = await fetch('/api/stops');
+      // Responds with an array of open stops, or an empty array if all stops are closed.
+      const response = await fetch('/api/stops/open');
       if (!response.ok) throw new Error(response.statusText);
-      const { data } = await response.json();
-      const openStops = data.filter((stop: Stop) => stop.closed === false);
+      const openStops = await response.json() as Stop[];
       stops.value = openStops;
     } catch (e) {
-      error(e, 'stores/stops.ts');
+      console.error(e, 'stores/stops.ts');
     }
   };
 
-  // ✅ Working ✅
-  const getStopsForDate = (date: string) => {
-    if (!stops.value) return [];
+  const getStopsForDate = (date: Date | string) => {
+    if (!stops.value) return [] as Stop[];
+    const dateString = new Date(date).toISOString().split('T')[0];
     const relevantStops: Stop[] = [];
     for (const stop of stops.value) {
-      if (stop.date === date) relevantStops.push(stop);
+      if (stop.date === dateString) relevantStops.push(stop);
     }
     return relevantStops;
   };
@@ -52,12 +52,15 @@ export const useStopStore = defineStore('stops', () => {
     const previousClosedStatus = stop.closed;
     if (previousClosedStatus === 'canceled' || previousClosedStatus === 'completed') stop.closed = true;
     const updatedStop = { ...stop, status };
+    // Expects stop object as body. Responds with 200 if the update was successful.
     const response = await fetch('/api/stops/update/one', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedStop),
     });
-    if (response.error) console.error(response.error);
+    if (!response.ok) throw new Error(response.statusText);
+
+    // Refresh the stops with a new fetch
     await fetchStops();
   };
 
@@ -69,36 +72,36 @@ export const useStopStore = defineStore('stops', () => {
    * @returns { success: boolean, error: Error }
    */
   async function cancelStop(stop: Stop, cancelationType: string, notes: string = '') {
-    log("stopStore attempting to cancel stop", stop.id);
+    console.log("stopStore attempting to cancel stop", stop.id);
     const { tripId } = stop;
-    log('Associated with trip', tripId);
-    const tripObjectToUpdate: Trip = await fetchTrip(tripId);
+    console.log('Associated with trip', tripId);
+    const tripObjectToUpdate: Trip | null = await fetchTrip(tripId);
     const stopsToUpdate: Stop[] = stops.value.filter((stop) => stop.tripId === tripId);
     const cancelationNote: CancelationNote = { tripId, cancelationType, notes, };
-    // ✅ Working ✅
 
     // Update Trip
-    log('Updating Trip', tripObjectToUpdate);
+    console.log('Updating Trip', tripObjectToUpdate);
     const updatedTrip = { ...tripObjectToUpdate, closed: true, canceled: true };
-    log('... to', updatedTrip);
+    console.log('... to', updatedTrip);
     const { data, error } = await updateTrip(updatedTrip);
     if (error) throw error;
-    log('Trip updated successfully', data.id);
+    console.log('Trip updated successfully', data.id);
     await fetchStops();
   }
 
-  // TODO
-  // WIP - requires testing - It seems that the full trip is completing for some reason
-  // Only one stop at a time should be completing.
-  // I feel like I may have somehow accidentally made duplicate trips with duped ID's
-  // But this definitely needs to be tested.
+
+  // TODO - we really only need the stop id. It would be better to refactor this accordingly and update the front end to align.
+  /**
+   * Completes a stop and updates the associated trip and any additional related stops
+   * @param stop The stop to be completed
+   * @param notes Any notes related to the completion
+   * */
   async function completeStop(stop: Stop, notes: string) {
-    // update stop
-    stop.status = 'completed';
-    const stopResponse = await fetch('/api/stops/update/one', {
+    // Responds with 200 if successful. Updates the stop and creates completion note in the db.
+    const stopResponse = await fetch('/api/stops/complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(stop),
+      body: JSON.stringify({ id: stop.id, note: notes }),
     });
     if (!stopResponse.ok) throw new Error(stopResponse.statusText);
     // Evaluate if trip is fully complete.
@@ -111,15 +114,9 @@ export const useStopStore = defineStore('stops', () => {
       const updatedTrip = { ...tripToUpdate, closed: true, completed: true, notes };
       const tripUpdateResult = await updateTrip(updatedTrip);
     }
-    // create completion note
-    const completionNote: CompletionNote = { tripId, notes };
-    const noteResponse = await fetch('/api/notes/completion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(completionNote),
-    });
-    if (!noteResponse.ok) throw new Error(noteResponse.statusText);
-    // Fetch all stops again with updated stop data.
+    // NOTE - No need to create completion note - our back end is doing this for us.
+
+    // Refresh our stops data with a new fetch.
     await fetchStops();
   }
 

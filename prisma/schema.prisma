@@ -51,11 +51,11 @@ model Trip {
   dropOffAddressCity   String
   dropOffTime          String?
   notes                String?
+  estimatedDistance    Float?
+  estimatedDuration    Float?
   confirmed            Boolean  @default(false)
   closed               Boolean  @default(false)
   canceled             Boolean  @default(false)
-  distance             Float?
-  duration             Float?
 
   Stops            Stop[]
   CompletionNotes  CompletionNote[]
@@ -103,6 +103,7 @@ model Stop {
   arrivalTime   Int
   departureTime Int
   distance      Float?
+  duration      Float?
   name          String?
   unit          String?
   notes         String?
