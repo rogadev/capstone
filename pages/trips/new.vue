@@ -9,10 +9,7 @@ import { NuxtLink } from '../../.nuxt/components';
       <div v-else>
         <TripsValidateItem v-for="(trip, index) in trips" :trip="trip" :key="index" />
       </div>
-      <div v-if="generated && trips.length < 1">
-        <p class="text-center">No trips to validate</p>
-      </div>
-      <div v-if="generated && trips.length < 1" class="flex flex-col items-center">
+      <div v-if="generated && allTripsAreValidated" class="flex flex-col items-center">
         <h5 class="text-center font-semibold text-2xl">All trips validated!</h5>
         <NuxtLink to="/trips">
           <button class="btn btn-primary btn-wide">Confirm Added Trips</button>
@@ -34,5 +31,6 @@ useHead({
 const user = useSupabaseUser();
 const { tripsToValidate } = useTripStore();
 const trips = computed(() => tripsToValidate);
+const allTripsAreValidated = computed(() => trips.value.length < 1);
 const generated = ref(false);
 </script>

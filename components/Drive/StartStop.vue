@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 md:flex-row justify-between mt-8 mb-3">
-    <button class="btn btn-success btn-wide mx-auto" @click="() => $emit('enroute')">
+    <button v-if="stopIsToday" class="btn btn-success btn-wide mx-auto" @click="() => $emit('enroute')">
       Enroute
       <Icon name="fa6-solid:route" class="ml-2" />
     </button>
@@ -12,10 +12,20 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   stopType: {
     type: String,
     required: true,
+  },
+  stopDate: {
+    type: String,
+    required: true,
   }
+});
+console.log(props.stopDate);
+const stopIsToday = computed(() => {
+  const today = new Date();
+  const stopDate = new Date(props.stopDate.replace(/-/g, '/'));
+  return today.toDateString() === stopDate.toDateString();
 });
 </script>

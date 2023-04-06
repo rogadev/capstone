@@ -13,7 +13,7 @@
           :class="generated || generating ? 'textarea-disabled text-gray-500' : 'text-white input-accent'"
           rows="10"></textarea>
       </div>
-      <div class="flex flex-row-reverse">
+      <div class="flex flex-row-reverse items-center gap-8">
         <button type="submit" class="btn"
           :class="[generating ? 'loading btn-disabled' : 'btn-primary', generated || prompt === '' ? 'btn-disabled' : '',]">
           {{ prompt === '' ?
@@ -23,7 +23,7 @@
               'Generate Trips' }}
         </button>
         <p v-if="generating" class="text-sm text-gray-500 dark:text-gray-400">
-          Estimated generation time: {{ estimatedGenerationDuration }} seconds
+          Estimated generation time: {{ countdown }} seconds
         </p>
       </div>
     </form>
@@ -44,10 +44,8 @@ const prompt = ref('');
 
 // TODO Start saving durations in the database
 const estimatedGenerationDuration = computed(() => {
-  const timePattern: RegExp = /\d{1,2}:\d{2}\s+(?:am|pm)/gi;
-  const matches: RegExpMatchArray | null = prompt.value.match(timePattern);
-  const numberOfTrips = matches ? matches.length : 0;
-  return numberOfTrips * 10;
+  const count = (prompt.value.match(/:/g) || []).length;
+  return count * 6;
 });
 
 function getTomorrowDateString(): string {
@@ -80,4 +78,21 @@ const handleSubmit = async (e: Event) => {
   }
   generating.value = false;
 };
+
+// while generating, create a setInterval and count down the estimatedGenerationDuration to zero.
+let interval: NodeJS.Timeout;
+const countdown = ref(0);
+watch(generating, (generating) => {
+  countdown.value = estimatedGenerationDuration.value;
+  if (generating) {
+    interval = setInterval(() => {
+      countdown.value -= 1;
+      if (estimatedGenerationDuration.value <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+  } else {
+    clearInterval(interval);
+  }
+});
 </script>
