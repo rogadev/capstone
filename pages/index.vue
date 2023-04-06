@@ -41,13 +41,13 @@ watchEffect(() => {
       <h2 class="text-center">Fees</h2>
       <p>
         Our fees are determined by factors such as distance and location. We offer flat fees for certain routes and can
-        provide customized pricing based on your specific needs. For more information on our fees, please <a
-          href="#contact">contact us</a>.
+        provide customized pricing based on your specific needs. For more information on our fees, please contact us
+        (details below).
       </p>
     </section>
 
-    <section id="contact" class="prose pt-8 text-center">
-      <h2>Contact Us</h2>
+    <section id="contact" class="prose pt-8">
+      <h2 class="text-center">Contact Us</h2>
       <p class="pb-4">
         If you have any questions or require assistance, please feel free to reach out to us. Our team is always happy to
         help.
