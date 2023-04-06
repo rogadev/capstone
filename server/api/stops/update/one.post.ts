@@ -1,10 +1,15 @@
 import type { Stop } from '@prisma/client';
-import supabase from '~~/server/db/supabase';
+import * as supabase from '~~/server/db/supabase';
 
-const { log } = console;
 export default defineEventHandler(async (event) => {
-  const stop: Stop = await readBody(event);
-  log('API request to update stop:', stop.id);
-  const response = await supabase.updateStop(stop);
-  return response;
+  const stop = await readBody(event) as Stop;
+  console.info('Updating stop', stop.id);
+  try {
+    const success = await supabase.updateStop(stop);
+    if (!success) throw new Error('Update failed');
+    return {};
+  } catch (e: Error) {
+    console.error(`Error updating stop ${stop.id}:`, e);
+    sendError(event, 'Error updating stop');
+  }
 });
