@@ -1,19 +1,13 @@
 <template>
-  <div class="mx-8 my-1 p-2 border border-slate-700 dark:border-white rounded-md">
+  <div class="mx-8 my-1 p-2 border rounded-md">
     <div class="container mx-auto">
-      <div v-if="!stopIsNext" class="flex flex-row-reverse">
-        <button class="btn btn-outline" @click="() => peakControls = !peakControls">
-          <Icon
-            :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
-            class="w-6 h-6" />
-        </button>
-      </div>
       <div id="info" class="flex flex-col">
         <DriveLateIndicator v-if="arrivingLate" />
-        <DriveStopDetails :stop="stop" />
+        <DriveStopDetails :stop="stop" :stopIsNext="stopIsNext" :peakControls="peakControls"
+          @togglePeakControls="togglePeakControls" />
       </div>
-      <div v-if="stopIsNext" class="flex flex-col justify-center items-center">
-        <DriveMap :key="stop.id" :origin="currentLocation" :destination="destinationString" />
+      <div v-if="stopIsNext || peakControls" class="flex flex-col justify-center items-center">
+        <DriveMap :key="stop.id" :destination="destinationString" />
       </div>
       <div v-if="showControls || peakControls" id="actions" class="flex flex-col">
         <DriveStopControls :stop="stop" @refresh="() => $emit('refresh')" />
@@ -24,6 +18,7 @@
 
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
+
 defineEmits(['refresh']);
 const props = defineProps({
   stop: {
@@ -39,7 +34,8 @@ const props = defineProps({
 const peakControls = ref(false);
 const currentTimeInMinutes = ref(0);
 
-const currentLocation = reactive({ lat: 0, lon: 0, });
+const lat = ref(0);
+const lon = ref(0);
 
 const isNextStop = computed(() => props.stopIsNext === true);
 const isCompleted = computed(() => props.stop.status === 'completed');
@@ -58,34 +54,65 @@ const arrivalTimeString = computed(() => {
   return `${hours}:${minutes}`;
 });
 
-const tripDate = computed(() => {
-  const date = new Date(props.stop.date.split('-').join('/')).toDateString();
-  return date;
-});
-
 const stopIsToday = computed(() => {
-  const today = new Date().toDateString();
-  return tripDate.value === today;
+  const today = new Date();
+  const stopDate = new Date(props.stop.date.replace(/-/g, '/'));
+  return today.toDateString() === stopDate.toDateString();
 });
 
+// TODO - Not working
+const now = ref();
+const timeToArrive = ref();
+const calculateTimeToArrive = async () => {
+  if (!isNextStop.value) return null;
+  updateCurrentLocation();
+  const metrics = await fetch('/api/maps/duration', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      origin: [lat.value, lon.value],
+      destination: destinationString.value,
+    }),
+  }).then((res) => res.json());
+  const { duration } = metrics;
+  console.log(duration);
+  if (!duration || typeof duration !== 'number') return null;
+  return duration;
+};
+
+// arriving late if now (in minutes) + timeToArrive is greater than arrivalTime (in minutes)
 const arrivingLate = computed(() => {
   if (!stopIsToday.value) return false;
-  return stopIsToday.value && arrivalTimeString.value === "00:00" && props.stop.status !== "completed" && props.stop.status !== "cancelled";
+  const now = new Date().getHours() * 60 + new Date().getMinutes();
+  if (timeToArrive.value + now > props.stop.arrivalTime) return true;
+
+  return arrivalTimeString.value === "00:00" && props.stop.status !== "completed" && props.stop.status !== "cancelled";
 });
 
 function updateCurrentLocation() {
   navigator.geolocation.getCurrentPosition((position) => {
-    currentLocation.lat = position.coords.latitude;
-    currentLocation.lon = position.coords.longitude;
+    lat.value = position.coords.latitude;
+    lon.value = position.coords.longitude;
   });
 }
 
-onMounted(() => {
+function togglePeakControls() {
+  peakControls.value = !peakControls.value;
+}
+
+
+let interval: NodeJS.Timeout;
+onMounted(async () => {
   updateCurrentLocation();
-  const interval = setInterval(() => {
+  await calculateTimeToArrive();
+
+  interval = setInterval(() => {
     currentTimeInMinutes.value = new Date().getHours() * 60 + new Date().getMinutes();
+    now.value = currentTimeInMinutes.value;
   }, 5000);
-  onUnmounted(() => clearInterval(interval));
 });
 
+onUnmounted(() => clearInterval(interval));
 </script>

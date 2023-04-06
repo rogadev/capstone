@@ -1,20 +1,22 @@
+import { PostgrestError } from "@supabase/supabase-js";
 import supabase from "~/server/db";
-import { errorLog } from "~~/server/utils/logging";
 
 export default defineEventHandler(async (event) => {
+  console.log("Attempting to fetch all trips from the database...");
   try {
-    const { data } = await supabase.from('trips').select('*') as { data: Trip[] | null; };
-    return {
-      statusCode: 200,
-      data: trips,
-      error: null
-    };
-  } catch (error) {
-    errorLog(error, 'server/db/supabase.ts');
-    return {
-      statusCode: 500,
-      data: null,
-      error: error
-    };
+    // Use the supabase client to fetch all trips from the database
+    const { data, error } = await supabase.from("trips").select("*") as { data: Trip[] | null; error: PostgrestError | null; };
+    if (error) throw error;
+    if (!data)
+      return {
+        status: 404,
+        statusText: "No trips found.",
+      };
+
+    console.info('Successfully fetched all trips from the database. Returning data...');
+    return data;
+  } catch (error: PostgrestError | Error) {
+    console.error('Supabase encountered an error fetching all trips from the database:', error);
+    sendError(event, 'Error fetching trips. This was not expected.');
   }
 });

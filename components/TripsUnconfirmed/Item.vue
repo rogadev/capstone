@@ -58,6 +58,7 @@ const originLocationString = computed(() => {
 const confirmTrip = async (id: number) => {
   loading.value = true;
   const tripId = id;
+  // Responds with 200 if trip was confirmed successfully
   const response = await fetch('/api/trips/confirm', {
     method: 'POST',
     body: JSON.stringify(tripId),
