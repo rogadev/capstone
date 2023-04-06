@@ -93,6 +93,7 @@ async function fetchTrip() {
 async function updateTrip() {
   updating.value = true;
   feedbackMessage.value = '';
+  // Responds with 200 if the trip was updated successfully.
   const response = await fetch('/api/trips/update/one', {
     method: 'POST',
     body: JSON.stringify(trip.value),

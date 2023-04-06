@@ -1,12 +1,11 @@
 <template>
   <div class="flex flex-col items-center justify-center my-4">
     <DriveStartStop v-if="stop.status === 'scheduled' && !confirmCancel" :stop="stop" @cancel="() => confirmCancel = true"
-      @enroute="enroute" />
+      @enroute="enroute" :stopType="stop.type" :stop-date="stop.date" />
     <DriveEnrouteToStop v-if="stop.status === 'enroute'" :stop="stop" @arrived="arrived"
       @back="() => stop.status = 'scheduled'" />
     <DriveArrivedAtStop v-if="stop.status === 'arrived' && !confirmCancel" :stop="stop"
       @cancel="() => confirmCancel = true" @completed="completed" @back="() => stop.status = 'enroute'" />
-    <DriveCompleteStop v-if="stop.status === 'completed'" :stop="stop" @completed="completed" />
     <DriveCancelStop v-if="confirmCancel" :stopID="stop.id" @deleted="() => emits('refresh')"
       @cancel="() => confirmCancel = false" />
   </div>
@@ -25,14 +24,15 @@ const emits = defineEmits(['refresh']);
 
 const confirmCancel = ref(false);
 const currentLocation = reactive({ lat: 0, lon: 0 });
-const stopStatus = ref(props.stop.status);
 
 async function enroute() {
   const addressString = `${props.stop.street}, ${props.stop.city}`;
   const slugAddress = addressString.replace(/ /g, '+');
   const lat = currentLocation.lat;
   const lon = currentLocation.lon;
-  await fetch('/api/maps/stop', {
+
+  // Responds with { distance, duration } if successful after also updating the stop with these values.
+  const metricsResponse = await fetch('/api/maps/stop', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -43,6 +43,9 @@ async function enroute() {
       stop: props.stop,
     })
   });
+  const { distance, duration } = await metricsResponse.json() as { distance: number; duration: number; };
+  console.info(`Distance: ${distance} km, Duration: ${duration} minutes`);
+
   await stopStore.updateStopStatus(props.stop, "enroute");
   window.open(`https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${slugAddress}&travelmode=driving`, '_blank');
 }

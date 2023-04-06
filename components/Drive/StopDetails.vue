@@ -1,35 +1,51 @@
 <template>
-  <div class="flex flex-row justify-between items-center font-bold">
-    <p class="text-left">{{ stopType }}</p>
-    <div class="text-center">
-      <p>Arrive In</p>
-      <p v-if="!arrivingLate">{{ stopIsToday ? timeUntilArrival : stop.date }}</p>
+  <div>
+    <div class="flex flex-row justify-between items-center gap-8">
+      <Icon :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
+        class="text-5xl" />
+      <p class="text-xl font-semibold text-right">
+        <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>
+      <p>{{ stop.street }}<br>{{ stop.city }}</p>
+      </p>
+      <div v-if="!stopIsNext" class="flex flex-row-reverse">
+        <button class="btn btn-outline btn-circle mr-1 flex items-center justify-center"
+          @click="() => $emit('togglePeakControls')">
+          <Icon
+            :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
+            class="text-3xl mt-[1px]" />
+        </button>
+      </div>
     </div>
-    <p class="text-right">{{ arrivalTimeString }}</p>
-  </div>
-  <div class="flex flex-row justify-between">
-    <p>{{ stop.passenger }}</p>
-    <p><span v-if="stop.unit && stop.unit !== ''">Unit {{ stop.unit }}, </span>{{ stop.street }}, {{ stop.city }}</p>
+    <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
+    </div>
+    <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
+      <p class="font-bold text-2xl">{{ arrivalTimeString }} {{ stop.passenger }}</p>
+      <div class="text-center font-bold text-xl">
+        <p v-if="!arrivingLate">{{ stopIsToday ? timeUntilArrival : stopDateString }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Stop } from '@prisma/client';
+
 const props = defineProps({
   stop: {
     type: Object as PropType<Stop>,
     required: true,
-  }
-});
-const stopType = computed(() => {
-  if (props.stop.type === "pickup") {
-    return "Pickup";
-  } else {
-    return "Drop Off";
-  }
+  },
+  stopIsNext: {
+    type: Boolean,
+    required: true,
+  },
+  peakControls: {
+    type: Boolean,
+    required: true,
+  },
 });
 
-const timeRemaining = ref(true);
+const onTime = ref(true);
 
 const timeUntilArrival = computed(() => {
   const now = new Date();
@@ -39,7 +55,7 @@ const timeUntilArrival = computed(() => {
   const timeDiffMs = arrivalDate.getTime() - now.getTime();
   const timeDiffMinutes = Math.floor(timeDiffMs / 1000 / 60);
   if (timeDiffMinutes < 0) {
-    timeRemaining.value = false;
+    onTime.value = false;
     return "0h 0m";
   }
   const hours = Math.floor(timeDiffMinutes / 60);
@@ -70,5 +86,14 @@ const arrivalTimeString = computed(() => {
 const arrivingLate = computed(() => {
   if (!stopIsToday.value) return false;
   return stopIsToday.value && arrivalTimeString.value === "00:00" && props.stop.status !== "completed";
+});
+
+const stopDateString = computed(() => {
+  const date = new Date(props.stop.date.split('-').join('/'));
+  return Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
+});
+
+const stopHasUnitNumber = computed(() => {
+  return props.stop.unit && props.stop.unit !== '';
 });
 </script>

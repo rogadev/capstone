@@ -11,23 +11,25 @@
     v-model="completionNote" />
 
   <div class="flex flex-col gap-4 md:flex-row justify-between mt-8 mb-3">
-    <button class="btn btn-error btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
-      @click="() => $emit('cancel')">
+    <button class="btn btn-success btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
+      @click="completed">
+      {{ stop.type === 'pickup' ? 'Picked Up' : 'Dropped Off' }}
+      <Icon name="fa6-solid:check" class="ml-2" />
+    </button>
+    <button v-if="stop.type === 'pickup'" class="btn btn-error btn-wide mx-auto"
+      :class="{ 'loading btn-disabled': loading }" :disabled="loading" @click="() => $emit('cancel')">
       Cancel On Arrival
     </button>
     <button class="btn btn-warning btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
       @click="() => $emit('back')">
       Back Step
     </button>
-    <button class="btn btn-success btn-wide mx-auto" :class="{ 'loading btn-disabled': loading }" :disabled="loading"
-      @click="completed">
-      Complete
-    </button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { Stop } from '@prisma/client';
+import type { Stop, Trip } from '@prisma/client';
+
 const props = defineProps({
   stop: {
     type: Object as PropType<Stop>,
@@ -40,6 +42,7 @@ const loading = ref(false);
 const phoneNumber = ref('');
 
 async function fetchPhoneNumber() {
+  // TODO - Create route for just the phone number for a given trip.
   const response = await fetch(`/api/trips/${props.stop.tripId}`, {
     method: 'GET',
     headers: {
@@ -47,8 +50,8 @@ async function fetchPhoneNumber() {
     }
   });
   if (!response.ok) throw new Error(response.statusText);
-  const { data } = await response.json();
-  phoneNumber.value = data.passengerPhone;
+  const trip = await response.json() as Trip;
+  phoneNumber.value = trip.passengerPhone;
 }
 
 function completed() {
