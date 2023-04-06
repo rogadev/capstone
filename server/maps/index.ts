@@ -61,3 +61,19 @@ function formatDistance(distance: number) {
 function formatDuration(duration: number) {
   return Number.parseInt(duration / 60) || 1;
 }
+
+export async function getDuration(origin: [number, number], destination: string) {
+  const response = await client.distancematrix({
+    params: {
+      origins: [origin],
+      destinations: [destination],
+      key: GOOGLE_MAPS_API_KEY,
+      units: 'metric',
+    },
+    timeout: 1000,
+  });
+  const data = response.data.rows[0].elements[0];
+  const duration = formatDuration(data.duration.value);
+  console.log('duration', duration);
+  return duration;
+}

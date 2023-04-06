@@ -1,7 +1,6 @@
 <template>
   <div v-if="user" class="mx-auto">
     <div class="mx-4 md:mx-0 mt-6">
-
       <h1 class="text-4xl font-bold text-center mb-4">
         Dashboard
       </h1>
@@ -67,7 +66,7 @@ useHead({
 const user = useSupabaseUser();
 
 const trips: Ref<Trip[]> = ref([]);
-const numberOfTrips = computed(() => trips.value.length);
+const numberOfTrips = computed(() => trips.value.length.toLocaleString('en-US'));
 const numberOfTripsToday = computed(() => trips.value.filter(trip => trip.date === new Date().toISOString().split('T')[0]).length);
 const numberOfUnconfirmedTrips = computed(() => trips.value.filter(trip => trip.confirmed === false).length);
 
@@ -82,10 +81,9 @@ async function fetchTrips() {
     });
     if (!response.ok) throw new Error(response.statusText);
     const allTrips = await response.json();
-    // ✅ Working - April 3 - Post Backend Refactoring ✅
     trips.value = allTrips;
   } catch (error) {
-    alert(error);
+    console.error(error);
   }
 }
 

@@ -16,10 +16,6 @@ useHead({
 });
 
 const props = defineProps({
-  origin: {
-    type: Object as PropType<{ lat: number; lon: number; }>,
-    required: true,
-  },
   destination: {
     type: String,
     required: true,
