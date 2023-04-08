@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-base-200 p-4 sticky top-0 z-10">
+  <nav class="bg-base-200 p-4 sticky top-0 z-50">
     <ul class="flex justify-around">
       <NavbarHomeButton />
       <NavbarLink v-for="link in publicLinks" :key="link.to" :to="link.to" :icon="link.icon" :text="link.text"

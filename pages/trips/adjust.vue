@@ -1,0 +1,72 @@
+import { fetchAllStops } from '../../server/db/supabase';
+<template>
+  <div>
+    <div class="sticky top-20 z-10">
+      <div class="text-center mt-2 text-xl font-semibold block md:hidden">
+        {{ dateString }}
+      </div>
+      <div class="flex flex-row justify-evenly items-center my-2 max-w-fit gap-4 mx-auto">
+        <button class="btn btn-outline w-[180px] gap-2" @click="dateBack">
+          <Icon name="fa6-solid:arrow-left" />
+          Back
+        </button>
+        <div class="hidden md:block py-4 text-xl font-semibold">{{ dateString }}</div>
+        <button class="btn btn-outline w-[180px] gap-2 " @click="dateForward">
+          Forward
+          <Icon name="fa6-solid:arrow-right" />
+        </button>
+      </div>
+    </div>
+    <div ref="timeTableContainer">
+      <TimeTable :stops="stopsForDate" :key="dateString" />
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import type { Stop } from '@prisma/client';
+
+const stopStore = useStopStore();
+
+definePageMeta({
+  layout: 'driver',
+  middleware: 'auth'
+});
+useHead({
+  title: 'Drive',
+});
+
+const timeTableContainer = ref<HTMLElement | null>(null);
+const date: Ref<Date> = ref(new Date());
+const dateString = computed(() =>
+  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }).format(date.value).replace(/\//g, '-')
+);
+
+const stopsForDate = computed(() => {
+  return stopStore.stops.filter(stop => stop.date === new Date(date.value).toISOString().split('T')[0]);
+}) as Ref<Stop[]>;
+
+/**
+ * Change the date either forward or backward by one day.
+ * @param numberOfDays Number of days to change the date by. Defaults to 1 to increment forward by one day.
+ */
+function changeDate(delta: number = 1) {
+  const newDate = new Date(date.value);
+  newDate.setDate(newDate.getDate() + delta);
+  date.value = newDate;
+}
+
+function dateForward() {
+  changeDate(1);
+}
+
+function dateBack() {
+  changeDate(-1);
+}
+
+onMounted(async () => {
+  await stopStore.fetchStops();
+  const timeTableContainerHeight = timeTableContainer.value?.clientHeight;
+  window.scrollTo(0, timeTableContainerHeight ? timeTableContainerHeight / 3 : 0);
+});
+</script>

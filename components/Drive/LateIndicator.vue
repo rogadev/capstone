@@ -1,8 +1,28 @@
 <template>
-  <div class="late-indicator">
+  <div v-if="arrivingLate" class="late-indicator">
     <p>Arriving Late</p>
   </div>
+  <p v-else-if="stopIsNext && timeToArrivalString" class="text-center font-bold text-xl pt-4">
+    Stop is {{ timeToArrivalString }} away
+  </p>
 </template>
+
+<script lang="ts" setup>
+defineProps({
+  arrivingLate: {
+    type: Boolean,
+    required: true,
+  },
+  stopIsNext: {
+    type: Boolean,
+    required: true,
+  },
+  timeToArrivalString: {
+    type: String as PropType<string | null>,
+    required: true,
+  },
+});
+</script>
 
 <style scoped>
 /* late-indicator should slowly flash red and dark red */

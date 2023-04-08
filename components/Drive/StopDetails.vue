@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="flex flex-row justify-between items-center gap-8">
+    <!-- Next Stop Template -->
+    <div v-if="stopIsNext" class="flex flex-row justify-between items-center gap-8">
       <Icon :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
         class="text-5xl" />
       <p class="text-xl font-semibold text-right">
-        <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>
-      <p>{{ stop.street }}<br>{{ stop.city }}</p>
+        <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}<br></span>{{ stop.street }}<br>{{ stop.city }}
       </p>
       <div v-if="!stopIsNext" class="flex flex-row-reverse">
         <button class="btn btn-outline btn-circle mr-1 flex items-center justify-center"
@@ -16,12 +16,36 @@
         </button>
       </div>
     </div>
+
+    <!-- Upcoming Stop Template -->
+    <div v-else class="flex flex-row justify-between items-center gap-8">
+      <div class="flex items-center gap-4">
+        <Icon
+          :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
+          class="text-5xl" />
+        <p class="text-xl font-semibold" :class="stopIsNext ? 'text-right' : 'text-left'">
+          <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>
+        <p>{{ stop.street }}<br>{{ stop.city }}</p>
+        </p>
+      </div>
+      <div v-if="!stopIsNext" class="flex flex-row-reverse">
+        <button class="btn btn-outline btn-circle mr-1 flex items-center justify-center"
+          @click="() => $emit('togglePeakControls')">
+          <Icon
+            :name="peakControls ? 'material-symbols:keyboard-arrow-up-rounded' : 'material-symbols:keyboard-arrow-down-rounded'"
+            class="text-3xl mt-[1px]" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls -->
     <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
     </div>
     <div class="flex flex-row justify-between items-center mt-1 text-[1.05rem]">
       <p class="font-bold text-2xl">{{ arrivalTimeString }} {{ stop.passenger }}</p>
       <div class="text-center font-bold text-xl">
         <p v-if="!arrivingLate">{{ stopIsToday ? timeUntilArrival : stopDateString }}</p>
+        <p v-else-if="stopIsToday">Arriving Late</p>
       </div>
     </div>
   </div>
@@ -42,6 +66,14 @@ const props = defineProps({
   peakControls: {
     type: Boolean,
     required: true,
+  },
+  arrivingLate: {
+    type: Boolean,
+    required: true,
+  },
+  timeToArrivalString: {
+    type: String as PropType<string | null>,
+    required: false,
   },
 });
 
@@ -81,11 +113,6 @@ const arrivalTimeString = computed(() => {
   const hoursString = hours < 10 ? `0${hours}` : `${hours}`;
   const minutesString = minutes < 10 ? `0${minutes}` : `${minutes}`;
   return `${hoursString}:${minutesString}`;
-});
-
-const arrivingLate = computed(() => {
-  if (!stopIsToday.value) return false;
-  return stopIsToday.value && arrivalTimeString.value === "00:00" && props.stop.status !== "completed";
 });
 
 const stopDateString = computed(() => {

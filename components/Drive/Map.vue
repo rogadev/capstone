@@ -50,11 +50,6 @@ onMounted(async () => {
       .setLngLat([lon, lat])
       .addTo(map);
 
-    onUnmounted(() => {
-      if (map) {
-        map.remove();
-      }
-    });
   } catch (error) {
     console.error(error);
   }
