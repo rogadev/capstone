@@ -30,7 +30,7 @@ export async function getDistanceAndDuration(origin: string, destination: string
     };
   } catch (error) {
     console.error('Error getting distance and duration from Google Maps API - server/maps/index.ts - getDistanceAndDuration()');
-    sendError(event, error);
+    throw new Error(error);
   }
 }
 
@@ -41,9 +41,8 @@ export async function getDistanceAndDuration(origin: string, destination: string
  */
 export async function getDestinationAsLonLat(destination: string): Promise<{ lat: number, lon: number; }> {
   const response = await client.geocode({ params: { address: destination, key: GOOGLE_MAPS_API_KEY } });
-  // if (!response.ok) sendError(event, 'Error getting destination as lon/lat');
   const { data } = response;
-  if (data?.status !== 'OK') sendError(event, 'Error getting destination as lon/lat');
+  if (data?.status !== 'OK') throw new Error('Error getting destination as lon/lat');
   const { lat, lng } = data.results[0].geometry.location;
   return { lat, lon: lng };
 }
@@ -76,4 +75,28 @@ export async function getDuration(origin: [number, number], destination: string)
   const duration = formatDuration(data.duration.value);
   console.log('duration', duration);
   return duration;
+}
+
+export async function getDistanceAndDurationLatLonToStringLocations(origin: string, destination: string) {
+  try {
+    const response: DistanceMatrixResponse = await client.distancematrix({
+      params: {
+        origins: [origin], // format the lat/lon coordinates as a string
+        destinations: [destination],
+        key: GOOGLE_MAPS_API_KEY,
+        units: 'metric',
+      },
+      timeout: 1000,
+    });
+    const { distance, duration } = response.data.rows[0].elements[0];
+    if (!distance || !duration) throw new Error('Google Maps API did not return distance or duration for the given origin and destination', 'server/maps/index.ts', 'getDistanceAndDurationLatLonToStringLocations()', 'distance', distance, 'duration', duration);
+    const inKM = formatDistance(distance.value);
+    const inMinutes = formatDuration(duration.value);
+    return {
+      distance: inKM,
+      duration: inMinutes,
+    };
+  } catch (error) {
+    console.error('Error getting distance and duration from Google Maps API - server/maps/index.ts - getDistanceAndDuration()');
+  }
 }
