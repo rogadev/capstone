@@ -150,7 +150,7 @@ const submitted = ref(false);
 const handleSubmit = async (e: Event) => {
   e.preventDefault();
   submitting.value = true;
-  const data: Trip = {
+  const data = {
     date: date.value,
     pickupTime: pickupTime.value,
     passengerName: passengerName.value,

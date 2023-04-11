@@ -4,7 +4,7 @@
       <div id="info" class="flex flex-col">
         <DriveStopDetails :stop="stop" :stopIsNext="stopIsNext" :peakControls="peakControls" :arrivingLate="arrivingLate"
           :timeToArrivalString="timeToArrivalString" @togglePeakControls="togglePeakControls" />
-        <DriveLateIndicator :stopIsNext="stopIsNext" :arrivingLate="arrivingLate"
+        <DriveLateIndicator v-if="stopIsToday" :stopIsNext="stopIsNext" :arrivingLate="arrivingLate"
           :timeToArrivalString="timeToArrivalString" />
       </div>
       <div v-if="displayMap" class="flex flex-col justify-center items-center">
@@ -40,6 +40,14 @@ const displayMap = computed(() => props.stopIsNext || peakControls.value);
 const displayControls = computed(
   () => !['completed', 'cancelled'].includes(props.stop.status) && displayMap.value
 );
+
+const stopIsToday = computed(() => {
+  const today = new Date();
+  const stopDate = new Date(props.stop.date.replace(/-/g, '/'));
+  return (today.getFullYear() === stopDate.getFullYear() &&
+    today.getMonth() === stopDate.getMonth() &&
+    today.getDate() === stopDate.getDate());
+});
 
 const arrivingLate = ref(false);
 const minutesUntilArrival = ref(-1);

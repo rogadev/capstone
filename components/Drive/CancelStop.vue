@@ -59,7 +59,6 @@ const cancel = () => {
 
 const confirm = async () => {
   loading.value = true;
-  console.log('cancelling trip', props.stopID);
   const response = await fetch(`/api/stops/cancel/${props.stopID}`, {
     method: 'POST',
     headers: {
