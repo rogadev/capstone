@@ -73,7 +73,6 @@ export async function getDuration(origin: [number, number], destination: string)
   });
   const data = response.data.rows[0].elements[0];
   const duration = formatDuration(data.duration.value);
-  console.log('duration', duration);
   return duration;
 }
 

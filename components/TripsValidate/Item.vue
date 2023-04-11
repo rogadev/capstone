@@ -175,7 +175,6 @@ const handleSubmit = async (e: Event) => {
     },
     body: JSON.stringify(data),
   });
-  console.log('response: ', response);
   if (response.ok) {
     console.info('Trip submitted successfully!');
     showTrip.value = false;

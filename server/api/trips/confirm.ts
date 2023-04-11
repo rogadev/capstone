@@ -43,9 +43,6 @@ export default defineEventHandler(async (event) => {
     trip.estimatedDuration = duration;
   } catch (e: Error) {
     console.error('/api/trips/confirm', 'Error getting trip distance and duration');
-    console.log(e);
-    console.log(e);
-    console.log(e);
     sendError(event, e.message);
   }
 

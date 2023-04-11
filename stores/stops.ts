@@ -18,7 +18,6 @@ export const useStopStore = defineStore('stops', () => {
   const nextStop = computed(() => {
     if (!sortedStops.value.length) return null;
     const nextStop = sortedStops.value.find((stop) => stop.status !== "completed" && stop.status !== "canceled");
-    console.log("nextStop", nextStop);
     return nextStop;
   });
 

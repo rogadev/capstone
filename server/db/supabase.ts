@@ -61,7 +61,6 @@ export const fetchStop = async (id: number) => {
   try {
     const { data, error } = await supabase.from('stops').select('*').eq('id', id) as { data: Stop | null; error: PostgrestError | null; };
     console.info('Stop fetched - fetchStop() returning data...');
-    console.log('data', data);
     response.data = data;
   } catch (error: PostgrestError | Error) {
     console.error('Stop not fetched - fetchStop() returning error...', error);
