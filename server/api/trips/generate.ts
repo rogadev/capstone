@@ -54,6 +54,9 @@ export default defineEventHandler(async (event) => {
   }
 
   console.info("Checking for missing data...");
+
+  if (data.length === 0) createError(event, "No trips were generated. This may be because the number of trips were too large for one response. Please try again with a smaller batches of trips.");
+
   const missingRequiredFields = checkForMissingData(data);
   if (missingRequiredFields) {
     try {

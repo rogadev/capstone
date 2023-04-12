@@ -1,5 +1,5 @@
 <template>
-  <div class="border border-white rounded mb-4">
+  <div v-if="!submitted" class="border border-white rounded mb-4">
     <form v-if="!submitted" @submit.prevent="e => handleSubmit(e)" class="m-4 flex flex-col" :trip="trip">
       <input type="hidden" name="date" :value="trip.date" />
       <div class="flex flex-row justify-between items-baseline">
@@ -85,7 +85,7 @@
         </button>
       </div>
     </form>
-    <div v-else class="btn btn-disabled w-full my-4">
+    <!-- <div v-else class="btn btn-disabled w-full my-4">
       <div class="w-full flex flex-row gap-4 items-center justify-evenly">
         <div>
           {{ trip.pickup_time }}
@@ -100,13 +100,11 @@
           Submitted!
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Trip } from '.prisma/client';
-
 const { validateTrip } = useTripStore();
 const props = defineProps({
   trip: {
@@ -133,16 +131,16 @@ const notes = ref(props.trip.notes);
 const showTrip = ref(true);
 const feedbackMessage = ref('');
 
-const toLocation = computed(() => {
-  if (dropOffAddressName.value === '')
-    return props.trip.drop_off_location_street + ', ' + props.trip.drop_off_location_city;
-  return dropOffAddressName.value;
-});
-const fromLocation = computed(() => {
-  if (pickupAddressName.value === '')
-    return props.trip.pickup_location_street + ', ' + props.trip.pickup_location_city;
-  return pickupAddressName.value;
-});
+// const toLocation = computed(() => {
+//   if (dropOffAddressName.value === '')
+//     return props.trip.drop_off_location_street + ', ' + props.trip.drop_off_location_city;
+//   return dropOffAddressName.value;
+// });
+// const fromLocation = computed(() => {
+//   if (pickupAddressName.value === '')
+//     return props.trip.pickup_location_street + ', ' + props.trip.pickup_location_city;
+//   return pickupAddressName.value;
+// });
 
 const submitting = ref(false);
 const submitted = ref(false);

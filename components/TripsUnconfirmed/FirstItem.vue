@@ -112,11 +112,12 @@ async function deleteCurrentTrip() {
     method: 'DELETE',
   });
   if (!response.ok) {
-    console.error('Error deleting trip');
+    console.error('components/TripsUnconfirmed/FirstItem.vue - deleteCurrentTrip() - There was an error deleting the trip.');
+    const { error } = await response.json();
+    console.error(error);
     feedbackMessage.value = 'There was an error deleting this trip.';
     success.value = false;
   } else {
-    console.info('Trip deleted');
     feedbackMessage.value = 'Trip deleted successfully!';
     success.value = true;
     emits('confirm');
