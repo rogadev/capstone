@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.28",
-    "@pinia/nuxt": "^0.4.7",
+    "@pinia/nuxt": "^0.4.8",
     "@prisma/client": "^4.12.0",
     "@supabase/supabase-js": "^2.20.0",
     "daisyui": "^2.51.5",
