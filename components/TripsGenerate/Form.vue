@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full m-4">
-    <form @submit.prevent="(e) => handleSubmit(e)" class="container">
+  <div class="w-full m-4 pr-8">
+    <form @submit.prevent="(e) => handleSubmit(e)">
       <div class="input-group-lg">
         <label for="prompt" class="text-3xl font-bold">Trip List</label>
         <p>Copy and paste your list of trips from email into the text area below.</p>
@@ -9,7 +9,7 @@
           <input v-model="date" type="date" name="date" id="date" class="input" :disabled="generated || generating"
             :class="generated || generating ? 'disabled input-disabled' : 'input-sm input-accent'">
         </div>
-        <textarea autocomplete="off" v-model="prompt" name="prompt" id="prompt" class="w-full textarea"
+        <textarea autocomplete="off" v-model="prompt" name="prompt" id="prompt" class="w-full h-64 textarea"
           :class="generated || generating ? 'textarea-disabled text-gray-500' : 'input-accent'" rows="10"></textarea>
       </div>
       <div class="flex flex-row-reverse items-center gap-8">
@@ -23,6 +23,11 @@
         </button>
         <p v-if="generating" class="text-sm text-gray-500 dark:text-gray-400">
           Estimated generation time: {{ countdown }} seconds
+        </p>
+        <p v-if="generating && countdown === 0">
+          <span class="text-red-600 dark:text-red-500">Generation is taking longer than expected.</span>
+          <br>
+          <span class="text-red-600 dark:text-red-500">If it takes much longer, try refreshing.</span>
         </p>
       </div>
     </form>
@@ -85,7 +90,7 @@ watch(generating, (generating) => {
   countdown.value = estimatedGenerationDuration.value;
   if (generating) {
     interval = setInterval(() => {
-      countdown.value -= 1;
+      if (countdown.value > 0) countdown.value -= 1;
       if (estimatedGenerationDuration.value <= 0) {
         clearInterval(interval);
       }

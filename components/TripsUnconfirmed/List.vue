@@ -13,10 +13,13 @@
     </div>
     <div v-else>
       <h3 class="text-center">All trips have been confirmed!</h3>
-      <div class="flex justify-center mt-8">
-        <router-link to="/drive">
-          <button class="btn btn-success btn-wide">Let's Drive!</button>
-        </router-link>
+      <div class="flex flex-col md:flex-row justify-evenly items-center mt-8">
+        <NuxtLink to="/trips/adjust">
+          <button class="btn btn-info btn-wide">Adjust Times</button>
+        </NuxtLink>
+        <NuxtLink to="/drive">
+          <button class="btn btn-success btn-wide">Drive!</button>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -33,7 +36,7 @@ const unconfirmedTrips: Ref<Trip[]> = ref([]);
 
 const firstTrip = computed(() => unconfirmedTrips.value[0]);
 const remainingTrips = computed(() => unconfirmedTrips.value.slice(1));
-const allTripsConfirmed = computed(() => unconfirmedTrips.value.length < 1);
+const allTripsConfirmed = computed(() => unconfirmedTrips.value.length === 0);
 
 async function tripConfirmed() {
   await fetchTrips();
