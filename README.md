@@ -1,78 +1,67 @@
-# Nuxt 3 Minimal Starter
+# Introducing EzTripr - The Ultimate Trip Management Solution
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+EzTripr revolutionizes trip management for drivers, streamlining their schedules and enhancing communication with passengers and dispatch. Our intuitive web application offers a suite of features that simplify trip planning, increase efficiency, and elevate the overall driving experience.
 
-## Setup
+Feel free to check out the [final presentation slides](https://www.canva.com/design/DAFfid4eMDA/XdWkNkor_7pZTy1r3YTySw/edit?utm_content=DAFfid4eMDA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) to learn more, or [request a live demo by email](mailto:ryan@roga.dev).
 
-Make sure to install the dependencies:
+# Core Features
 
-```bash
-# yarn
-yarn install
+## All-in-One Trip Dashboard
 
-# npm
-npm install
+Drivers can effortlessly monitor their schedule with a comprehensive, easy-to-read trip dashboard. Featuring arrival times, estimated time of arrival (ETA) based on current location, location details, and passenger information, drivers have all essential details at their fingertips.
 
-# pnpm
-pnpm install
-```
+## Intuitive Tap-Through Interface
 
-## Development Server
+Navigate your day with ease using our user-friendly interface. A simple tap allows drivers to progress through trips, update trip status, view details, and communicate with passengers. With EzTripr's automatic distance and time tracking, drivers can concentrate on the road while effortlessly collecting vital data for invoicing and tax purposes.
 
-Start the development server on http://localhost:3000
+## AI-Powered Schedule Generation
 
-```bash
-npm run dev
-```
+EzTripr integrates OpenAI's Chat Completion API with GPT-3.5-Turbo to extract schedule data from email dispatches. Drivers can copy and paste their dispatches into the app, creating an optimized driving route in just a few clicks. This innovative feature saves time and boosts schedule accuracy.
 
-## Production
+## Visual Conflict Detection
 
-Build the application for production:
+Our application highlights potential scheduling conflicts with a clear visual representation of trips in the queue. Utilizing Google Maps Distance Matrix API, drivers can effortlessly identify and resolve conflicts, ensuring a smooth and timely driving experience.
 
-```bash
-npm run build
-```
+# Upcoming Enhancements
 
-Locally preview production build:
+## Advanced Trip Queue, Conflict Detection, and Route Optimization
 
-```bash
-npm run preview
-```
+Future releases of EzTripr will further leverage the Google Maps Distance Matrix API to intelligently adjust stop orders, minimizing travel time and maximizing efficiency. By incorporating trip duration data, the app will also ensure sufficient time for each stop before proceeding to the next. This seamless scheduling allows drivers to focus on delivering exceptional passenger experiences.
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Next-Generation AI Integration
 
-## Modules
+As AI technology advances, EzTripr will expand its integration to provide even more convenience for drivers. Features such as automated text messages to inform passengers of delays and AI-assisted schedule adjustments will ease the burden on drivers. Additional applications, like drafting morning emails for passengers, will further streamline communication and enhance the overall trip management experience.
 
-This project uses a number of Nuxt 3 modules. To learn more about them, check out the [modules documentation](https://nuxt.com/modules).
+# Partner with EzTripr: Revolutionizing Medical Transportation
 
-### [Color-Mode](https://nuxt.com/modules/color-mode)
+EzTripr is seeking forward-thinking medical transportation and medical companion companies to collaborate with us in transforming the way drivers manage their schedules and communicate with passengers. By partnering with EzTripr, you'll be at the forefront of cutting-edge technology, streamlining your operations, and providing a superior experience for both your drivers and passengers.
 
-Color-Mode allows for a more personalized user experience, improved accessibility, and enhanced aesthetic by enabling users to switch between different color modes. This feature can be particularly useful for users with visual impairments or sensitivity to certain color schemes, and can even be used to create different color themes for seasonal events or holidays.
+## Why Sponsor EzTripr?
 
-### [TailwindCSS](https://nuxt.com/modules/tailwindcss)
+- **Improve Operational Efficiency**: Our intuitive and AI-powered scheduling system enables your drivers to optimize their routes, saving time and reducing operational costs. With EzTripr, you can increase the number of trips completed each day while ensuring a smooth, timely experience for passengers.
 
-TailwindCSS provides pre-built CSS classes that can speed up development, make responsive design easier, and promote consistent design practices across multiple projects. This module can help save time, increase efficiency, and improve collaboration with other developers.
+- **Enhance Communication**: By investing in our technology, you'll empower your drivers with seamless communication tools that keep passengers informed and engaged. Automated text messages, AI-assisted schedule adjustments, and proactive conflict detection all contribute to a more satisfying and professional experience for your clients.
 
-### [Icon](https://nuxt.com/modules/icon)
+- **Stay Ahead of the Competition**: As the medical transportation industry evolves, companies that embrace innovation will stand out from the rest. Sponsoring EzTripr demonstrates your commitment to adopting the latest technology and delivering unparalleled service to your clients.
 
-The Icon module (nuxt-icon) gives access to a collection of icons that can be easily integrated into our website or application. This module provides a wide range of icons in different styles and formats, such as SVG and Font Awesome, that can be customized to fit your specific design needs. By using icons, you can enhance the visual appeal of your website or application, make it easier for users to navigate, and improve the overall user experience. Additionally, this module can save time by eliminating the need to create custom icons from scratch.
+- **Influence Future Development**: As a sponsor, you'll have a direct impact on the future features and functionalities of EzTripr. Your feedback and expertise will guide our development, ensuring that our application continues to meet the unique needs of the medical transportation industry.
 
-## Packages
+- **Expand Your Brand Visibility**: Partnering with EzTripr offers the opportunity to showcase your brand as a pioneer in adopting advanced technologies. Your company's logo and information will be featured prominently within the application and on our marketing materials, amplifying your brand's presence in the medical transportation sector.
 
-In addition to the modules, this project uses a number of packages.
+## How to Become a Sponsor
 
-### [tRPC](https://trpc.io/docs/)
+Join us on our mission to revolutionize medical transportation and companion services. To learn more about sponsorship opportunities and how EzTripr can elevate your business, please contact us by email at [ryan@roga.dev](mailto:ryan@roga.dev). Together, let's drive innovation and create a better future for medical transportation.
 
-tRPC provides a simple and efficient way to build APIs for my website or application. This module allowed me to generate TypeScript types automatically, making it easier to work with APIs and avoid errors. Additionally, tRPC allowed me to easily create APIs that are compatible with both the client and server, which made it easier to implement features such as server-side rendering. Overall, adding tRPC to my project improved the efficiency of my development process and helped me build more robust APIs.
+# Tech Stack
 
-### [tRPC-nuxt](https://trpc-nuxt.vercel.app/get-started/installation)
-
-The `nuxt-trpc` package provides seamless integration between tRPC and Nuxt 3. This package enabled me to easily implement my tRPC APIs making full-stack type safety a breeze.
-
-### [daisyUI](https://daisyui.com/)
-
-`daisyUI` adds classes to Tailwind CSS for all common UI components. Classes like btn, card, etc. This allows us to focus on important things instead of making basic elements for every project. It also provides themes which make it easy to change the look of the UI in both light and dark mode, toggled using the `color-mode` module.
-
-### [zod](https://zod.dev/)
-
-Zod provides a simple and efficient way to validate data in our TypeScript code. With Zod, we can define and enforce strict data schemas that ensure data is validated and formatted correctly, which helps to prevent errors and improve the reliability of our application. Additionally, Zod provides a wide range of built-in validation rules and supports custom validation functions, making it easy to handle complex data validation scenarios. Overall, adding Zod to our project has improved the efficiency and reliability of our code by ensuring that data is validated correctly at all times.
+| Frontend                                                               | Backend                                                          | API's                                                                                           |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [TypeScript](https://www.typescriptlang.org/)                          | [TypeScript](https://www.typescriptlang.org/)                    | [OpenAI](https://openai.com/blog/openai-api)                                                    |
+| [Vue 3](https://vuejs.org/)                                            | [Nuxt 3](https://nuxt.com/)                                      | [GM Distance Matrix](https://developers.google.com/maps/documentation/distance-matrix/overview) |
+| [Pinia](https://pinia.vuejs.org/)                                      | [Zod](https://zod.dev/)                                          |                                                                                                 |
+| [DaisyUI](https://daisyui.com/)                                        | [Vitest](https://vitest.dev/)                                    |                                                                                                 |
+| [Mapbox GL](https://docs.mapbox.com/mapbox-gl-js/)                     | [Prisma](https://www.prisma.io/)                                 |                                                                                                 |
+| [Nuxt Icon](https://nuxt.com/modules/icon)                             | [Supabase](https://supabase.com/database)                        |                                                                                                 |
+| [TailwindCSS](https://tailwindcss.com/)                                | [Supabase Auth](https://supabase.com/auth)                       |                                                                                                 |
+| [Tailwind Forms](https://tailwindcss.com/docs/plugins#forms)           | [Nuxt Test Utils](https://nuxt.com/docs/getting-started/testing) |                                                                                                 |
+| [Tailwind Typography](https://tailwindcss.com/docs/plugins#typography) |                                                                  |                                                                                                 |
