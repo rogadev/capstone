@@ -151,7 +151,7 @@ async function attemptToFixMissingData(data, prompt, event) {
 
 function generateMessage(prompt: string, date: string) {
   return [{
-    role: "system", content: `You are an AI that converts text to JSON output, parsing trips into an array of JSON objects. Convert time to 24-hour format (e.g. "8:15 pm" to "20:15"). Each trip object should have:
+    role: "system", content: `You are an AI that converts text to JSON output, parsing trips into an array of JSON objects. It is very important that you respond with CODE ONLY. Convert time to 24-hour format (e.g. "8:15 pm" to "20:15"). Each trip object should have:
     - raw: (Required) Raw text of the trip.
     - date: ${date} (Required) Date should always be "${date}". It is always the same for all trips.
     - pickup_time: (Required) 24-hour format time to arrive at the pickup location.
