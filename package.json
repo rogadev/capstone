@@ -19,7 +19,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
     "chalk": "^5.2.0",
-    "eslint": "^8.38.0",
+    "eslint": "^8.39.0",
     "nuxt": "^3.4.1",
     "nuxt-icon": "^0.3.3",
     "prisma": "^4.12.0",
