@@ -12,14 +12,14 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@nuxt/test-utils": "^3.4.1",
+    "@nuxt/test-utils": "^3.4.3",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/supabase": "^0.3.5",
     "@nuxtjs/tailwindcss": "^6.6.6",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/typography": "^0.5.9",
     "chalk": "^5.2.0",
-    "eslint": "^8.38.0",
+    "eslint": "^8.40.0",
     "nuxt": "^3.4.1",
     "nuxt-icon": "^0.3.3",
     "prisma": "^4.12.0",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.28",
-    "@pinia/nuxt": "^0.4.8",
+    "@pinia/nuxt": "^0.4.10",
     "@prisma/client": "^4.12.0",
     "@supabase/supabase-js": "^2.20.0",
     "consola": "^3.0.2",
@@ -35,7 +35,7 @@
     "mapbox-gl": "^2.14.1",
     "nanoid": "^4.0.2",
     "openai": "^3.2.1",
-    "pinia": "^2.0.34",
+    "pinia": "^2.0.36",
     "superjson": "^1.12.2",
     "zod": "^3.21.4"
   },
