@@ -20,23 +20,23 @@
     "@tailwindcss/typography": "^0.5.9",
     "chalk": "^5.2.0",
     "eslint": "^8.40.0",
-    "nuxt": "^3.4.1",
+    "nuxt": "^3.4.3",
     "nuxt-icon": "^0.3.3",
-    "prisma": "^4.12.0",
+    "prisma": "^4.13.0",
     "vitest": "^0.30.1"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.28",
     "@pinia/nuxt": "^0.4.10",
     "@prisma/client": "^4.13.0",
-    "@supabase/supabase-js": "^2.20.0",
+    "@supabase/supabase-js": "^2.21.0",
     "consola": "^3.0.2",
     "daisyui": "^2.51.5",
     "mapbox-gl": "^2.14.1",
     "nanoid": "^4.0.2",
     "openai": "^3.2.1",
-    "pinia": "^2.0.36",
-    "superjson": "^1.12.2",
+    "pinia": "^2.0.34",
+    "superjson": "^1.12.3",
     "zod": "^3.21.4"
   },
   "prisma": {
