@@ -24,11 +24,11 @@
         <p v-if="generating" class="text-sm text-gray-500 dark:text-gray-400">
           Estimated generation time: {{ countdown }} seconds
         </p>
-        <p v-if="generating && countdown === 0">
+        <!-- <p v-if="generating && countdown === 0">
           <span class="text-red-600 dark:text-red-500">Generation is taking longer than expected.</span>
           <br>
           <span class="text-red-600 dark:text-red-500">If it takes much longer, try refreshing.</span>
-        </p>
+        </p> -->
       </div>
     </form>
     <div class="font-semibold text-red-600 dark:text-red-500" v-if="errorMessage !== ''">
