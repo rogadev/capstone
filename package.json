@@ -26,7 +26,7 @@
     "vitest": "^0.30.1"
   },
   "dependencies": {
-    "@googlemaps/google-maps-services-js": "^3.3.28",
+    "@googlemaps/google-maps-services-js": "^3.3.41",
     "@pinia/nuxt": "^0.4.10",
     "@prisma/client": "^4.13.0",
     "@supabase/supabase-js": "^2.21.0",
@@ -34,7 +34,7 @@
     "daisyui": "^2.51.5",
     "mapbox-gl": "^2.14.1",
     "nanoid": "^4.0.2",
-    "openai": "^3.2.1",
+    "openai": "^4.17.4",
     "pinia": "^2.0.34",
     "superjson": "^1.12.3",
     "zod": "^3.22.3"
