@@ -2,7 +2,8 @@
   <div>
     <!-- Next Stop Template -->
     <div v-if="stopIsNext" class="flex flex-row justify-between items-center gap-8">
-      <Icon :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
+      <Icon
+        :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
         class="text-5xl" />
       <p class="text-xl font-semibold text-right">
         <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}<br></span>{{ stop.street }}<br>{{ stop.city }}
@@ -23,10 +24,10 @@
         <Icon
           :name="stop.type === 'pickup' ? 'fa6-solid:person-arrow-up-from-line' : 'fa6-solid:person-arrow-down-to-line'"
           class="text-5xl" />
-        <p class="text-xl font-semibold" :class="stopIsNext ? 'text-right' : 'text-left'">
+        <div class="text-xl font-semibold" :class="stopIsNext ? 'text-right' : 'text-left'">
           <span v-if="stopHasUnitNumber">Unit {{ stop.unit }}, </span>
-        <p>{{ stop.street }}<br>{{ stop.city }}</p>
-        </p>
+          <p>{{ stop.street }}<br>{{ stop.city }}</p>
+        </div>
       </div>
       <div v-if="!stopIsNext" class="flex flex-row-reverse">
         <button class="btn btn-outline btn-circle mr-1 flex items-center justify-center"
