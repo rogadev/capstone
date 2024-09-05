@@ -1,15 +1,16 @@
 import type { Trip } from '@prisma/client';
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import { extractJsonData } from '~~/server/utils/extractJson';
 
 const { OPENAI_API_KEY } = useRuntimeConfig();
-const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY
+
+const openai = new OpenAI({
+  // organization: "org-9xVOsgyw2Y03jr4gVALdi0z2",
+  // project: "proj_0YcDtJ8v1qTBhfYZUMjMeuQC",
+  apiKey: OPENAI_API_KEY,
 });
 
-const model = "gpt-3.5-turbo";
-
-const openai = new OpenAIApi(configuration);
+const model = "gpt-4o-mini";
 
 export default defineEventHandler(async (event) => {
   let startTime = Date.now();
@@ -20,26 +21,25 @@ export default defineEventHandler(async (event) => {
       status: 400,
       statusText: "Request must include prompt string in the body. Expected body: { prompt: string }",
     };
+
   if (!date)
     return {
       status: 400,
       statusText: "Request must include date string in the body. Expected body: { date: string }",
     };
 
-  console.log("Generating trips...");
+  console.log("Preparing messages to send to OpenAI...");
   const messages = generateMessage(prompt, date);
 
   console.info("Sending request to OpenAI...");
-  let chatContent: string;
-  try {
-    const content = await openai.createChatCompletion({ model, messages }).then((completion) => completion.data.choices[0].message?.content);
-    if (!content) throw new Error("No content returned from OpenAI");
-    console.info("OpenAI response received successfully.");
-    chatContent = content;
-  } catch (e: Error) {
-    console.error("Error generating trips:", e);
-    sendError(event, "Error generating trips. This was not expected.");
-  }
+  const completion = await openai.chat.completions.create({ messages, model });
+  console.log(completion);
+
+  return {};
+
+  if (!content) throw new Error("No content returned from OpenAI");
+  console.info("OpenAI response received successfully.");
+
 
   console.info("Extracting JSON data from OpenAI response...");
   let data: Trip[];
@@ -137,12 +137,12 @@ async function attemptToFixMissingData(data, prompt, event) {
     Can you please use the input to find the missing required fields and respond with a JSON array of object(s) representing each trip?` },
   ];
 
-  const completion = await openai.createChatCompletion({
+  const completion = await openai.chat.completions.create({
     model,
     messages
   });
 
-  const content = completion.data.choices[0].message?.content;
+  const content = completion.choices[0];
   if (!content) return createError(event, "No content returned from OpenAI 🤷");
 
   const newData = await extractJsonData(content);
