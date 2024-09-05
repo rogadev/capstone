@@ -1,3 +1,36 @@
+<script lang="ts" setup>
+import { Trip } from '@prisma/client';
+
+const props = defineProps({
+  trips: {
+    type: Array as PropType<Trip[]>,
+    required: true,
+  }
+});
+
+const filteredTrips = computed(() => props.trips.filter(trip => trip.closed === false));
+
+const sortedTrips = computed(() => filteredTrips.value.sort((a, b) => {
+  if (a.date === b.date) {
+    return a.pickupTime.localeCompare(b.pickupTime);
+  }
+  return a.date.localeCompare(b.date);
+}));
+
+function formatDate(dateString: string) {
+  dateString = dateString.replace(/-/g, '/');
+  const date = new Date(dateString);
+  const today = new Date();
+  if (date === today) {
+    return 'TODAY';
+  }
+  return Intl.DateTimeFormat('en-us', {
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+</script>
+
 <template>
   <div class="w-full">
     <div class="hidden lg:block w-fit mx-auto">
@@ -65,37 +98,3 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { Trip } from '.prisma/client';
-
-const props = defineProps({
-  trips: {
-    type: Array as PropType<Trip[]>,
-    required: true,
-  }
-});
-
-const filteredTrips = computed(() => props.trips.filter(trip => trip.closed === false));
-
-const sortedTrips = computed(() => filteredTrips.value.sort((a, b) => {
-  if (a.date === b.date) {
-    return a.pickupTime.localeCompare(b.pickupTime);
-  }
-  return a.date.localeCompare(b.date);
-}));
-
-function formatDate(dateString: string) {
-  dateString = dateString.replace(/-/g, '/');
-  const date = new Date(dateString);
-  const today = new Date();
-  if (date === today) {
-    return 'TODAY';
-  }
-  return Intl.DateTimeFormat('en-us', {
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
-}
-
-</script>
