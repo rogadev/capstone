@@ -6,6 +6,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1',
     }
   },
+
   modules: [
     '@nuxtjs/supabase',
     '@nuxtjs/tailwindcss',
@@ -13,12 +14,15 @@ export default defineNuxtConfig({
     'nuxt-icon',
     '@pinia/nuxt'
   ],
+
   imports: {
     dirs: ['./stores'],
   },
+
   pinia: {
     autoImports: ['defineStore', 'acceptHMRUpdate'],
   },
+
   runtimeConfig: {
     DEV: process.env.DEV,
     BASE_URL: process.env.BASE_URL,
@@ -31,11 +35,13 @@ export default defineNuxtConfig({
       MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
     }
   },
+
   colorMode: {
     preference: 'dark',
     fallback: 'dark',
     classSuffix: '',
   },
+
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
@@ -44,4 +50,6 @@ export default defineNuxtConfig({
       callback: '/auth/callback',
     }
   },
+
+  compatibilityDate: '2024-09-05',
 });
